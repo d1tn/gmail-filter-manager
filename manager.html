@@ -4,12 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gmail Filter Manager</title>
-    <link rel="stylesheet" href="manager.css"> // 後で作成するCSSファイル
+    <link rel="stylesheet" href="manager.css">
 </head>
 <body>
     <h1>Gmail Filter Manager</h1>
-    <div id="filter-list-container">
+
+    <div id="filter-conditions-section">
+        <h2>フィルタ条件</h2>
+
+        <div class="condition-item" data-condition-type="from"> <label for="from-input-v2">From:</label>
+            <div class="condition-input-area"> <div class="input-and-button-container"> <input type="text" id="from-input-v2" class="condition-input" placeholder="アドレスを入力"> <button class="add-and-button" type="button">+ AND</button> </div>
+                <button class="add-or-button" type="button">+ OR</button> </div>
+
+            <div class="condition-or-connector">OR</div> <div class="condition-chips-display"> </div>
         </div>
-    <script src="manager.js"></script> // 後で作成するJavaScriptファイル
+
+        <div class="condition-item" data-condition-type="to"> <label for="to-input">To:</label>
+            <div class="condition-input-area"> <div class="input-and-button-container"> <input type="text" id="to-input" class="condition-input" placeholder="アドレスを入力"> <button class="add-and-button" type="button">+ AND</button> </div>
+                <button class="add-or-button" type="button">+ OR</button> </div>
+
+            <div class="condition-or-connector">OR</div> <div class="condition-chips-display"></div> </div>
+
+        <div class="condition-item" data-condition-type="subject"> <label for="subject-input">件名:</label>
+            <div class="condition-input-area"> <div class="input-and-button-container"> <input type="text" id="subject-input" class="condition-input" placeholder="キーワードを入力"> <button class="add-and-button" type="button">+ AND</button> </div>
+                <button class="add-or-button" type="button">+ OR</button> </div>
+
+            <div class="condition-or-connector">OR</div> <div class="condition-chips-display"></div> </div>
+
+
+        </div> <div id="filter-list-container">
+        </div> <script src="manager.js"></script>
 </body>
 </html>

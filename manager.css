@@ -1,15 +1,258 @@
 /* manager.css */
-/* フィルタ管理画面全体のスタイル */
+
+/* == 全体的なスタイル == */
+:root {
+    font-size: 14px;
+  }
+
 body {
     font-family: sans-serif;
-    margin: 20px;
+    background-color: #F8FAFD;
+    margin: 1.5rem;
+    color: #333;
 }
 
 h1 {
     color: #555;
+    border-bottom: 0.1rem solid #eee;
+    padding-bottom: 0.7rem;
 }
 
+h2{
+    /* border-bottom: .2rem #F8FAFD solid; */
+}
+
+button {
+    border: none;
+}
+
+input {
+    border: none;
+}
+
+/* フィルタ条件セクション全体 */
+#filter-conditions-section {
+    margin-top: 1.5rem;
+    padding: 1.0rem;
+    border-radius: 1.0rem;
+    background-color: #fff;
+}
+
+#filter-conditions-section h2 {
+    margin-top: 0;
+    color: #555;
+    font-size: 1.1rem;
+    margin-bottom: 1.0rem;
+}
+
+/* 各条件項目（From, To, 件名など）を囲むコンテナ */
+.condition-item { /* 共通クラス */
+    margin-bottom: 1.0rem; /* 各項目の下の余白 */
+}
+
+/* 各条件項目のラベル（From:, To: など） */
+.condition-item label { /* 共通クラス .condition-item の中の label タグ */
+    display: block; /* ラベルをブロック要素にして入力フィールドの上に配置 */
+    margin-bottom: 0.4rem; /* ラベルの下の余白 */
+    font-weight: bold;
+    color: #666;
+}
+
+
+/* == 条件項目の UI スタイル (一般化) == */
+
+/* 入力フィールドコンテナと+ORボタン全体を囲むコンテナ */
+.condition-input-area { /* 共通クラス */
+    display: flex; /* 中の要素（入力コンテナとORボタン）を横並びにする */
+    align-items: center; /* 縦方向の中央揃え */
+    margin-bottom: 0.7rem; /* 入力エリアと下部エリア（OR接続テキスト/チップ表示）の間の余白 */
+}
+
+/* 入力フィールドと+ANDボタンを一体化させるコンテナ */
+.input-and-button-container { /* 既存または共通クラス */
+    display: flex; /* 中の要素（入力フィールドと+ANDボタン、入力フォーム内のチップ）を横並びにする */
+    align-items: center; /* 縦方向の中央揃え */
+    flex-grow: 1; /* 利用可能なスペースを占有 */
+    padding: 0.5rem 1.0rem;
+     /* 入力フィールド自体のボーダーは削除 */
+    background: #E9EEF5;
+    border-radius: 5.0rem; /* コンテナに角丸を設定 */
+    overflow: hidden; /* 中の要素が角丸からはみ出さないように */
+    max-width: none; /* 親要素のmax-widthを引き継ぐ場合 */
+    gap: 0.4rem; /* 中の要素（チップ、入力フィールド、ボタン）間の隙間をgapで設定 */
+    padding-right: 0.4rem; /* コンテナ右側のパディング */
+}
+
+/* 入力フィールド自体のスタイル */
+.condition-input { /* 共通クラス */
+    background: transparent;
+    flex-grow: 1; /* 入力フィールドを可能な限り広げる */
+     /* 入力フィールド自体のボーダーは削除 */
+    padding: 0.5rem; /* 入力フィールド左側のパディングが、前のチップとの隙間になります */
+    font-size: 1rem;
+    box-sizing: border-box;
+    min-width: 50px; /* 入力フィールドが極端に小さくならないように最小幅を設定 */
+}
+
+/* +AND ボタンのスタイル */
+.add-and-button { /* 共通クラス */
+    flex-shrink: 0; /* ボタンのサイズを固定 */
+    padding: 0.4rem 0.7rem;
+     /* ボタン自体のボーダーも削除（コンテナのボーダーを使う） */
+    border-radius: 5.0rem; /* 角丸はコンテナで行うのでボタン自体は0 */
+    cursor: pointer;
+    font-size: 1rem;
+    background-color: #ffebeb; /* 赤っぽい背景色 */
+    color: #c0392b; /* 赤っぽい文字色 */
+}
+.add-and-button:hover { /* 共通クラス */
+     background-color: #ffdddd;
+}
+
+
+/* +OR ボタンのスタイルは独立して設定 */
+.add-or-button { /* 共通クラス */
+    flex-shrink: 0;
+    padding: 0.4rem 0.7rem;
+    
+    border-radius: 5.0rem;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 0.7rem; /* 入力フィールド+ANDコンテナとの間の余白 */
+    background-color: #ebf3ff; /* 青っぽい背景色 */
+    color: #2980b9; /* 青っぽい文字色 */
+    border-color: #3498db;
+}
+.add-or-button:hover { /* 共通クラス */
+     background-color: #ddeeff;
+}
+
+/* 入力フォーム末尾に一時的に表示するOR (今回は使用しない可能性が高い) */
+/*
+.form-trailing-or {
+    font-weight: bold;
+    color: #555;
+    margin-left: 0.7rem;
+    flex-shrink: 0;
+}
+*/
+
+
+/* OR接続テキスト */
+.condition-or-connector { /* 共通クラス */
+    font-size: 1.0rem; /* 大きなフォントサイズ */
+    font-weight: bold;
+    margin: 0.5rem 0; /* 上下のマージン */
+    color: #555; /* 色を調整 */
+    /* ★★★ 要素が空のときは非表示にする（JavaScriptで制御） ★★★ */
+    display: none; /* デフォルトで非表示 */
+}
+
+/* チップ表示エリア全体を囲むコンテナ */
+.condition-chips-display { /* 共通クラス */
+    display: none; /* デフォルトで非表示 */
+    /* ★★★ 中の要素（ORグループとORインジケーター）を横並びにする ★★★ */
+    display: flex; /* デフォルトの表示はflex */
+    flex-wrap: wrap; /* 要素が多すぎるときに折り返す */
+    align-items: center; /* 縦方向の中央揃え */
+    gap: 0.5rem; /* ORグループとORインジケーター間の隙間 */
+    background-color: #fff; /* 背景色 */
+}
+
+/* 下部表示エリアに追加される各ORグループのコンテナ */
+.or-group { /* 共通クラス */
+    border-radius: 5.0rem;
+    padding: 0.5rem 1.0rem;
+    display: flex; /* 中の要素（チップ、削除ボタン）を横並びにする */
+    flex-wrap: wrap; /* チップが多すぎるときに折り返す */
+    align-items: center;
+    gap: 0.5rem; /* ORグループ内の要素間の隙間 */
+    background-color: #f0f0f0; /* ORグループの背景色 */
+    position: relative; /* 削除ボタンの絶対位置指定の基準 */
+}
+
+/* 下部エリアのORインジケーター（2個目以降のORグループとORグループの間） */
+.or-indicator { /* 共通クラス */
+    font-weight: bold;
+    /* margin-right は親の gap で設定 */
+    color: #555; /* 色を調整 */
+    flex-shrink: 0; /* 縮まないようにする */
+}
+
+/* 個々のチップのスタイル */
+.chip { /* 共通クラス */
+    display: inline-flex;
+    align-items: center;
+    border-radius: 1.0rem; /* 角丸 */
+    padding: 0.4rem 0.5rem; /* 上下のパディングを少し増やす */
+    font-size: 0.9rem;
+    box-sizing: border-box; /* パディングとボーダーをサイズに含める */
+}
+
+/* アドレスチップのスタイル */
+.address-chip { /* 共通クラス */
+     background-color: #e0e0e0;
+     color: #333;
+}
+
+.or-group .chip{
+    padding: 0 0; /* 上下のパディングを少し増やす */
+    
+}
+.or-group .chip.address-chip,
+.or-group .chip.operator-chip{
+    padding: 0 0;
+    background-color: transparent;
+    
+}
+
+.or-group .chip.operator-chip{
+    color: #333;
+}
+
+/* 演算子チップのスタイル */
+.operator-chip { /* 共通クラス */
+    background-color: #bbb; /* グレー系の背景色 */
+    color: #fff; /* 白文字 */
+    padding: 0.4rem 0.5rem; /* 左右のパディングを少し調整 */
+}
+
+/* 入力フォーム内のチップに付く削除ボタン */
+button.remove-chip { /* タグ名と共通クラス */
+     background: none;
+     
+     color: #666;
+     cursor: pointer;
+     font-size: 0.9rem;
+     padding: 0 0.1rem;
+     margin-left: 0.4rem;
+     line-height: 1;
+}
+button.remove-chip:hover { /* タグ名と共通クラス */
+     color: #333;
+}
+
+/* ORグループ削除ボタンのスタイル */
+button.remove-or-group-button { /* タグ名と共通クラス */
+    background: none;
+    
+    color: #c0392b; /* 赤系の色 */
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0;
+    margin-left: auto; /* 右端に配置 */
+    flex-shrink: 0;
+}
+
+button.remove-or-group-button:hover { /* タグ名と共通クラス */
+    color: #e74c3c;
+}
+
+
+/* == その他 == */
+
+/* フィルタ一覧コンテナのスタイル */
 #filter-list-container {
-    margin-top: 20px;
-    /* ここにフィルタ一覧などのスタイルを記述 */
+    margin-top: 30px;
+    /* ここにフィルタ一覧のスタイルを記述 */
 }
