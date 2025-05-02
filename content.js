@@ -48,7 +48,7 @@ function toggleFilterUI() {
 // TODO: Gmailの適切なDOM要素に挿入するように修正
 const toggleButton = document.createElement('button');
 toggleButton.id = 'toggle-filter-ui-button';
-toggleButton.textContent = 'フィルタ管理を開く'; // ボタンのテキスト
+toggleButton.textContent = 'フィルタ管理ツールを開く'; // ボタンのテキスト
 toggleButton.style.position = 'fixed'; // テスト用：画面左下に固定
 toggleButton.style.bottom = '10px';
 toggleButton.style.left = '10px';
