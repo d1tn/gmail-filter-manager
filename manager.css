@@ -38,7 +38,7 @@ input {
 /* フィルタ条件セクション全体 */
 #filter-conditions-section {
     margin-top: 1.5rem;
-    padding: 1.0rem;
+    padding: 2.0rem 1.0rem;
     border-radius: 1.0rem;
     background-color: #fff;
 }
@@ -53,7 +53,7 @@ input {
 /* 各条件項目（From, To, 件名など）を囲むコンテナ */
 .condition-item {
     /* 共通クラス */
-    margin-bottom: 5.0rem;
+    margin-bottom: 3.0rem;
     /* 各項目の下の余白 */
 }
 
@@ -84,11 +84,6 @@ input {
     min-width: 5.0rem;
 }
 
-.condition-input-area.size-value > .input-and-button-container {
-    max-width: 4.5rem;
-    padding: 0 0.5rem;
-    margin: 0 0.5rem;
-}
 
 /* 入力フィールドと+ANDボタンを一体化させるコンテナ */
 .input-and-button-container {
@@ -154,6 +149,7 @@ input {
 .add-or-button {
     /* 共通クラス */
     flex-shrink: 0;
+    margin-left: 0.5rem;
     padding: 0.3rem 0.9rem;
     border-radius: 5.0rem;
     cursor: pointer;
@@ -180,7 +176,7 @@ input {
     font-weight: bold;
     margin-top: 0.5rem 0;
     /* 上下のマージン */
-    padding: 0.5rem 5.0rem;
+    padding: 0.5rem 6.0rem;
     color: #555;
     /* 色を調整 */
     /* ★★★ 要素が空のときは非表示にする（JavaScriptで制御） ★★★ */
@@ -193,7 +189,7 @@ input {
     /* 共通クラス */
     display: none;
     /* デフォルトで非表示 */
-    padding: 0 5.0rem;
+    padding-left:5.0rem;
     display: flex;
     /* デフォルトの表示はflex */
     flex-wrap: wrap;
@@ -333,4 +329,70 @@ button.remove-or-group-button:hover {
 #filter-list-container {
     margin-top: 30px;
     /* ここにフィルタ一覧のスタイルを記述 */
+}
+
+/* 新しく追加する横並び用コンテナのスタイル */
+.horizontal-conditions {
+    display: flex; /* Flexboxを適用して子要素を横並びに */
+    gap: 20px; /* 子要素間の隙間を調整（適宜変更してください） */
+    align-items: flex-start; /* 子要素を上揃えにする（必要に応じて変更） */
+    margin-top: 1.5rem; /* 上の要素との間隔を調整 */
+}
+
+/* 横並びにした condition-item のスタイル調整（必要であれば） */
+.horizontal-conditions .condition-item {
+    /* 必要に応じて、個々の横並びアイテムの幅などを調整 */
+    flex-grow: 1; /* 利用可能なスペースを均等に分配（必要であれば） */
+    /* margin-bottom は親要素で設定されているので個別に調整しない */
+}
+
+
+/* サイズ 条件項目の入力エリア (.condition-input-area に .size-value も付いている場合) */
+/* このスタイルは、サイズ条件の入力エリア全体内の要素のレイアウトを制御します */
+.condition-item[data-condition-type="size"] > .condition-input-area.size-value {
+    display: flex; /* Flexbox レイアウトを適用 */
+    align-items: center; /* 子要素を縦方向中央揃え */
+    gap: 0.5rem; /* 子要素間の隙間を調整 */
+    flex-wrap: wrap; /* 画面幅が狭い場合に折り返す */
+}
+
+/* サイズ条件入力エリア内のラベル */
+.condition-item[data-condition-type="size"] > .condition-input-area.size-value > label {
+    /* ラベルの幅を固定する場合や、右側に余白を追加する場合 */
+    flex-shrink: 0; /* 縮まないように */
+    margin-right: 0.5rem; /* ラベルの右側に少し余白 */
+}
+
+/* サイズ条件入力エリア内のプルダウン要素 (比較演算子、単位) */
+.condition-item[data-condition-type="size"] > .condition-input-area.size-value > select {
+     /* プルダウンの基本的なスタイル調整 */
+    flex-shrink: 0; /* 縮まないように */
+    padding: 0.5rem; /* プルダウンのパディング */
+    border: none; /* ボーダー */
+    border-radius: 0.5rem; /* 角丸 */
+    background-color: #E9EEF5; /* 背景色をinputコンテナと合わせるなど */
+}
+
+/* サイズ値入力欄を囲むコンテナ */
+.condition-item[data-condition-type="size"] > .condition-input-area.size-value > .input-and-button-container {
+    /* このコンテナ自体も Flex item として振る舞い、中の input を制御します */
+    flex-grow: 0; /* サイズ値入力コンテナは必要以上に広がらないように */
+    /* ユーザーさんが提供された max-width, padding, margin はここに適用されると想定 */
+    max-width: 4.5rem; /* 例: サイズ入力欄の最大幅 */
+    padding: 0.5rem 1.0rem; /* input-and-button-container のパディング */
+    background: #E9EEF5; /* 背景色 */
+    border-radius: 0.5rem; /* 角丸 */
+    overflow: hidden; /* 角丸からはみ出さないように */
+    display: flex; /* 中の input を Flexbox で制御 */
+    align-items: center; /* 中の input を縦方向中央揃え */
+}
+
+/* サイズ値入力欄自体 */
+.condition-item[data-condition-type="size"] > .condition-input-area.size-value .condition-input.size-value {
+    /* サイズ値入力欄自体のスタイル */
+    flex-grow: 1; /* 利用可能なスペースを占有 */
+    border: none; /* ボーダーなし */
+    background: transparent; /* 背景透明 */
+    padding: 0; /* 親コンテナ (.input-and-button-container) でパディングを設定している場合 */
+    min-width: 3rem; /* 最小幅 */
 }

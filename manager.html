@@ -39,8 +39,7 @@
         </div>
 
         <div class="condition-item" data-condition-type="subject">
-            <div class="condition-input-area">
-                <label for="subject-input">件名</label>
+            <div class="condition-input-area"> <label for="subject-input">件名</label>
                 <div class="input-and-button-container">
                     <input type="text" id="subject-input" class="condition-input" placeholder="キーワードを入力">
                     <button class="add-and-button" type="button">+ AND</button>
@@ -76,32 +75,34 @@
             <div class="condition-chips-display"></div>
         </div>
 
-        <div class="condition-item" data-condition-type="size">
-            <div class="condition-input-area size-value">
-                <label for="size-value-input">サイズ</label>
-                <select class="condition-operator">
-                    <option value="larger_than">次の値より大きい</option>
-                    <option value="smaller_than">次の値より小さい</option>
-                </select>
-                <div class="input-and-button-container">
-                    <input type="number" id="size-value-input" class="condition-input size-value" placeholder="値" min="0">
+        <div class="horizontal-conditions">
+            <div class="condition-item" data-condition-type="size">
+                <div class="condition-input-area size-value">
+                    <label for="size-value-input">サイズ</label>
+                    <select class="condition-operator">
+                        <option value="larger_than">次の値より大きい</option>
+                        <option value="smaller_than">次の値より小さい</option>
+                    </select>
+                    <div class="input-and-button-container">
+                        <input type="number" id="size-value-input" class="condition-input size-value" placeholder="値" min="0">
+                    </div>
+                    <select class="size-unit">
+                        <option value="m">MB</option>
+                        <option value="k">KB</option>
+                        <option value="b">バイト</option>
+                    </select>
                 </div>
-                <select class="size-unit">
-                    <option value="m">MB</option>
-                    <option value="k">KB</option>
-                    <option value="b">バイト</option>
-                </select>
             </div>
-        </div>
 
-        <div class="condition-item" data-condition-type="has-attachment">
-            <div class="condition-input-area">
-                <label for="has-attachment-checkbox">添付ファイルあり</label>
-                <input type="checkbox" id="has-attachment-checkbox" class="condition-checkbox">
+            <div class="condition-item" data-condition-type="has-attachment">
+                <div class="condition-input-area">
+                    <label for="has-attachment-checkbox">添付ファイルあり</label>
+                    <input type="checkbox" id="has-attachment-checkbox" class="condition-checkbox">
+                </div>
             </div>
         </div>
-    </div>
+        </div>
     <script src="manager.js"></script>
-    </body>
+</body>
 
 </html>
