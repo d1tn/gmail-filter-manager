@@ -1,0 +1,15 @@
+/* manager.css */
+/* フィルタ管理画面全体のスタイル */
+body {
+    font-family: sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    color: #555;
+}
+
+#filter-list-container {
+    margin-top: 20px;
+    /* ここにフィルタ一覧などのスタイルを記述 */
+}

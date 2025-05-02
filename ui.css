@@ -1,11 +1,4 @@
 /* ui.css */
-
-/* UIコンテナのスタイル */
-#gmail-filter-manager-ui {
-    font-family: sans-serif;
-    color: #333;
-}
-
 /* UI表示ボタンのスタイル */
 #toggle-filter-ui-button {
     padding: 8px 15px;
@@ -16,6 +9,7 @@
     cursor: pointer;
     font-size: 1em;
     margin-top: 10px;
+    /* Content Scriptで position など指定している場合は、ここで調整 */
 }
 
 /* UI表示ボタンのホバー時のスタイル */

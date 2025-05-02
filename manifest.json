@@ -1,38 +1,31 @@
 {
-    "manifest_version": 3,
-    "name": "Gmail Filter Manager",
-    "version": "1.0",
-    "description": "GUI-based Gmail filter management.",
-    "permissions": [
-      "activeTab",
-      "storage"
-    ],
-    "host_permissions": [
-      "https://mail.google.com/*"
-    ],
-    "content_scripts": [
-      {
-        "matches": ["https://mail.google.com/*"],
-        "js": ["content.js"],
-        "css": ["ui.css"]
-      }
-    ],
-    "action": {
-    //   "default_popup": "popup.html",
-      "default_icon": {
-        "16": "icons/icon16.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon128.png"
-      }
+  "manifest_version": 3,
+  "name": "Gmail Filter Manager",
+  "version": "1.0",
+  "description": "GUI-based Gmail filter management.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://mail.google.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "css": ["ui.css"]
     }
-    // ,
-     // リリース時点で外部サーバーを使わないため、CSPは必須ではありませんが、
-     // 将来のためにコメントアウトや自己参照のみの設定にしておくことも可能です。
-     // 例えば、'self' のみ許可する場合：
-     /*
-     "content_security_policy": {
-       "extension_pages": "script-src 'self'; object-src 'self'",
-       "content_scripts": "script-src 'self'; object-src 'self'"
-     }
-     */
+  ],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
   }
+}
