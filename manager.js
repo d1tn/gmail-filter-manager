@@ -52,7 +52,7 @@ function createOrGroupRemoveButton() {
 // --- 各条件項目にロジックを設定する関数 ---
 function setupConditionItem(conditionItemElement) {
     // ★★★ この条件項目内の要素への参照を取得（共通クラスを使う） ★★★
-    const inputElement = conditionItemElement.querySelector('.condition-input');
+    const inputElement = conditionItemElement.querySelector('.app-form-input');
     const addAndButton = conditionItemElement.querySelector('.add-and-button');
     const addOrButton = conditionItemElement.querySelector('.add-or-button');
     const chipsDisplay = conditionItemElement.querySelector('.condition-chips-display'); // 下部ORグループ表示エリア
@@ -175,7 +175,6 @@ function setupConditionItem(conditionItemElement) {
     // --- +AND ボタンのイベントリスナー (この条件項目用) ---
     addAndButton.addEventListener('click', () => {
         const address = inputElement.value.trim();
-
          if (address) {
              // ★★★ 入力フォーム内でのAND条件追加ロジック ★★★
 
@@ -283,7 +282,7 @@ function setupConditionItem(conditionItemElement) {
 // --- ページの読み込みが完了したら、各条件項目にロジックを設定 ---
 document.addEventListener('DOMContentLoaded', () => {
     // 全ての条件項目要素を取得
-    const conditionItems = document.querySelectorAll('.condition-item'); // 共通クラス
+    const conditionItems = document.querySelectorAll('.filter-condition-item'); // 共通クラス
 
     // 各条件項目に対して setupConditionItem 関数を呼び出す
     conditionItems.forEach(item => {
