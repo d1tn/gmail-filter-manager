@@ -111,102 +111,103 @@
                     </div>
                 </section>
 
-                <section id="filter-conditions-section">
+                <section class="filter-conditions">
                     <h3>フィルタ条件</h3>
-
-                    <div class="condition-item" data-condition-type="from">
-                        <div class="condition-input-area">
-                            <label for="condition-from-input">From</label>
-                            <div class="input-and-button-container">
-                                <input type="text" id="condition-from-input" class="app-form-input"
-                                    placeholder="アドレスを入力">
-                                <button class="add-and-button" type="button">+ AND</button>
-                            </div>
-                            <button class="add-or-button" type="button">+ OR</button>
-                        </div>
-                        <div class="condition-or-connector">OR</div>
-                        <div class="condition-chips-display"></div>
-                    </div>
-
-                    <div class="condition-item" data-condition-type="to">
-                        <div class="condition-input-area">
-                            <label for="condition-to-input">To</label>
-                            <div class="input-and-button-container">
-                                <input type="text" id="condition-to-input" class="app-form-input" placeholder="アドレスを入力">
-                                <button class="add-and-button" type="button">+ AND</button>
-                            </div>
-                            <button class="add-or-button" type="button">+ OR</button>
-                        </div>
-                        <div class="condition-or-connector">OR</div>
-                        <div class="condition-chips-display"></div>
-                    </div>
-
-                    <div class="condition-item" data-condition-type="subject">
-                        <div class="condition-input-area"> <label for="condition-subject-input">件名</label>
-                            <div class="input-and-button-container">
-                                <input type="text" id="condition-subject-input" class="app-form-input"
-                                    placeholder="キーワードを入力">
-                                <button class="add-and-button" type="button">+ AND</button>
-                            </div>
-                            <button class="add-or-button" type="button">+ OR</button>
-                        </div>
-                        <div class="condition-or-connector">OR</div>
-                        <div class="condition-chips-display"></div>
-                    </div>
-
-                    <div class="condition-item" data-condition-type="includes">
-                        <div class="condition-input-area"> <label for="condition-includes-input">含む</label>
-                            <div class="input-and-button-container">
-                                <input type="text" id="condition-includes-input" class="app-form-input"
-                                    placeholder="キーワードを入力">
-                                <button class="add-and-button" type="button">+ AND</button>
-                            </div>
-                            <button class="add-or-button" type="button">+ OR</button>
-                        </div>
-                        <div class="condition-or-connector">OR</div>
-                        <div class="condition-chips-display"></div>
-                    </div>
-
-                    <div class="condition-item" data-condition-type="excludes">
-                        <div class="condition-input-area">
-                            <label for="condition-excludes-input">含まない</label>
-                            <div class="input-and-button-container">
-                                <input type="text" id="condition-excludes-input" class="app-form-input"
-                                    placeholder="キーワードを入力">
-                                <button class="add-and-button" type="button">+ AND</button>
-                            </div>
-                            <button class="add-or-button" type="button">+ OR</button>
-                        </div>
-                        <div class="condition-or-connector">OR</div>
-                        <div class="condition-chips-display"></div>
-                    </div>
-
-                    <div class="horizontal-conditions">
-                        <div class="condition-item" data-condition-type="size">
-                            <div class="condition-input-area size-value">
-                                <label for="condition-size-value-input">サイズ</label>
-                                <select id="condition-size-operator" class="app-form-select">
-                                    <option value="larger_than">次の値より大きい</option>
-                                    <option value="smaller_than">次の値より小さい</option>
-                                </select>
-                                <div class="input-and-button-container">
-                                    <input type="number" id="condition-size-value-input"
-                                        class="app-form-input size-value" placeholder="値" min="0">
-                                </div>
-                                <select id="condition-size-unit" class="app-form-select size-unit">
-                                    <option value="m">MB</option>
-                                    <option value="k">KB</option>
-                                    <option value="b">バイト</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="condition-item" data-condition-type="has-attachment">
+                    <div class="filter-condition-items">
+                        <div class="filter-condition-item" data-condition-type="from">
                             <div class="condition-input-area">
-                                <label for="condition-has-attachment" class="app-form-checkbox label">
-                                    <input type="checkbox" id="condition-has-attachment"
-                                        class="app-form-checkbox input">添付ファイルあり
-                                </label>
+                                <label for="condition-from-input">From</label>
+                                <div class="input-and-button-container">
+                                    <input type="text" id="condition-from-input" class="app-form-input"
+                                        placeholder="アドレスを入力">
+                                    <button class="add-and-button" type="button">+ AND</button>
+                                </div>
+                                <button class="add-or-button" type="button">+ OR</button>
+                            </div>
+                            <div class="condition-or-connector">OR</div>
+                            <div class="condition-chips-display"></div>
+                        </div>
+
+                        <div class="filter-condition-item" data-condition-type="to">
+                            <div class="condition-input-area">
+                                <label for="condition-to-input">To</label>
+                                <div class="input-and-button-container">
+                                    <input type="text" id="condition-to-input" class="app-form-input" placeholder="アドレスを入力">
+                                    <button class="add-and-button" type="button">+ AND</button>
+                                </div>
+                                <button class="add-or-button" type="button">+ OR</button>
+                            </div>
+                            <div class="condition-or-connector">OR</div>
+                            <div class="condition-chips-display"></div>
+                        </div>
+
+                        <div class="filter-condition-item" data-condition-type="subject">
+                            <div class="condition-input-area"> <label for="condition-subject-input">件名</label>
+                                <div class="input-and-button-container">
+                                    <input type="text" id="condition-subject-input" class="app-form-input"
+                                        placeholder="キーワードを入力">
+                                    <button class="add-and-button" type="button">+ AND</button>
+                                </div>
+                                <button class="add-or-button" type="button">+ OR</button>
+                            </div>
+                            <div class="condition-or-connector">OR</div>
+                            <div class="condition-chips-display"></div>
+                        </div>
+
+                        <div class="filter-condition-item" data-condition-type="includes">
+                            <div class="condition-input-area"> <label for="condition-includes-input">含む</label>
+                                <div class="input-and-button-container">
+                                    <input type="text" id="condition-includes-input" class="app-form-input"
+                                        placeholder="キーワードを入力">
+                                    <button class="add-and-button" type="button">+ AND</button>
+                                </div>
+                                <button class="add-or-button" type="button">+ OR</button>
+                            </div>
+                            <div class="condition-or-connector">OR</div>
+                            <div class="condition-chips-display"></div>
+                        </div>
+
+                        <div class="filter-condition-item" data-condition-type="excludes">
+                            <div class="condition-input-area">
+                                <label for="condition-excludes-input">含まない</label>
+                                <div class="input-and-button-container">
+                                    <input type="text" id="condition-excludes-input" class="app-form-input"
+                                        placeholder="キーワードを入力">
+                                    <button class="add-and-button" type="button">+ AND</button>
+                                </div>
+                                <button class="add-or-button" type="button">+ OR</button>
+                            </div>
+                            <div class="condition-or-connector">OR</div>
+                            <div class="condition-chips-display"></div>
+                        </div>
+
+                        <div class="horizontal-conditions">
+                            <div class="filter-condition-item" data-condition-type="size">
+                                <div class="condition-input-area size-value">
+                                    <label for="condition-size-value-input">サイズ</label>
+                                    <select id="condition-size-operator" class="app-form-select">
+                                        <option value="larger_than">次の値より大きい</option>
+                                        <option value="smaller_than">次の値より小さい</option>
+                                    </select>
+                                    <div class="input-and-button-container">
+                                        <input type="number" id="condition-size-value-input"
+                                            class="app-form-input size-value" placeholder="値" min="0">
+                                    </div>
+                                    <select id="condition-size-unit" class="app-form-select size-unit">
+                                        <option value="m">MB</option>
+                                        <option value="k">KB</option>
+                                        <option value="b">バイト</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="filter-condition-item" data-condition-type="has-attachment">
+                                <div class="condition-input-area">
+                                    <label for="condition-has-attachment" class="app-form-checkbox label">
+                                        <input type="checkbox" id="condition-has-attachment"
+                                            class="app-form-checkbox input">添付ファイルあり
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>

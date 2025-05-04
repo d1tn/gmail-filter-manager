@@ -117,12 +117,12 @@ input {
 
 
 /* 各条件項目（From, To, 件名など）を囲むコンテナ */
-.condition-item {
+.filter-condition-item {
     margin-bottom: 3.0rem;
 }
 
 /* 各条件項目のラベル（From:, To: など） */
-.condition-item label {
+.filter-condition-item label {
     display: block;
     margin-bottom: 0.4rem;
     font-size: 1.0rem;
@@ -324,7 +324,7 @@ button.remove-or-group-button:hover {
 }
 
 /* サイズ 条件項目の入力エリア */
-.condition-item[data-condition-type="size"]>.condition-input-area.size-value {
+.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -332,13 +332,13 @@ button.remove-or-group-button:hover {
 }
 
 /* サイズ条件入力エリア内のラベル */
-.condition-item[data-condition-type="size"]>.condition-input-area.size-value>label {
+.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value>label {
     flex-shrink: 0;
     margin-right: 0.5rem;
 }
 
 /* サイズ条件入力エリア内のプルダウン要素 (比較演算子、単位) */
-.condition-item[data-condition-type="size"]>.condition-input-area.size-value>select {
+.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value>select {
     flex-shrink: 0;
     padding: 0.5rem;
     border: none;
@@ -347,7 +347,7 @@ button.remove-or-group-button:hover {
 }
 
 /* サイズ値入力欄を囲むコンテナ */
-.condition-item[data-condition-type="size"]>.condition-input-area.size-value>.input-and-button-container {
+.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value>.input-and-button-container {
     flex-grow: 0;
     max-width: 4.5rem;
     padding: 0.5rem 1.0rem;
@@ -358,7 +358,7 @@ button.remove-or-group-button:hover {
     align-items: center;
 }
 
-.condition-item[data-condition-type="size"]>.condition-input-area.size-value .condition-input.size-value {
+.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value .condition-input.size-value {
     flex-grow: 1;
     border: none;
     background: transparent;
