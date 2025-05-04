@@ -79,14 +79,26 @@ input {
         margin-bottom: 1.0rem;
     }
     /* ファイル名セクション */
-    .filter-name-section{
-
-        #filter-name-input{
+    .filter-name {
+        #filter-name-input {
             font-weight: bold;
             padding: 0;
             width: 100%;
             font-size: 1.5rem;
         }
+    }
+
+    .filter-process {
+        .filter-process-items{
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            .filter-process-item{
+                margin-right: 1.0rem;
+                padding: 0;
+            }
+        }
+
     }
 }
 
@@ -157,17 +169,12 @@ input {
 
 /* 入力フィールド自体のスタイル */
 .app-form-input {
-    /* 共通クラス */
     background: transparent;
     flex-grow: 1;
-    /* 入力フィールドを可能な限り広げる */
-    /* 入力フィールド自体のボーダーは削除 */
     padding: 0.5rem;
-    /* 入力フィールド左側のパディングが、前のチップとの隙間になります */
     font-size: 1rem;
     box-sizing: border-box;
     min-width: 50px;
-    /* 入力フィールドが極端に小さくならないように最小幅を設定 */
 }
 
 /* +AND ボタンのスタイル */
