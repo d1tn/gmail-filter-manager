@@ -91,8 +91,7 @@ input {
 
     /* 左側表示領域のサイズ調整 */
     .left-pane {
-        width: 20%;
-        min-width: 18rem;
+        width: 18rem;
 
         h2 {
             font-size: 1.5rem;
