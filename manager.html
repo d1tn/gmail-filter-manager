@@ -14,19 +14,6 @@
 
     <div class="two-pane-container">
         <div class="left-pane">
-            <section class="filter-list">
-            <h2>フィルタ一覧</h2>
-            <ul id="filter-list">
-                <li class="filter-list-item">
-                    <button id="modify-filter">
-                        フィルタを編集する
-                    </button>
-                </li>
-                <li class="filter-list-item">
-                    <button id="add-new-filter">＋ フィルタを追加</button>
-                </li>
-            </ul>
-            </section>
             <section class="menu">
                 <li class="menu-item">
                     <button id="export-filter">フィルタを保存する</button>
@@ -35,6 +22,14 @@
                     <button id="import-filter">フィルタを読み込む</button>
                 </li>
 
+            </ul>
+            </section>
+            <section class="filter-list">
+            <h2>作成したフィルタ</h2>
+            <ul id="filter-list">
+                <li class="filter-list-item" id="add-new-filter-item">
+                    <button id="add-new-filter">＋ フィルタを追加</button>
+                </li>
             </ul>
             </section>
         </div>
@@ -230,7 +225,7 @@
                     </div>
                 </section>
                 <section class="filter-actions-section">
-                    <button id="copy-this-filter">このフィルタを複製</button>
+                    <button id="duplicate-this-filter">このフィルタを複製</button>
                     <button id="delete-this-filter">このフィルタを削除</button>
                 </section>
             </article>
