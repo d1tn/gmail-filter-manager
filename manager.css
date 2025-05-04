@@ -415,7 +415,7 @@ button.remove-or-group-button:hover {
         padding: 0 1.0rem;
     }
 
-    #copy-this-filter {
+    #duplicate-this-filter {
         &:hover {
             background-color: #ebf3ff;
             color: #2980b9;
