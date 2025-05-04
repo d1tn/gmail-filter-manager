@@ -4,7 +4,9 @@
     margin: 0;
 }
 
-*,html,body{
+*,
+html,
+body {
     margin: 0;
     padding: 0;
     transition: 0.3s;
@@ -61,18 +63,6 @@ input {
     }
 }
 
-/* 左右分割表示 */
-.two-pane-container {
-    display: flex;
-    margin: 1.5rem 0;
-
-    /* 左側表示領域のサイズ調整 */
-    .left-pane {
-        width: 20%;
-        min-width: 18rem;
-    }
-}
-
 /* プルダウン要素共通 */
 .app-form-select {
     flex-shrink: 0;
@@ -92,14 +82,52 @@ input {
     min-width: 50px;
 }
 
+
+
+/* 左右分割表示 */
+.two-pane-container {
+    display: flex;
+    margin: 1.5rem 0;
+
+    /* 左側表示領域のサイズ調整 */
+    .left-pane {
+        width: 20%;
+        min-width: 18rem;
+
+        h2 {
+            font-size: 1.5rem;
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+    }
+}
+
 /* 左側セクション */
-.filter-list-item {
-    list-style: none;
-    margin-bottom: 0.0rem;
-    button{
-        line-height: 2.5rem;
-        height: 100%;
-        width: 100%;
+
+.filter-list {
+    margin: 1.5rem 0;
+
+    .filter-list-item {
+        list-style: none;
+        margin-bottom: 0.0rem;
+
+        button {
+            line-height: 2.5rem;
+            height: 100%;
+            width: 100%;
+            border-radius: 0 5.0rem 5.0rem 0;
+            background: transparent;
+            color: #202124;
+            font-weight: bold;
+            text-align: left;
+            padding-left: 2.0rem;
+            line-height: 2.5rem;
+        }
+
+        button:hover {
+            background: #eee;
+        }
+
     }
 }
 
@@ -111,6 +139,7 @@ input {
     background-color: #fff;
     max-width: 50rem;
     margin: 0 1.5rem;
+
     h3 {
         margin-top: 2.5rem;
         margin-bottom: 1.0rem;
