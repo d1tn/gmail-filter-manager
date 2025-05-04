@@ -91,46 +91,41 @@ input {
 
     /* 左側表示領域のサイズ調整 */
     .left-pane {
-        .filter-list {
+        section {
             width: 18rem;
+
             h2 {
                 font-size: 1.5rem;
                 margin-left: 1.5rem;
                 margin-bottom: 0.5rem;
             }
         }
+
+        li {
+            list-style: none;
+
+            button {
+                line-height: 2.5rem;
+                height: 100%;
+                width: 100%;
+                border-radius: 0 5.0rem 5.0rem 0;
+                background: transparent;
+                color: #202124;
+                font-weight: bold;
+                text-align: left;
+                padding-left: 2.0rem;
+                line-height: 2.5rem;
+            }
+
+            button:hover {
+                background: #eee;
+            }
+
+        }
     }
+
     .right-pane {
         min-width: 50rem;
-    }
-}
-
-/* 左側セクション */
-
-.filter-list {
-    width: 100%;
-    margin: 1.5rem 0;
-
-    .filter-list-item {
-        list-style: none;
-
-        button {
-            line-height: 2.5rem;
-            height: 100%;
-            width: 100%;
-            border-radius: 0 5.0rem 5.0rem 0;
-            background: transparent;
-            color: #202124;
-            font-weight: bold;
-            text-align: left;
-            padding-left: 2.0rem;
-            line-height: 2.5rem;
-        }
-
-        button:hover {
-            background: #eee;
-        }
-
     }
 }
 
