@@ -77,6 +77,7 @@ input {
     padding: 1.0rem 1.5rem;
     border-radius: 1.0rem;
     background-color: #fff;
+    max-width: 50rem;
 
     h3 {
         margin-top: 2.5rem;
