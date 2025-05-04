@@ -36,7 +36,7 @@ input {
 }
 
 /* フィルタ条件セクション全体 */
-#filter-conditions-section {
+.filter-setting-section{
     margin-top: 1.5rem;
     padding: 2.0rem 1.0rem;
     border-radius: 1.0rem;
@@ -108,7 +108,7 @@ input {
 }
 
 /* 入力フィールド自体のスタイル */
-.condition-input {
+.app-form-input {
     /* 共通クラス */
     background: transparent;
     flex-grow: 1;
