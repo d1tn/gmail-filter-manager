@@ -22,71 +22,81 @@
 
         <div class="right-pane">
             <article class="filter-setting-section">
-                <h2>フィルタ名</h2>
-                <input type="text" id="filter-name-input" class="app-form-input" placeholder="フィルタ名を入力">
+                <h2><input type="text" id="filter-name-input" class="app-form-input filter-name" placeholder="フィルタ名を入力"></h2>
                 
                 <section class="filter-process-section">
                     <h3>処理</h3>
                 
                     <div class="filter-process-item">
-                        <input type="checkbox" id="process-skip-inbox" class="app-form-checkbox-input">
-                        <label for="process-skip-inbox" class="app-form-checkbox-label">受信トレイをスキップ（アーカイブ）</label>
+                        <label for="process-skip-inbox" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-skip-inbox" class="app-form-checkbox input">受信トレイをスキップ（アーカイブ）
+                        </label>
                     </div>
                 
                     <div class="filter-process-item">
-                        <input type="checkbox" id="process-mark-as-read" class="app-form-checkbox-input">
-                        <label for="process-mark-as-read" class="app-form-checkbox-label">既読にする</label>
+                        <label for="process-mark-as-read" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-mark-as-read" class="app-form-checkbox input">既読にする
+                        </label>
                     </div>
                 
                     <div class="filter-process-item">
-                        <input type="checkbox" id="process-star" class="app-form-checkbox-input">
-                        <label for="process-star" class="app-form-checkbox-label">スターを付ける</label>
+                        <label for="process-star" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-star" class="app-form-checkbox input">スターを付ける
+                        </label>
                     </div>
                 
                     <div class="filter-process-item">
-                        <input type="checkbox" id="process-apply-label" class="app-form-checkbox-input">
-                        <label for="process-apply-label" class="app-form-checkbox-label">ラベルを付ける:</label>
-                        <input type="text" id="process-label-name" class="app-form-input" placeholder="ラベル名を入力">
+                        
+                        <label for="process-apply-label" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-apply-label" class="app-form-checkbox input">ラベルを付ける:
+                            <input type="text" id="process-label-name" class="app-form-input" placeholder="ラベル名を入力">
+                        </label>
+                        </div>
+                
+                    <div class="filter-process-item">
+                        <label for="process-forward" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-forward" class="app-form-checkbox input">転送する:
+                            <input type="text" id="process-forward-address" class="app-form-input" placeholder="転送先アドレスを入力">
+                        </label>
                     </div>
                 
                     <div class="filter-process-item">
-                        <input type="checkbox" id="process-forward" class="app-form-checkbox-input">
-                        <label for="process-forward" class="app-form-checkbox-label">転送する:</label>
-                        <input type="text" id="process-forward-address" class="app-form-input" placeholder="転送先アドレスを入力">
+                        <label for="process-delete" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-delete" class="app-form-checkbox input">削除する
+                        </label>
                     </div>
                 
                     <div class="filter-process-item">
-                        <input type="checkbox" id="process-delete" class="app-form-checkbox-input">
-                        <label for="process-delete" class="app-form-checkbox-label">削除する</label>
+                        <label for="process-not-spam" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-not-spam" class="app-form-checkbox input">迷惑メールにしない
+                        </label>
                     </div>
                 
                     <div class="filter-process-item">
-                        <input type="checkbox" id="process-not-spam" class="app-form-checkbox-input">
-                        <label for="process-not-spam" class="app-form-checkbox-label">迷惑メールにしない</label>
+                        <label for="process-always-important" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-always-important" class="app-form-checkbox input">常に重要マークを付ける
+                        </label>
                     </div>
                 
                     <div class="filter-process-item">
-                        <input type="checkbox" id="process-always-important" class="app-form-checkbox-input">
-                        <label for="process-always-important" class="app-form-checkbox-label">常に重要マークを付ける</label>
+                        <label for="process-never-important" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-never-important" class="app-form-checkbox input">重要マークを付けない
+                        </label>
                     </div>
                 
                     <div class="filter-process-item">
-                        <input type="checkbox" id="process-never-important" class="app-form-checkbox-input">
-                        <label for="process-never-important" class="app-form-checkbox-label">重要マークを付けない</label>
-                    </div>
-                
-                    <div class="filter-process-item">
-                        <input type="checkbox" id="process-apply-category" class="app-form-checkbox-input">
-                        <label for="process-apply-category" class="app-form-checkbox-label">適用するカテゴリ:</label>
-                        <select id="process-apply-category-select" class="app-form-select">
-                            <option value="">カテゴリを選択</option>
-                            <option value="primary">メイン</option>
-                            <option value="social">ソーシャル</option>
-                            <option value="updates">新着</option>
-                            <option value="forums">フォーラム</option>
-                            <option value="promotions">プロモーション</option>
-                        </select>
-                    </div>
+                        <label for="process-apply-category" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-apply-category" class="app-form-checkbox input">適用するカテゴリ:
+                            <select id="process-apply-category-select" class="app-form-select">
+                                <option value="">カテゴリを選択</option>
+                                <option value="primary">メイン</option>
+                                <option value="social">ソーシャル</option>
+                                <option value="updates">新着</option>
+                                <option value="forums">フォーラム</option>
+                                <option value="promotions">プロモーション</option>
+                            </select>
+                        </label>
+                </div>
                 </section>
                 
                 <section id="filter-conditions-section">
@@ -176,8 +186,9 @@
                 
                         <div class="condition-item" data-condition-type="has-attachment">
                             <div class="condition-input-area">
-                                <input type="checkbox" id="condition-has-attachment" class="app-form-checkbox-input">
-                                 <label for="condition-has-attachment" class="app-form-checkbox-label">添付ファイルあり</label>
+                                 <label for="condition-has-attachment" class="app-form-checkbox label">
+                                    <input type="checkbox" id="condition-has-attachment" class="app-form-checkbox input">添付ファイルあり
+                                </label>
                             </div>
                         </div>
                     </div>
