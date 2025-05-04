@@ -122,6 +122,11 @@ input {
                 background: #eee;
             }
 
+            &.active button {
+                background: #D3E3FD;
+
+            }
+
         }
     }
 
