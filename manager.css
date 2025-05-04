@@ -36,6 +36,26 @@ input {
     border: none;
 }
 
+/* チェックボックス共通 */
+.app-form-checkbox {
+    &.label {
+        align-items: center;
+        padding: 0.5rem;
+        margin: 0;
+        cursor: pointer;
+        user-select: none; /* ラベルのテキストを選択できないようにする（クリックしやすくするため）*/
+    }
+    &.label:hover, &.label:has(input[type="checkbox"]:checked) {
+        background-color: #ddeeff;
+        cursor: pointer;
+        border-radius: 0.3rem;
+        font-weight: bold;
+    }
+    &.input {
+        margin-right: 0.5rem; 
+    }
+}
+
 /* 左右分割表示 */
 .two-pane-container{
     display: flex;
@@ -70,31 +90,13 @@ input {
     }
 }
 
-.filter-process-item{
+.filter-process-item {
     padding: 0;
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
 }
 
-.app-form-checkbox.label {
-    align-items: center;
-    padding: 0.5rem;
-    margin: 0;
-    cursor: pointer;
-    user-select: none; /* ラベルのテキストを選択できないようにする（クリックしやすくするため）*/
-}
-.app-form-checkbox.label:hover, .app-form-checkbox.label:has(input[type="checkbox"]:checked) {
-    background-color: #ddeeff;
-    cursor: pointer;
-    border-radius: 0.3rem;
-    font-weight: bold;
-}
-
-/* チェックボックス入力要素自体のスタイル */
-.app-form-checkbox.input {
-    margin-right: 0.5rem; 
-}
 
 /* 各条件項目（From, To, 件名など）を囲むコンテナ */
 .condition-item {
