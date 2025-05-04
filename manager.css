@@ -116,6 +116,12 @@ input {
                 text-align: left;
                 padding-left: 2.0rem;
                 line-height: 2.5rem;
+
+                /* テキスト省略表示 */
+                padding-right: 1.0rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             button:hover {
