@@ -34,7 +34,7 @@ input {
     border: none;
 }
 
-/* チェックボックス共通 */
+/* チェックボックス要素共通 */
 .app-form-checkbox {
     &.label {
         align-items: center;
@@ -69,6 +69,15 @@ input {
         width: 20%;
         min-width: 18rem;
     }
+}
+
+/* プルダウン要素共通 */
+.app-form-select {
+    flex-shrink: 0;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #E9EEF5;
 }
 
 /* 右側セクション */
@@ -315,7 +324,6 @@ button.remove-or-group-button:hover {
     color: #e74c3c;
 }
 
-
 /* == その他 == */
 .horizontal-conditions {
     display: flex;
@@ -325,44 +333,22 @@ button.remove-or-group-button:hover {
 }
 
 /* サイズ 条件項目の入力エリア */
-.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
+.filter-condition-item[data-condition-type="size"] {
+    >.condition-input-area.size-value {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
 
-/* サイズ条件入力エリア内のラベル */
-.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value>label {
-    flex-shrink: 0;
-    margin-right: 0.5rem;
-}
-
-/* サイズ条件入力エリア内のプルダウン要素 (比較演算子、単位) */
-.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value>select {
-    flex-shrink: 0;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 0.5rem;
-    background-color: #E9EEF5;
-}
-
-/* サイズ値入力欄を囲むコンテナ */
-.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value>.input-and-button-container {
-    flex-grow: 0;
-    max-width: 4.5rem;
-    padding: 0.5rem 1.0rem;
-    background: #E9EEF5;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-}
-
-.filter-condition-item[data-condition-type="size"]>.condition-input-area.size-value .condition-input.size-value {
-    flex-grow: 1;
-    border: none;
-    background: transparent;
-    padding: 0;
-    min-width: 3rem;
+    /* サイズ値入力欄を囲むコンテナ */
+    .input-and-button-container {
+        flex-grow: 0;
+        max-width: 3.5rem;
+        padding: 0.0rem;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
 }
