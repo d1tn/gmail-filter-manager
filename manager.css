@@ -80,6 +80,16 @@ input {
     background-color: #E9EEF5;
 }
 
+/* 入力フィールド要素共通 */
+.app-form-input {
+    background: transparent;
+    flex-grow: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+    min-width: 50px;
+}
+
 /* 右側セクション */
 /*フィルタ条件セクション全体 */
 .filter-setting-section {
@@ -163,16 +173,6 @@ input {
     overflow: hidden;
     max-width: none;
     gap: 0.4rem;
-}
-
-/* 入力フィールド自体のスタイル */
-.app-form-input {
-    background: transparent;
-    flex-grow: 1;
-    padding: 0.5rem;
-    font-size: 1rem;
-    box-sizing: border-box;
-    min-width: 50px;
 }
 
 /* +AND ボタンのスタイル */
