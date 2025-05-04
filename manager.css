@@ -47,6 +47,29 @@ input {
     }
 }
 
+/* 右側セクション */
+/*フィルタ条件セクション全体 */
+.filter-setting-section {
+    padding: 1.0rem 1.5rem;
+    border-radius: 1.0rem;
+    background-color: #fff;
+
+    h3 {
+        margin-top: 2.5rem;
+        margin-bottom: 1.0rem;
+    }
+    /* ファイル名セクション */
+    .filter-name-section{
+
+        #filter-name-input{
+            font-weight: bold;
+            padding: 0;
+            width: 100%;
+            font-size: 1.5rem;
+        }
+    }
+}
+
 .filter-process-item{
     padding: 0;
     display: flex;
@@ -71,21 +94,6 @@ input {
 /* チェックボックス入力要素自体のスタイル */
 .app-form-checkbox.input {
     margin-right: 0.5rem; 
-}
-
-/* フィルタ条件セクション全体 */
-.filter-setting-section{
-    margin: 1.5rem 0;
-    padding: 1.0rem;
-    border-radius: 1.0rem;
-    background-color: #fff;
-}
-
-#filter-conditions-section h2 {
-    margin-top: 0;
-    color: #202124;
-    font-size: 1.1rem;
-    margin-bottom: 1.0rem;
 }
 
 /* 各条件項目（From, To, 件名など）を囲むコンテナ */
