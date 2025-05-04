@@ -21,7 +21,7 @@ body {
 h1 {
     color: #202124;
     border-bottom: 0.1rem solid #eee;
-    padding-bottom: 0.7rem;
+    padding: 1.0rem 1.5rem;
 }
 
 h3 {
