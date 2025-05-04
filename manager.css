@@ -395,7 +395,7 @@ button.remove-or-group-button:hover {
 }
 
 
-.filter-actions-section{
+.filter-actions-section {
     display: flex;
     justify-self: flex-end;
     gap: 1.0rem;
@@ -403,5 +403,13 @@ button.remove-or-group-button:hover {
         border-radius: 0.5rem;
         line-height: 2.5rem;
         padding: 0 1.0rem;
+    }
+    #delete-this-filter {
+        background-color: transparent;
+        color: #c0392b;
+        &:hover{
+            background-color: #ffebeb;
+            color: #c0392b;
+        }
     }
 }
