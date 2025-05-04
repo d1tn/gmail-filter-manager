@@ -3,22 +3,20 @@
 
 console.log("Filter Manager tab loaded!");
 
+// フィルタデータを保持するための配列（初期値として空の配列）
+// 後で chrome.storage に保存するように修正します
+let filters = [];
+
+// 現在選択されているフィルタのインデックスを保持
+let currentFilterIndex = -1;
+
 // --- 汎用的なヘルパー関数（条件項目に依存しないもの） ---
 
-// アドレスチップを作成
-function createAddressChip(address) {
+// チップを作成 (汎用化)
+function createChip(text, type) {
     const chip = document.createElement('span');
-    chip.classList.add('chip', 'address-chip'); // 共通クラス
-    chip.appendChild(document.createTextNode(address));
-    // 削除ボタンはORグループ単位と入力フォーム内チップに付けるため、ここでは付けません
-    return chip;
-}
-
-// 演算子チップを作成
-function createOperatorChip(operator) {
-    const chip = document.createElement('span');
-    chip.classList.add('chip', 'operator-chip'); // 共通クラス
-    chip.appendChild(document.createTextNode(operator.toUpperCase()));
+    chip.classList.add('chip', type);
+    chip.appendChild(document.createTextNode(text));
     return chip;
 }
 
@@ -48,250 +46,1125 @@ function createOrGroupRemoveButton() {
     return removeButton;
 }
 
+// --- 無題のフィルタデータを作成する関数 ---
+function createNewFilterData() {
+    // デフォルト値を持つ無題のフィルタオブジェクトを生成
+    const newFilter = {
+        id: Date.now().toString(), // シンプルなIDとしてタイムスタンプを使用
+        name: "",
+        conditions: { // フィルタ条件の初期値は空またはデフォルト値
+            from: [],
+            to: [],
+            subject: [],
+            includes: [],
+            excludes: [],
+            size: {
+                operator: 'larger_than',
+                value: 0,
+                unit: 'm'
+            },
+            hasAttachment: false
+        },
+        actions: { // フィルタ処理の初期値は全てfalseまたはデフォルト値
+            skipInbox: false,
+            markAsRead: false,
+            star: false,
+            applyLabel: { enabled: false, labelName: '' },
+            forward: { enabled: false, forwardAddress: '' },
+            delete: false,
+            notSpam: false,
+            alwaysImportant: false,
+            neverImportant: false,
+            applyCategory: { enabled: false, category: '' }
+        }
+    };
+    return newFilter;
+}
 
-// --- 各条件項目にロジックを設定する関数 ---
-function setupConditionItem(conditionItemElement) {
-    // ★★★ この条件項目内の要素への参照を取得（共通クラスを使う） ★★★
-    const inputElement = conditionItemElement.querySelector('.app-form-input');
-    const addAndButton = conditionItemElement.querySelector('.add-and-button');
-    const addOrButton = conditionItemElement.querySelector('.add-or-button');
-    const chipsDisplay = conditionItemElement.querySelector('.condition-chips-display'); // 下部ORグループ表示エリア
-    const orConnector = conditionItemElement.querySelector('.condition-or-connector'); // OR接続テキスト
-    const inputAndButtonContainer = conditionItemElement.querySelector('.input-and-button-container'); // 入力フォーム内削除用に使用
+// --- フィルタ一覧を更新する関数 ---
+function renderFilterList() {
+    console.log("Rendering filter list...");
+    const filterListUl = document.getElementById('filter-list');
+    if (!filterListUl) {
+        console.error("Filter list UL element not found!");
+        return;
+    }
 
-    // この条件項目のタイプを取得 (例: 'from', 'to', 'subject')
-    const conditionType = conditionItemElement.dataset.conditionType;
-    console.log(`Setting up logic for condition type: ${conditionType}`);
+    // 既存のフィルタ項目をクリア（「＋ フィルタを追加」ボタン以外）
+    // manager.html で「＋ フィルタを追加」ボタンの li に id="add-new-filter-item" が付与されている前提
+    filterListUl.querySelectorAll('.filter-list-item:not(#add-new-filter-item)').forEach(item => item.remove());
+
+    // filters 配列の各フィルタに対してリスト項目を作成
+    filters.forEach((filter, index) => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('filter-list-item');
+        // データ属性としてフィルタのIDとインデックスを保持
+        listItem.dataset.filterId = filter.id;
+        listItem.dataset.filterIndex = index;
+
+        const button = document.createElement('button');
+        // ★★★ ここを修正: フィルタ名が空の場合はデフォルト名を表示 ★★★
+        button.textContent = filter.name || "無題のフィルタ"; // filter.name が空文字列や null, undefined の場合は "無題のフィルタ" を使用
+        // または、より明示的に:
+        // if (filter.name === "") {
+        //     button.textContent = "無題のフィルタ";
+        // } else {
+        //     button.textContent = filter.name;
+        // }
+        button.classList.add('filter-list-button'); // スタイル用クラス
+        button.type = 'button'; // フォーム送信を防ぐ
+
+        // クリックイベントでフィルタを選択状態にする
+        button.addEventListener('click', () => {
+            // インデックスではなくIDでフィルタを特定する方が、並べ替えなどでインデックスが変わった際に安全です
+            selectFilterById(filter.id);
+        });
+
+        // 現在選択されているフィルタであれば、アクティブなスタイルを適用
+        if (filter.id === (filters[currentFilterIndex] ? filters[currentFilterIndex].id : null)) {
+             listItem.classList.add('active'); // li 要素にactiveクラスを付ける
+         }
 
 
-    // --- 下部表示エリアとOR接続テキストの表示/非表示を更新する関数 (この条件項目用) ---
-    // ORグループ（chipsDisplayの子要素でクラスが'or-group'の要素）の数に基づいて表示/非表示を制御
-    function updateDisplayVisibility() {
-        // 下部表示エリアにあるORグループコンテナの数を正確にカウント
-        const orGroupCount = chipsDisplay.querySelectorAll('.or-group').length;
-
-        if (orGroupCount === 0) {
-            // ORグループが0個の場合は、下部表示エリアとOR接続テキストを非表示
-            chipsDisplay.style.display = 'none';
-            if (orConnector) { // orConnector が存在する場合のみ操作
-                 orConnector.style.display = 'none';
-            }
+        listItem.appendChild(button);
+        // 「＋ フィルタを追加」ボタンの li 要素の前に挿入
+        const addNewFilterItem = filterListUl.querySelector('#add-new-filter-item'); // IDで確実に取得
+        if (addNewFilterItem) {
+             addNewFilterItem.before(listItem);
         } else {
-            // ORグループが1個以上の場合は、下部表示エリアとOR接続テキストを表示
-            chipsDisplay.style.display = 'flex'; // CSSでflexに設定
-             if (orConnector) { // orConnector が存在する場合のみ操作
-                 orConnector.style.display = 'block'; // OR接続テキストはblock表示
+             // もし「＋ フィルタを追加」ボタンが見つからない場合は末尾に追加 (フォールバック)
+             filterListUl.appendChild(listItem);
+        }
+    });
+     console.log("Filter list rendering complete.");
+}
+
+// --- フィルタを選択し、右ペインに表示する関数 (IDで選択) ---
+function selectFilterById(filterId) {
+    console.log(`Attempting to select filter with ID: ${filterId}`);
+    const index = filters.findIndex(filter => filter.id === filterId);
+    if (index !== -1) {
+        selectFilter(index);
+    } else {
+        console.error(`Filter with ID ${filterId} not found.`);
+         // 見つからなかった場合は、選択状態を解除するなど適切な処理を行う
+         currentFilterIndex = -1;
+         renderFilterList(); // 選択状態解除を反映
+         // 右ペインをクリアする関数を呼び出すなど...
+         displayFilterDetails(null); // 右ペインをクリアするためにnullを渡す
+    }
+}
+
+// --- 選択されたフィルタのデータを右ペインに表示する関数 ---
+function displayFilterDetails(filter) {
+    console.log("Displaying filter details:", filter);
+    // 右ペインの要素をクリアする処理（フィルタが選択されていない場合や無題のフィルタ表示前）
+    const filterNameInput = document.getElementById('filter-name-input');
+
+    // ★★★ フィルタ名入力欄の表示制御を修正 ★★★
+    if (filterNameInput) {
+        // フィルタデータが存在し、かつフィルタ名がデフォルト値の場合は空欄にする
+        if (filter && filter.name === "無題のフィルタ") {
+            filterNameInput.value = ''; // 空文字列を設定
+            console.log("Filter name is default, showing placeholder."); // ログを追加
+        } else {
+            // それ以外のフィルタ名の場合はその値を設定
+            filterNameInput.value = filter ? filter.name : '';
+             if (filter) {
+                 console.log(`Displaying filter name: "${filter.name}"`); // ログを追加
+             }
+        }
+    }
+
+    if (!filter) {
+        console.warn("No filter data to display.");
+        // フィルタデータがない場合は条件表示エリアも非表示にする
+        document.querySelectorAll('.filter-condition-item').forEach(conditionItemElement => {
+            updateDisplayVisibilityOfCondition(conditionItemElement);
+        });
+        // フィルタ名入力欄もクリア（既に上で処理済みですが念のため）
+         if (filterNameInput) {
+             filterNameInput.value = '';
+         }
+        return; // フィルタデータがない場合はここで終了
+    }
+
+    // 各条件入力エリアのチップと入力フィールドをクリア
+    document.querySelectorAll('.filter-condition-item').forEach(conditionItemElement => {
+        const chipsDisplay = conditionItemElement.querySelector('.condition-chips-display');
+         const inputAndButtonContainer = conditionItemElement.querySelector('.input-and-button-container');
+         const inputElement = conditionItemElement.querySelector('.app-form-input');
+
+        if (chipsDisplay) chipsDisplay.innerHTML = '';
+        if (inputAndButtonContainer) inputAndButtonContainer.querySelectorAll('.chip').forEach(chip => chip.remove());
+        if (inputElement) inputElement.value = '';
+
+         // OR接続テキストも非表示に戻す
+         const orConnector = conditionItemElement.querySelector('.condition-or-connector');
+         if (orConnector) orConnector.style.display = 'none';
+    });
+
+
+     // 例: フィルタ処理のチェックボックス、入力欄、プルダウンをデフォルト状態に戻す
+     document.querySelectorAll('.filter-process-item input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+     document.querySelectorAll('.filter-process-item input[type="text"]').forEach(input => { input.value = ''; input.disabled = true; });
+     document.querySelectorAll('.filter-process-item select').forEach(select => { select.value = ''; select.disabled = true; }); // プルダウンのデフォルト値を適宜修正
+
+
+    if (!filter) {
+        console.warn("No filter data to display.");
+        // フィルタデータがない場合は条件表示エリアも非表示にする
+        document.querySelectorAll('.filter-condition-item').forEach(conditionItemElement => {
+            updateDisplayVisibilityOfCondition(conditionItemElement);
+        });
+        return; // フィルタデータがない場合はここで終了
+    }
+
+    // フィルタ名入力欄にデータを反映
+    if (filterNameInput) {
+        filterNameInput.value = filter.name;
+    }
+
+    // ★★★ 各フィルタ条件のデータを右ペインに反映 ★★★
+    renderCondition('from', filter.conditions.from);
+    renderCondition('to', filter.conditions.to);
+    renderCondition('subject', filter.conditions.subject);
+    renderCondition('includes', filter.conditions.includes);
+    renderCondition('excludes', filter.conditions.excludes);
+
+    // サイズ条件の反映
+    const sizeOperatorSelect = document.getElementById('condition-size-operator');
+    const sizeValueInput = document.getElementById('condition-size-value-input');
+    const sizeUnitSelect = document.getElementById('condition-size-unit');
+    if (sizeOperatorSelect && sizeValueInput && sizeUnitSelect) {
+        sizeOperatorSelect.value = filter.conditions.size.operator;
+        sizeValueInput.value = filter.conditions.size.value;
+        sizeUnitSelect.value = filter.conditions.size.unit;
+    }
+
+    // 添付ファイルあり条件の反映
+    const hasAttachmentCheckbox = document.getElementById('condition-has-attachment');
+    if (hasAttachmentCheckbox) {
+        hasAttachmentCheckbox.checked = filter.conditions.hasAttachment;
+    }
+
+    // ★★★ フィルタ処理（チェックボックス、入力欄、プルダウン）のデータを右ペインに反映 ★★★
+    // filter.actions のデータ構造を元に、右ペインの入力要素の状態を設定します。
+    // 例: フィルタ処理 - 各入力要素にデータを反映
+    const skipInboxCheckbox = document.getElementById('process-skip-inbox');
+    if (skipInboxCheckbox) {
+        skipInboxCheckbox.checked = filter.actions.skipInbox;
+    }
+     const markAsReadCheckbox = document.getElementById('process-mark-as-read');
+     if (markAsReadCheckbox) {
+         markAsReadCheckbox.checked = filter.actions.markAsRead;
+     }
+     const starCheckbox = document.getElementById('process-star');
+     if (starCheckbox) {
+         starCheckbox.checked = filter.actions.star;
+     }
+      const applyLabelCheckbox = document.getElementById('process-apply-label');
+      const applyLabelInput = document.getElementById('process-label-name');
+      if (applyLabelCheckbox && applyLabelInput) {
+          applyLabelCheckbox.checked = filter.actions.applyLabel.enabled;
+          applyLabelInput.value = filter.actions.applyLabel.labelName;
+          applyLabelInput.disabled = !filter.actions.applyLabel.enabled; // チェック状態に応じて入力欄を有効/無効にする
+           // 手動でdisabled状態を切り替えるためのイベントリスナー（display時にも必要）
+           // ここで一度だけ設定すれば良い場合が多いですが、DOM再生成の可能性を考慮してここで設定することも有効です。
+           // ただし、DOMContentLoaded で設定したリスナーがあれば重複に注意が必要です。
+           // 一旦、DOMContentLoaded 側のリスナーに任せます。
+           // applyLabelCheckbox.onchange = () => { applyLabelInput.disabled = !applyLabelCheckbox.checked; };
+      }
+      const forwardCheckbox = document.getElementById('process-forward');
+      const forwardInput = document.getElementById('process-forward-address');
+      if (forwardCheckbox && forwardInput) {
+          forwardCheckbox.checked = filter.actions.forward.enabled;
+          forwardInput.value = filter.actions.forward.forwardAddress;
+          forwardInput.disabled = !filter.actions.forward.enabled; // チェック状態に応じて入力欄を有効/無効にする
+          // forwardCheckbox.onchange = () => { forwardInput.disabled = !forwardCheckbox.checked; };
+      }
+      const deleteCheckbox = document.getElementById('process-delete');
+      if (deleteCheckbox) {
+          deleteCheckbox.checked = filter.actions.delete;
+      }
+      const notSpamCheckbox = document.getElementById('process-not-spam');
+      if (notSpamCheckbox) {
+          notSpamCheckbox.checked = filter.actions.notSpam;
+      }
+      const alwaysImportantCheckbox = document.getElementById('process-always-important');
+      if (alwaysImportantCheckbox) {
+          alwaysImportantCheckbox.checked = filter.actions.alwaysImportant;
+      }
+      const neverImportantCheckbox = document.getElementById('process-never-important');
+      if (neverImportantCheckbox) {
+          neverImportantCheckbox.checked = filter.actions.neverImportant;
+      }
+       const applyCategoryCheckbox = document.getElementById('process-apply-category');
+       const applyCategorySelect = document.getElementById('process-apply-category-select');
+       if (applyCategoryCheckbox && applyCategorySelect) {
+           applyCategoryCheckbox.checked = filter.actions.applyCategory.enabled;
+           applyCategorySelect.value = filter.actions.applyCategory.category;
+           applyCategorySelect.disabled = !applyCategoryCheckbox.checked; // チェック状態に応じてプルダウンを有効/無効にする
+           // applyCategoryCheckbox.onchange = () => { applyCategorySelect.disabled = !applyCategoryCheckbox.checked; };
+       }
+}
+
+// --- フィルタを選択し、右ペインに表示する関数 (インデックスで選択) ---
+function selectFilter(index) {
+    console.log(`Selecting filter by index: ${index}`);
+    if (index < 0 || index >= filters.length) {
+        console.error(`Invalid filter index: ${index}`);
+        return;
+    }
+
+    // 既存の選択状態を解除
+    const filterListUl = document.getElementById('filter-list');
+    if (filterListUl) {
+        filterListUl.querySelectorAll('.filter-list-item').forEach(item => item.classList.remove('active'));
+    }
+
+
+    // 無題のフィルタを選択状態にする
+    currentFilterIndex = index;
+    const selectedItem = filterListUl.querySelector(`.filter-list-item[data-filter-index="${index}"]`);
+    if (selectedItem) {
+        selectedItem.classList.add('active');
+    }
+
+    // 選択されたフィルタのデータを右ペインに表示する
+    displayFilterDetails(filters[currentFilterIndex]);
+
+    console.log(`Selected filter index: ${currentFilterIndex}`);
+}
+
+// --- 条件項目の表示/非表示を更新するヘルパー関数（renderCondition内で使用） ---
+function updateDisplayVisibilityOfCondition(conditionItemElement) {
+    const chipsDisplay = conditionItemElement.querySelector('.condition-chips-display');
+    const orConnector = conditionItemElement.querySelector('.condition-or-connector');
+
+    // AND/OR入力UIがない条件項目では、表示制御は不要
+     const inputElement = conditionItemElement.querySelector('.app-form-input');
+     const addAndButton = conditionItemElement.querySelector('.add-and-button');
+     const addOrButton = conditionItemElement.querySelector('.add-or-button');
+     const inputAndButtonContainer = conditionItemElement.querySelector('.input-and-button-container');
+    const hasAndOrElements = inputElement && addAndButton && addOrButton && chipsDisplay && inputAndButtonContainer;
+
+    if (!hasAndOrElements) {
+        return;
+    }
+
+
+    if (chipsDisplay) {
+         const orGroupCount = chipsDisplay.querySelectorAll('.or-group').length;
+         if (orGroupCount === 0) {
+             chipsDisplay.style.display = 'none';
+             if (orConnector) {
+                 orConnector.style.display = 'none';
+             }
+         } else {
+             chipsDisplay.style.display = 'flex';
+              if (orConnector) {
+                 orConnector.style.display = 'block';
+             }
+         }
+    }
+}
+
+
+// --- フィルタデータの conditions 部分を右ペインの条件入力エリアのチップ表示に反映する関数 ---
+function renderCondition(conditionType, conditionData) {
+    console.log(`Rendering condition: ${conditionType}`, conditionData);
+    const conditionItemElement = document.querySelector(`.filter-condition-item[data-condition-type="${conditionType}"]`);
+    if (!conditionItemElement) {
+        console.warn(`Condition item element not found for type: ${conditionType}.`);
+        return;
+    }
+
+    const chipsDisplay = conditionItemElement.querySelector('.condition-chips-display');
+    const inputAndButtonContainer = conditionItemElement.querySelector('.input-and-button-container');
+    const inputElement = conditionItemElement.querySelector('.app-form-input');
+
+
+    // 既存のチップ表示と入力フォームを全てクリア
+    if (chipsDisplay) {
+        console.log('Clearing chips display.'); // ログを追加
+        chipsDisplay.innerHTML = '';
+    }
+    if (inputAndButtonContainer) {
+        console.log('Clearing input form chips.'); // ログを追加
+        inputAndButtonContainer.querySelectorAll('.chip').forEach(chip => chip.remove());
+    }
+    if (inputElement) {
+        console.log('Clearing input element value.'); // ログを追加
+        inputElement.value = '';
+    }
+
+     // OR接続テキストも非表示に戻す
+     const orConnector = conditionItemElement.querySelector('.condition-or-connector');
+     if (orConnector) orConnector.style.display = 'none';
+
+
+    if (!conditionData || conditionData.length === 0) {
+         // データがない場合は表示エリアを非表示にする
+         updateDisplayVisibilityOfCondition(conditionItemElement);
+         return;
+    }
+
+    // conditionData (Array<Array<string>>) を解析し、チップを生成して配置
+    conditionData.forEach((orGroup, orIndex) => {
+        // 最初のORグループの場合
+        if (orIndex === 0) {
+            // --- 修正箇所: 最初のORグループの要素を、最後の要素を入力フォームに、それ以前をチップとして表示 ---
+            if (orGroup.length > 0) {
+                const lastValue = orGroup[orGroup.length - 1]; // 最後の要素を取得
+
+                // 最後の要素を入力フォームに設定
+                if (inputElement) {
+                     inputElement.value = lastValue;
+                }
+
+                // 最後の要素より前の要素を入力フォーム内のチップとして追加
+                for (let i = 0; i < orGroup.length - 1; i++) { // 最後の要素の手前までループ
+                    const item = orGroup[i];
+                     if (item === 'AND') {
+                          const operatorChip = createChip('AND', 'operator-chip');
+                          if (inputElement) inputElement.before(operatorChip); // inputElement の前に挿入
+                     } else {
+                          const valueChip = createChip(item, 'address-chip'); // address-chip クラスを流用
+                          addRemoveButtonToInputChip(valueChip); // 削除ボタンを追加
+                          if (inputElement) inputElement.before(valueChip); // inputElement の前に挿入
+                     }
+                }
             }
+            // --- 修正箇所終了 ---
+
+            // 最初のORグループに対応する下部表示エリアは空のまま（入力フォームで表現されるため）
+
+        } else {
+            // 2番目以降のORグループの場合
+            if (chipsDisplay) {
+                // 既存のORグループ（下部表示エリアにあるもの）が存在する場合のみ、ORインジケーターを追加
+                 if (chipsDisplay.querySelectorAll('.or-group').length > 0) {
+                     const orIndicator = createOrGroupIndicator();
+                     chipsDisplay.appendChild(orIndicator);
+                 }
+
+                // ORグループ全体のコンテナを作成
+                const orGroupContainer = document.createElement('div');
+                orGroupContainer.classList.add('or-group');
+
+                orGroup.forEach((item, itemIndex) => {
+                     if (item === 'AND') {
+                         // AND演算子チップ
+                         const operatorChip = createChip('AND', 'operator-chip');
+                         orGroupContainer.appendChild(operatorChip);
+                     } else {
+                         // 値（アドレスやキーワード）チップ
+                         const valueChip = createChip(item, 'address-chip'); // address-chip クラスを流用
+                         // 下部表示エリアのチップには削除ボタンを付けない（ORグループごと削除するため）
+                         // addRemoveButtonToInputChip(valueChip); // これは不要
+                         orGroupContainer.appendChild(valueChip);
+                     }
+                });
+
+                // ORグループ削除ボタンを追加
+                const orGroupRemoveButton = createOrGroupRemoveButton();
+                orGroupContainer.appendChild(orGroupRemoveButton);
+
+                // ORグループコンテナを下部表示エリアに追加
+                chipsDisplay.appendChild(orGroupContainer);
+            }
+        }
+    });
+
+    // 表示エリアの表示/非表示を更新
+    updateDisplayVisibilityOfCondition(conditionItemElement);
+    console.log(`Finished rendering condition: ${conditionType}`); // ログを追加
+}
+
+// --- 右ペインの入力値の変更を現在のフィルタデータに反映させる関数 ---
+function updateCurrentFilterData() {
+    console.log("Updating current filter data...");
+    if (currentFilterIndex === -1 || !filters[currentFilterIndex]) {
+        console.warn("No filter selected or filter data missing to update.");
+        return; // フィルタが選択されていない場合やフィルタデータが存在しない場合は何もしない
+    }
+
+    const currentFilter = filters[currentFilterIndex];
+
+    // フィルタ名入力欄の値を取得してデータに反映
+    const filterNameInput = document.getElementById('filter-name-input');
+    if (filterNameInput) {
+        const newFilterName = filterNameInput.value.trim();
+        currentFilter.name = newFilterName; // フィルタデータ自体は入力された通りに更新
+
+        // フィルタ名の変更を左ペインのフィルタ一覧に直接反映
+        const filterListUl = document.getElementById('filter-list');
+         // data-filter-id を使って該当要素を特定
+        const selectedItemButton = filterListUl.querySelector(`.filter-list-item[data-filter-id="${currentFilter.id}"] button`);
+        if (selectedItemButton) {
+            // ★★★ ここを修正: フィルタ名が空の場合はデフォルト名を表示 ★★★
+            selectedItemButton.textContent = currentFilter.name || "無題のフィルタ"; // データ上のフィルタ名が空ならデフォルト名を使用
+            console.log(`Left pane filter name updated to: "${selectedItemButton.textContent}"`); // ログを追加
         }
     }
 
 
-    // --- +OR ボタンのイベントリスナー (この条件項目用) ---
-    addOrButton.addEventListener('click', () => {
-        const currentInput = inputElement.value.trim();
-        // 入力フォーム内の確定チップを取得（この条件項目内のinputAndButtonContainerから）
-        const confirmedChips = inputAndButtonContainer.querySelectorAll('.chip');
+    // ★★★ 各条件項目のDOMからフィルタデータの conditions 部分を構築して反映 ★★★
+    document.querySelectorAll('.filter-condition-item').forEach(conditionItemElement => {
+        const conditionType = conditionItemElement.dataset.conditionType;
+        // AND/OR入力UIを持つ条件の場合
+         const inputElement = conditionItemElement.querySelector('.app-form-input');
+         const addAndButton = conditionItemElement.querySelector('.add-and-button');
+         const addOrButton = conditionItemElement.querySelector('.add-or-button');
+         const chipsDisplay = conditionItemElement.querySelector('.condition-chips-display');
+         const inputAndButtonContainer = conditionItemElement.querySelector('.input-and-button-container');
+
+         const hasAndOrElements = inputElement && addAndButton && addOrButton && chipsDisplay && inputAndButtonContainer;
+
+         if (hasAndOrElements) {
+             const conditionData = [];
+
+             // 1. 入力フォーム内のチップと入力値からAND条件グループを構築（最初のORグループ）
+             const currentAndGroup = [];
+             // inputAndButtonContainer の子要素を順番に取得
+             const inputContainerChildren = inputAndButtonContainer.childNodes;
+             inputContainerChildren.forEach(child => {
+                 if (child.nodeType === Node.ELEMENT_NODE) { // 要素ノードの場合
+                     if (child.classList.contains('chip')) {
+                          const value = child.textContent.replace('✕', '').trim(); // チップのテキストから削除ボタンの✕を除去
+                         if (child.classList.contains('address-chip')) {
+                             currentAndGroup.push(value);
+                         } else if (child.classList.contains('operator-chip') && value === 'AND') {
+                             currentAndGroup.push('AND');
+                         }
+                     }
+                 } else if (child.nodeType === Node.TEXT_NODE) { // テキストノードの場合（入力フィールドの値）
+                     const value = child.textContent.trim();
+                     if (value !== '' && child === inputElement) { // 入力フィールド自体のテキストコンテンツ
+                         // これは発生しないはずですが、念のため
+                     }
+                 }
+             });
+
+              // 現在入力中のテキストをAND条件として追加
+             const currentInputValue = inputElement.value.trim();
+             if (currentInputValue !== '') {
+                  // 既存のチップがある場合、最後の要素がANDでなければANDを追加
+                 if (currentAndGroup.length > 0 && currentAndGroup[currentAndGroup.length - 1] !== 'AND') {
+                      currentAndGroup.push('AND');
+                 }
+                 currentAndGroup.push(currentInputValue);
+             }
+
+             // 構築した最初のAND条件グループを conditionData に追加（ORグループの最初の要素）
+             if (currentAndGroup.length > 0) {
+                 conditionData.push(currentAndGroup);
+             }
 
 
-        // 入力フォームの内容が全て空の場合は何もしない
-        if (confirmedChips.length === 0 && currentInput === '') {
-            console.log(`${conditionType}: Input form is empty, not adding OR condition.`);
-            return;
-        }
+             // 2. 下部のチップ表示エリア（chipsDisplay）からORグループを取得
+             // chipsDisplay の子要素（ORインジケーターとORグループ）を順番に取得
+             const displayChildren = chipsDisplay.childNodes;
+             let currentOrGroup = null;
 
-        const chipsArray = Array.from(confirmedChips);
+             displayChildren.forEach(child => {
+                 if (child.nodeType === Node.ELEMENT_NODE) { // 要素ノードの場合
+                     if (child.classList.contains('or-group')) {
+                         // 新しいORグループの開始
+                         currentOrGroup = [];
+                         // ORグループ内のチップを取得（削除ボタン以外）
+                         const chips = child.querySelectorAll('.chip:not(.remove-or-group-button)');
+                         chips.forEach(chip => {
+                             const value = chip.textContent.trim();
+                             if (chip.classList.contains('address-chip')) {
+                                 currentOrGroup.push(value);
+                             } else if (chip.classList.contains('operator-chip') && value === 'AND') {
+                                 currentOrGroup.push('AND');
+                             }
+                         });
+                         if (currentOrGroup.length > 0) {
+                              // ORグループの最後に不要なANDが残っていれば削除
+                             if (currentOrGroup[currentOrGroup.length - 1] === 'AND') {
+                                 currentOrGroup.pop();
+                             }
+                             conditionData.push(currentOrGroup);
+                         }
+                         currentOrGroup = null; // ORグループの処理完了
 
-        // 入力フォームの末尾に「AND」が追加されていたとき、ANDを削除する
-        const lastChip = chipsArray[chipsArray.length - 1];
-        if (lastChip && lastChip.classList.contains('operator-chip') && lastChip.textContent.toUpperCase() === 'AND') {
-            chipsArray.pop();
-        }
-
-
-        // ★★★ 下部表示エリアに新しいORグループとしてチップを追加 ★★★
-
-        // 新しいORグループ全体のコンテナを作成
-        const orGroupContainer = document.createElement('div');
-        orGroupContainer.classList.add('or-group'); // 共通クラス
-
-        // ★★★ 下部表示エリアに既にORグループが存在する場合のみ、ORインジケーターを下部表示エリアの末尾に追加 ★★★
-        // chipsDisplay の子要素（ORグループ）の数を正確にカウント
-        const existingOrGroupCount = chipsDisplay.querySelectorAll('.or-group').length;
-
-        if (existingOrGroupCount > 0) { // 既にORグループが1個以上存在する場合 (= 追加されるORグループが2個目以降の場合)
-            const orIndicator = createOrGroupIndicator(); // ORインジケーターを作成（共通クラス）
-            // ORインジケーターは、既存の最後のORグループの後、新しいORグループの前に挿入
-            chipsDisplay.appendChild(orIndicator);
-        }
-
-
-        // 入力フォームから取得した確定チップを新しいORグループコンテナにコピーして追加
-        chipsArray.forEach(chip => {
-            if (chip.classList.contains('address-chip')) {
-                const address = chip.textContent.replace('✕', '').trim();
-                const addressChip = createAddressChip(address); // 下部エリア用は削除ボタンなし
-                orGroupContainer.appendChild(addressChip);
-            } else if (chip.classList.contains('operator-chip')) {
-                const operator = chip.textContent.trim();
-                const operatorChip = createOperatorChip(operator);
-                orGroupContainer.appendChild(operatorChip);
-            }
-        });
-
-        // 現在入力中のテキストがあれば、それもアドレスチップとして新しいORグループコンテナに追加
-        if (currentInput !== '') {
-             const addressChip = createAddressChip(currentInput); // 下部エリア用は削除ボタンなし
-             orGroupContainer.appendChild(addressChip);
-        }
-
-        // ORグループ全体の削除ボタンを作成し、ORグループコンテナに追加
-        const orGroupRemoveButton = createOrGroupRemoveButton(); // ORグループ削除用共通クラス
-        orGroupContainer.appendChild(orGroupRemoveButton);
+                     } else if (child.classList.contains('or-indicator')) {
+                          // ORインジケーターはデータの区切りとして認識するが、データ構造には追加しない
+                          // ここでは特に何もしなくても良い
+                     }
+                 }
+             });
 
 
-        // ★★★ 完成したORグループ全体を下部表示エリアの末尾に追加 ★★★
-        // ORインジケーターを追加した場合は、その後にORグループを追加
-        chipsDisplay.appendChild(orGroupContainer);
+             // 構築した条件データをフィルタデータに反映
+             currentFilter.conditions[conditionType] = conditionData;
 
 
-        // ★★★ 下部表示エリアとOR接続テキストの表示状態を更新 ★★★
-        updateDisplayVisibility();
-
-
-        // ★★★ 入力フォーム内の確定部分と入力中のテキストをクリア ★★★
-        // 入力フォーム内の確定チップを全て削除（この条件項目内のinputAndButtonContainerから）
-        inputAndButtonContainer.querySelectorAll('.chip').forEach(chip => chip.remove());
-        // 入力フィールドの値をクリア
-        inputElement.value = '';
-
-
-        // TODO: この条件項目のチップリストの状態からクエリ構文の一部を生成するロジックを呼び出す
-        // generateConditionQueryString(conditionItemElement);
-
-        console.log(`${conditionType}: OR condition added to display area.`);
-    });
-
-
-    // --- +AND ボタンのイベントリスナー (この条件項目用) ---
-    addAndButton.addEventListener('click', () => {
-        const address = inputElement.value.trim();
-         if (address) {
-             // ★★★ 入力フォーム内でのAND条件追加ロジック ★★★
-
-             // 確定したアドレスのチップを作成（入力フォーム内用は削除ボタン付き）
-             const addressChip = createAddressChip(address);
-             addRemoveButtonToInputChip(addressChip); // 削除ボタンを追加（共通クラス）
-
-             // AND演算子チップを作成
-             const operatorChip = createOperatorChip('AND'); // 共通クラス
-
-             // 入力フィールドの直前に、アドレスチップとAND演算子チップを挿入
-             // inputAndButtonContainer の中で、inputElement の前に挿入
-             // アドレスチップを先に挿入し、その直後にAND演算子チップを挿入
-             inputElement.before(addressChip);
-             addressChip.after(operatorChip); // addressChip の直後に挿入
-
-
-             // 入力フィールドの値はクリアする
-             inputElement.value = '';
-
-
-             // TODO: この条件項目のチップリストの状態からクエリ構文の一部を生成するロジックを呼び出す
-             // generateConditionQueryString(conditionItemElement);
-
-             console.log(`${conditionType}: AND condition added within the input form.`);
+         } else if (conditionType === 'size') {
+             // サイズ条件の状態を取得してデータに反映
+             const sizeOperatorSelect = conditionItemElement.querySelector('#condition-size-operator');
+             const sizeValueInput = conditionItemElement.querySelector('#condition-size-value-input');
+             const sizeUnitSelect = conditionItemElement.querySelector('#condition-size-unit');
+             if (sizeOperatorSelect && sizeValueInput && sizeUnitSelect) {
+                 currentFilter.conditions.size.operator = sizeOperatorSelect.value;
+                 currentFilter.conditions.size.value = parseInt(sizeValueInput.value, 10) || 0; // 数値に変換、無効な場合は0
+                 currentFilter.conditions.size.unit = sizeUnitSelect.value;
+             }
+         } else if (conditionType === 'has-attachment') {
+             // 添付ファイルあり条件の状態を取得してデータに反映
+             const hasAttachmentCheckbox = conditionItemElement.querySelector('#condition-has-attachment');
+             if (hasAttachmentCheckbox) {
+                 currentFilter.conditions.hasAttachment = hasAttachmentCheckbox.checked;
+             }
          }
     });
 
 
-    // --- 入力フォーム内のチップに対するイベント委譲を使った削除ボタンのイベントリスナー (この条件項目用) ---
-    // この条件項目内のinputAndButtonContainerにイベントリスナーを設定
-    inputAndButtonContainer.addEventListener('click', (event) => {
-        const removeButton = event.target.closest('button.remove-chip'); // 共通クラスで検索
+    // 例：フィルタ処理 - チェックボックス、入力欄、プルダウンの状態を取得してデータに反映
+     const skipInboxCheckbox = document.getElementById('process-skip-inbox');
+     if (skipInboxCheckbox) {
+        currentFilter.actions.skipInbox = skipInboxCheckbox.checked;
+     }
+     const markAsReadCheckbox = document.getElementById('process-mark-as-read');
+      if (markAsReadCheckbox) {
+          currentFilter.actions.markAsRead = markAsReadCheckbox.checked;
+      }
+      const starCheckbox = document.getElementById('process-star');
+      if (starCheckbox) {
+          currentFilter.actions.star = starCheckbox.checked;
+      }
+      const applyLabelCheckbox = document.getElementById('process-apply-label');
+      const applyLabelInput = document.getElementById('process-label-name');
+      if (applyLabelCheckbox && applyLabelInput) {
+          currentFilter.actions.applyLabel.enabled = applyLabelCheckbox.checked;
+          currentFilter.actions.applyLabel.labelName = applyLabelInput.value.trim();
+      }
+      const forwardCheckbox = document.getElementById('process-forward');
+      const forwardInput = document.getElementById('process-forward-address');
+      if (forwardCheckbox && forwardInput) {
+          currentFilter.actions.forward.enabled = forwardCheckbox.checked;
+          forwardInput.value = forwardInput.value.trim();
+      }
+      const deleteCheckbox = document.getElementById('process-delete');
+      if (deleteCheckbox) {
+          currentFilter.actions.delete = deleteCheckbox.checked;
+      }
+      const notSpamCheckbox = document.getElementById('process-not-spam');
+      if (notSpamCheckbox) {
+          currentFilter.actions.notSpam = notSpamCheckbox.checked;
+      }
+      const alwaysImportantCheckbox = document.getElementById('process-always-important');
+      if (alwaysImportantCheckbox) {
+          currentFilter.actions.alwaysImportant = alwaysImportantCheckbox.checked;
+      }
+      const neverImportantCheckbox = document.getElementById('process-never-important');
+      if (neverImportantCheckbox) {
+          currentFilter.actions.neverImportant = neverImportantCheckbox.checked;
+      }
+      const applyCategoryCheckbox = document.getElementById('process-apply-category');
+       const applyCategorySelect = document.getElementById('process-apply-category-select');
+       if (applyCategoryCheckbox && applyCategorySelect) {
+           currentFilter.actions.applyCategory.enabled = applyCategoryCheckbox.checked;
+           applyCategorySelect.value = applyCategorySelect.value;
+       }
 
-        if (removeButton) {
-            // ★★★ 入力フォーム内のチップ削除ロジック ★★★
-            const addressChip = removeButton.closest('.address-chip'); // 共通クラスで親チップを取得
+    console.log("Updated filter data:", currentFilter);
+}
 
-            // チップが入力フォーム内にあることを確認 (この条件項目内のinputAndButtonContainerに属するか)
-            if (addressChip && inputAndButtonContainer.contains(addressChip)) {
-                // 削除対象のアドレスチップの直後の要素がAND演算子チップであるか確認
-                const nextElement = addressChip.nextElementSibling;
+// --- 各条件項目にロジックを設定する関数 ---
+function setupConditionItem(conditionItemElement) {
+    const inputElement = conditionItemElement.querySelector('.app-form-input');
+    const addAndButton = conditionItemElement.querySelector('.add-and-button');
+    const addOrButton = conditionItemElement.querySelector('.add-or-button');
+    const chipsDisplay = conditionItemElement.querySelector('.condition-chips-display');
+    const orConnector = conditionItemElement.querySelector('.condition-or-connector'); // OR接続テキストは省略可能
+    const inputAndButtonContainer = conditionItemElement.querySelector('.input-and-button-container'); // 入力フォーム内のコンテナ
 
-                // アドレスチップをDOMから削除
-                addressChip.remove();
+    const conditionType = conditionItemElement.dataset.conditionType;
+    console.log(`Setting up logic for condition type: ${conditionType}`);
 
-                // もし直後の要素がAND演算子チップであれば、それも削除
-                if (nextElement && nextElement.classList.contains('operator-chip')) {
-                     nextElement.remove();
-                }
+    // この条件項目がAND/OR入力UIを持つかどうかの判定に必要な要素
+    const hasAndOrElements = inputElement && addAndButton && addOrButton && chipsDisplay && inputAndButtonContainer;
 
-                // TODO: 削除後にこの条件項目のクエリ構文を再生成するロジックを呼び出す
-                // generateConditionQueryString(conditionItemElement);
 
-                console.log(`${conditionType}: Address chip removed from input form.`);
+    // 下部表示エリアとOR接続テキストの表示/非表示を更新する関数 (この条件項目用)
+    function updateDisplayVisibility() {
+        // AND/OR入力UIがない条件項目では、表示制御は不要
+        if (!hasAndOrElements) {
+            return;
+        }
+        const orGroupCount = chipsDisplay.querySelectorAll('.or-group').length;
+        if (orGroupCount === 0) {
+            chipsDisplay.style.display = 'none';
+            if (orConnector) {
+                 orConnector.style.display = 'none';
+            }
+        } else {
+            chipsDisplay.style.display = 'flex';
+             if (orConnector) {
+                 orConnector.style.display = 'block';
             }
         }
-    });
+    }
+
+    // +OR ボタンのイベントリスナー
+    // +OR ボタンのイベントリスナーが必要な要素が全て揃っているかチェック
+    if (addOrButton && inputElement && chipsDisplay && inputAndButtonContainer) {
+        addOrButton.addEventListener('click', () => {
+            const currentInput = inputElement.value.trim();
+            const confirmedChips = inputAndButtonContainer.querySelectorAll('.chip');
+
+            if (confirmedChips.length === 0 && currentInput === '') {
+                console.log(`${conditionType}: Input form is empty, not adding OR condition.`);
+                return;
+            }
+
+            // 入力フォーム内のチップと入力値をまとめて一つのAND条件グループとして取得
+            const currentAndGroup = [];
+            // inputAndButtonContainer の子要素を順番に取得
+            const inputContainerChildren = inputAndButtonContainer.childNodes;
+            inputContainerChildren.forEach(child => {
+                 if (child.nodeType === Node.ELEMENT_NODE && child.classList.contains('chip')) {
+                      const value = child.textContent.replace('✕', '').trim();
+                     if (child.classList.contains('address-chip')) {
+                         currentAndGroup.push(value);
+                     } else if (child.classList.contains('operator-chip') && value === 'AND') {
+                         currentAndGroup.push('AND');
+                     }
+                 }
+            });
+            const currentInputValue = inputElement.value.trim();
+            if (currentInputValue !== '') {
+                 if (currentAndGroup.length > 0 && currentAndGroup[currentAndGroup.length - 1] !== 'AND') {
+                      currentAndGroup.push('AND');
+                 }
+                 currentAndGroup.push(currentInputValue);
+            }
+             // 最後のANDを削除
+             if (currentAndGroup.length > 0 && currentAndGroup[currentAndGroup.length - 1] === 'AND') {
+                 currentAndGroup.pop();
+             }
 
 
-    // --- 下部の ORグループ表示エリア全体に対するイベント委譲を使った ORグループ削除ボタンのイベントリスナー (この条件項目用) ---
-    // この条件項目内のchipsDisplayにイベントリスナーを設定
-    chipsDisplay.addEventListener('click', (event) => {
-        const removeButton = event.target.closest('button.remove-or-group-button'); // 共通クラスで検索
+            // 確定したAND条件グループを下部表示エリアに新しいORグループとして追加
+            if (currentAndGroup.length > 0) {
+                const orGroupContainer = document.createElement('div');
+                orGroupContainer.classList.add('or-group');
 
-        if (removeButton) {
-            // ★★★ ORグループ削除ロジック ★★★
-            const orGroupContainer = removeButton.closest('.or-group'); // 共通クラスで親ORグループを取得
-
-            if (orGroupContainer) {
-                // 削除対象のORグループの前の要素がORインジケーターか確認
-                const prevElement = orGroupContainer.previousElementSibling;
-
-                // ORグループをDOMから削除
-                orGroupContainer.remove();
-
-                // もし前の要素がORインジケーターであれば、それも削除
-                // ただし、削除されたORグループが最初のORグループだった場合は、前の要素はORインジケーターではない
-                if (prevElement && prevElement.classList.contains('or-indicator')) { // 共通クラスで判定
-                     prevElement.remove();
-                }
+                // 既存のORグループ（下部表示エリアにあるもの）が存在する場合のみ、ORインジケーターを下部表示エリアの末尾に追加
+                 if (chipsDisplay.querySelectorAll('.or-group').length > 0) {
+                     const orIndicator = createOrGroupIndicator();
+                     chipsDisplay.appendChild(orIndicator);
+                 }
 
 
-                // ★★★ 下部表示エリアとOR接続テキストの表示状態を更新 ★★★
+                currentAndGroup.forEach(item => {
+                     if (item === 'AND') {
+                         const operatorChip = createChip('AND', 'operator-chip');
+                         orGroupContainer.appendChild(operatorChip);
+                     } else {
+                         const valueChip = createChip(item, 'address-chip');
+                         orGroupContainer.appendChild(valueChip);
+                     }
+                });
+
+                 const orGroupRemoveButton = createOrGroupRemoveButton();
+                 orGroupContainer.appendChild(orGroupRemoveButton);
+
+                chipsDisplay.appendChild(orGroupContainer);
+
+
                 updateDisplayVisibility();
 
-                // TODO: 削除後にこの条件項目のクエリ構文を再生成するロジックを呼び出す
-                // generateConditionQueryString(conditionItemElement);
+                // 入力フォーム内の確定部分と入力中のテキストをクリア
+                inputAndButtonContainer.querySelectorAll('.chip').forEach(chip => chip.remove());
+                inputElement.value = '';
 
-                console.log(`${conditionType}: OR group removed from display area.`);
+                // OR条件が追加されたらフィルタデータを更新
+                updateCurrentFilterData();
+
+                console.log(`${conditionType}: OR condition added to display area.`);
             }
+        });
+    } else {
+        console.log(`OR button or related elements not found for ${conditionType}. Skipping OR listener setup.`);
+    }
+
+
+    // +AND ボタンのイベントリスナー
+    // +AND ボタンのイベントリスナーが必要な要素が全て揃っているかチェック
+    if (addAndButton && inputElement && inputAndButtonContainer) {
+        addAndButton.addEventListener('click', () => {
+            const value = inputElement.value.trim(); // 入力された値を取得
+             if (value) {
+                 // 入力フォーム内でのAND条件追加ロジック
+                 const existingChips = inputAndButtonContainer.querySelectorAll('.chip');
+
+                 // 既存のチップが1つ以上あり、かつ最後のチップがAND演算子でない場合にAND演算子を追加
+                 if (existingChips.length > 0 && !existingChips[existingChips.length - 1].classList.contains('operator-chip')) {
+                     const operatorChip = createChip('AND', 'operator-chip'); // AND演算子チップを作成
+                     inputElement.before(operatorChip); // 入力フィールドの直前にANDチップを挿入
+                 }
+
+                 // 新しい値のチップを作成（入力フォーム内用は削除ボタン付き）
+                 const valueChip = createChip(value, 'address-chip');
+                 addRemoveButtonToInputChip(valueChip); // 削除ボタンを追加
+
+                 // 入力フィールドの直前に新しい値のチップを挿入
+                 inputElement.before(valueChip);
+
+                 // 入力フィールドの値はクリアする
+                 inputElement.value = '';
+
+                 // AND条件が追加されたらフィルタデータを更新
+                 updateCurrentFilterData();
+
+                 console.log(`${conditionType}: AND condition added within the input form.`);
+             }
+        });
+    } else {
+         console.log(`AND button or related elements not found for ${conditionType}. Skipping AND listener setup.`);
+    }
+
+
+    // 入力フォーム内のチップに対するイベント委譲を使った削除ボタンのイベントリスナー
+    // 入力フォーム内のチップ削除リスナーが必要な要素が全て揃っているかチェック
+    if (inputAndButtonContainer) {
+        inputAndButtonContainer.addEventListener('click', (event) => {
+            const removeButton = event.target.closest('button.remove-chip');
+
+            if (removeButton) {
+                const chipToRemove = removeButton.parentElement;
+
+                if (chipToRemove && inputAndButtonContainer.contains(chipToRemove)) {
+                    const isOperatorChip = chipToRemove.classList.contains('operator-chip');
+
+                    // 削除対象のチップが演算子チップでない場合 (値のチップの場合)
+                    if (!isOperatorChip) {
+                        // 直後の要素がAND演算子チップであれば、それも削除
+                        const nextElement = chipToRemove.nextElementSibling;
+                         if (nextElement && nextElement.classList.contains('operator-chip')) {
+                             nextElement.remove();
+                         }
+                    } else { // 削除対象のチップが演算子チップの場合
+                         // 直前の要素（値のチップ）が入力フォーム内のチップであれば、それも削除
+                         const prevElement = chipToRemove.previousElementSibling;
+                         if (prevElement && prevElement.classList.contains('chip') && inputAndButtonContainer.contains(prevElement)) {
+                             prevElement.remove();
+                         }
+                    }
+
+                    // チップをDOMから削除
+                    chipToRemove.remove();
+
+                     // チップが全てなくなった後に、最後にANDが残ってしまっている場合は削除
+                     const remainingChips = inputAndButtonContainer.querySelectorAll('.chip');
+                     const lastRemainingChip = remainingChips[remainingChips.length - 1];
+                     if (lastRemainingChip && lastRemainingChip.classList.contains('operator-chip')) {
+                          // 最後のチップがAND演算子かつ、その前に値のチップがない場合（ANDだけが残った場合）に削除
+                         const prevElement = lastRemainingChip.previousElementSibling;
+                         if (!prevElement || !prevElement.classList.contains('chip')) {
+                             lastRemainingChip.remove();
+                         }
+                     }
+
+                    // チップが削除されたらフィルタデータを更新
+                    updateCurrentFilterData();
+
+                    console.log(`${conditionType}: Chip removed from input form.`);
+                }
+            }
+        });
+    } else {
+         console.log(`Input and button container not found for ${conditionType}. Skipping input chip remove listener setup.`);
+    }
+
+
+    // 下部の ORグループ表示エリア全体に対するイベント委譲を使った ORグループ削除ボタンのイベントリスナー
+    if (chipsDisplay) { // 要素の存在チェックを追加
+        chipsDisplay.addEventListener('click', (event) => {
+            const removeButton = event.target.closest('button.remove-or-group-button');
+
+            if (removeButton) {
+                const orGroupContainer = removeButton.closest('.or-group');
+
+                if (orGroupContainer) {
+                    // 削除対象のORグループの前の要素がORインジケーターか確認
+                    const prevElement = orGroupContainer.previousElementSibling;
+
+                    // ORグループをDOMから削除
+                    orGroupContainer.remove();
+
+                    // もし前の要素がORインジケーターであれば、それも削除
+                    if (prevElement && prevElement.classList.contains('or-indicator')) {
+                         prevElement.remove();
+                    }
+
+                    updateDisplayVisibility();
+
+                    // ORグループが削除されたらフィルタデータを更新
+                    updateCurrentFilterData();
+
+                    console.log(`${conditionType}: OR group removed from display area.`);
+                }
+            }
+        });
+    } else {
+        console.log(`Chips display area not found for ${conditionType}. Skipping OR group remove listener setup.`);
+    }
+
+
+    // サイズ、添付ファイルありなどの条件項目内の入力要素の変更を監視し、
+    // その変更をフィルタデータに反映させるイベントリスナーを設定します。
+    // これは AND/OR 入力とは異なるため、個別の要素に対して設定します。
+
+    if (conditionType === 'size') {
+        const sizeOperatorSelect = conditionItemElement.querySelector('#condition-size-operator');
+        const sizeValueInput = conditionItemElement.querySelector('#condition-size-value-input');
+        const sizeUnitSelect = conditionItemElement.querySelector('#condition-size-unit');
+        if (sizeOperatorSelect) {
+            sizeOperatorSelect.addEventListener('change', updateCurrentFilterData);
         }
-    });
-
-
-    // TODO: この条件項目のチップリストの状態からクエリ構文の一部を生成する関数 (conditionItemElement を引数に取る)
-    // function generateConditionQueryString(conditionItemElement) { ... }
-
+        if (sizeValueInput) {
+            sizeValueInput.addEventListener('input', updateCurrentFilterData);
+        }
+        if (sizeUnitSelect) {
+            sizeUnitSelect.addEventListener('change', updateCurrentFilterData);
+        }
+    } else if (conditionType === 'has-attachment') {
+        const hasAttachmentCheckbox = conditionItemElement.querySelector('#condition-has-attachment');
+        if (hasAttachmentCheckbox) {
+            hasAttachmentCheckbox.addEventListener('change', updateCurrentFilterData);
+        }
+    } else if (hasAndOrElements) { // AND/OR入力UIを持つ条件項目の入力フィールドの変更も監視
+         if (inputElement) {
+             inputElement.addEventListener('input', updateCurrentFilterData); // 入力中にデータ更新
+         }
+    }
 
     // ★★★ この条件項目の初期表示状態を設定 ★★★
-    updateDisplayVisibility();
+    // AND/OR入力UIを持つ条件項目のみ表示制御が必要
+    if (hasAndOrElements) {
+        updateDisplayVisibility();
+    }
+}
+
+// --- フィルタを複製する関数 ---
+function duplicateCurrentFilter() {
+    console.log("Attempting to duplicate current filter.");
+    if (currentFilterIndex === -1) {
+        console.warn("No filter selected to duplicate.");
+        return; // 選択されているフィルタがない場合は何もしない
+    }
+
+    const originalFilter = filters[currentFilterIndex];
+
+    // ★★★ フィルタデータのディープコピーを作成 ★★★
+    // JSON.parse(JSON.stringify()) は、簡単なオブジェクトのディープコピーに便利ですが、
+    // Dateオブジェクトや関数などが含まれる場合は別の方法を検討する必要があります。
+    // 今回のフィルタデータ構造であれば問題ないでしょう。
+    const duplicatedFilter = JSON.parse(JSON.stringify(originalFilter));
+
+    // ★★★ 複製したフィルタに新しいIDと名前を設定 ★★★
+    duplicatedFilter.id = Date.now().toString(); // 新しい一意なIDを生成
+    duplicatedFilter.name = `${originalFilter.name} (コピー)`; // 名前に "(コピー)" を追加
+
+    console.log("Original filter:", originalFilter);
+    console.log("Duplicated filter:", duplicatedFilter);
+
+    // 複製したフィルタを filters 配列に追加
+    // シンプルに配列の末尾に追加します
+    filters.push(duplicatedFilter);
+
+    console.log("Duplicated filter added. Current filters:", filters);
+
+    // フィルタ一覧を再描画
+    renderFilterList();
+
+    // 複製されたフィルタを選択状態にする
+    // 追加したフィルタのIDで選択します
+    selectFilterById(duplicatedFilter.id);
+
+    console.log("Filter duplicated and new filter selected.");
+
+    // TODO: chrome.storage にフィルタデータを保存する処理を呼び出す (後で実装)
+    // saveFiltersToStorage();
+}
+
+// --- フィルタを削除する関数 ---
+function deleteCurrentFilter() {
+    console.log("Attempting to delete current filter.");
+    if (currentFilterIndex === -1) {
+        console.warn("No filter selected to delete.");
+        return; // 選択されているフィルタがない場合は何もしない
+    }
+
+    // 確認ダイアログを表示
+    const filterName = filters[currentFilterIndex].name;
+    const isConfirmed = confirm(`フィルタ "${filterName}" を削除してもよろしいですか？\nこの操作は元に戻せません。`);
+
+    if (!isConfirmed) {
+        console.log("Filter deletion cancelled by user.");
+        return; // ユーザーがキャンセルした場合
+    }
+
+    console.log(`Deleting filter at index: ${currentFilterIndex}`);
+
+    // filters 配列から対象のフィルタを削除
+    filters.splice(currentFilterIndex, 1);
+
+    console.log("Filter deleted. Remaining filters:", filters);
+
+    // フィルタ一覧を再描画
+    renderFilterList();
+
+    // 削除後の選択状態を決定
+    if (filters.length === 0) {
+        // フィルタが全てなくなった場合
+        currentFilterIndex = -1;
+        displayFilterDetails(null); // 右ペインをクリア
+        console.log("All filters deleted. Right pane cleared.");
+    } else {
+        // フィルタが残っている場合、削除された位置の次にあったフィルタを選択
+        // ただし、リストの最後を削除した場合は、新しい最後のフィルタを選択
+        const newIndexToSelect = Math.min(currentFilterIndex, filters.length - 1);
+        selectFilter(newIndexToSelect); // 新しいインデックスのフィルタを選択
+        console.log(`Filter deleted. Selecting filter at new index: ${newIndexToSelect}`);
+    }
+
+    // TODO: chrome.storage にフィルタデータを保存する処理を呼び出す (後で実装)
+    // saveFiltersToStorage();
 }
 
 
-// --- ページの読み込みが完了したら、各条件項目にロジックを設定 ---
+// --- ページの読み込みが完了したら実行される処理 ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 全ての条件項目要素を取得
-    const conditionItems = document.querySelectorAll('.filter-condition-item'); // 共通クラス
+    console.log("DOMContentLoaded event fired.");
 
-    // 各条件項目に対して setupConditionItem 関数を呼び出す
-    conditionItems.forEach(item => {
-        setupConditionItem(item);
-    });
+    // 全ての条件項目要素を取得し、ロジックを設定
+    const conditionItems = document.querySelectorAll('.filter-condition-item');
+    if (conditionItems.length > 0) {
+        conditionItems.forEach(item => {
+            setupConditionItem(item);
+        });
+    } else {
+        console.warn("No filter condition items found.");
+    }
 
-     // TODO: 全ての条件項目から生成されたクエリ構文全体を組み立てるロジックを呼び出す
-     // generateFullQueryString();
+
+    // 「＋ フィルタを追加」ボタンにイベントリスナーを設定
+    const addNewFilterButton = document.getElementById('add-new-filter');
+    if (addNewFilterButton) {
+        console.log("'+ フィルタを追加' button found, adding event listener.");
+        addNewFilterButton.addEventListener('click', () => {
+            console.log("'+ フィルタを追加' button clicked!");
+            const newFilter = createNewFilterData(); // 無題のフィルタデータを作成
+            filters.push(newFilter); // filters 配列に追加
+            console.log("New filter added:", newFilter);
+            console.log("Current filters:", filters);
+            renderFilterList(); // フィルタ一覧を更新
+            // 無題のフィルタのIDで選択する
+            selectFilterById(newFilter.id);
+            console.log("New filter should be rendered and selected.");
+        });
+    } else {
+        console.error("'+ フィルタを追加' button not found!");
+    }
+
+    // フィルタ名入力欄の input イベントを監視し、値が変更されたらフィルタデータを更新
+    const filterNameInput = document.getElementById('filter-name-input');
+    if (filterNameInput) {
+        filterNameInput.addEventListener('input', () => {
+            updateCurrentFilterData();
+        });
+    }
+
+    // フィルタ処理に関する入力要素（チェックボックス、プルダウン、テキスト入力）にイベントリスナーを設定
+     document.querySelectorAll('.filter-process-item input[type="checkbox"]').forEach(checkbox => {
+         checkbox.addEventListener('change', updateCurrentFilterData);
+
+         // ラベルや転送先アドレス、カテゴリの入力要素の有効/無効を切り替えるイベントリスナー
+          const relatedInput = checkbox.closest('.filter-process-item').querySelector('input[type="text"]');
+          const relatedSelect = checkbox.closest('.filter-process-item').querySelector('select');
+
+          if (relatedInput) {
+              checkbox.addEventListener('change', () => {
+                  relatedInput.disabled = !checkbox.checked;
+                  // チェックが外れたら入力値もクリア
+                   if (!checkbox.checked) {
+                       relatedInput.value = '';
+                       updateCurrentFilterData(); // データも更新
+                   }
+              });
+               // 初期状態を設定
+               relatedInput.disabled = !checkbox.checked;
+          }
+           if (relatedSelect) {
+               checkbox.addEventListener('change', () => {
+                   relatedSelect.disabled = !checkbox.checked;
+                   // チェックが外れたら選択値をクリア
+                    if (!checkbox.checked) {
+                        relatedSelect.value = ''; // デフォルト値に戻す（例：最初のoptionの値）
+                        updateCurrentFilterData(); // データも更新
+                    }
+               });
+                // 初期状態を設定
+                relatedSelect.disabled = !checkbox.checked;
+           }
+     });
+      document.querySelectorAll('.filter-process-item input[type="text"]').forEach(input => {
+          // input イベントは updateCurrentFilterData で処理済み
+          // input.addEventListener('input', updateCurrentFilterData);
+      });
+      document.querySelectorAll('.filter-process-item select').forEach(select => {
+           // change イベントは updateCurrentFilterData で処理済み
+          // select.addEventListener('change', updateCurrentFilterData);
+      });
+
+
+    // TODO: 既存のフィルタデータがあれば chrome.storage から読み込む処理を実装 (後で)
+    // 初期表示として空のフィルタリストを作成し、最初のフィルタを選択状態にする
+    if (filters.length === 0) {
+        console.log("No filters found, creating initial filter.");
+         const initialFilter = createNewFilterData();
+         filters.push(initialFilter);
+         renderFilterList();
+         selectFilterById(initialFilter.id); // IDで選択
+    } else {
+        // 既存のフィルタがある場合は、最初のフィルタを選択状態にする
+        console.log(`Found ${filters.length} filters, selecting the first one.`);
+        renderFilterList();
+        selectFilter(0);
+    }
+
+    // 「このフィルタを複製」ボタンにイベントリスナーを設定
+    const duplicateFilterButton = document.getElementById('duplicate-this-filter');
+    if (duplicateFilterButton) {
+        console.log("'このフィルタを複製' button found, adding event listener.");
+        duplicateFilterButton.addEventListener('click', () => {
+            console.log("'このフィルタを複製' button clicked!");
+            duplicateCurrentFilter(); // フィルタ複製関数を呼び出し
+        });
+    } else {
+        console.error("'このフィルタを複製' button not found!");
+    }
+
+    // 「このフィルタを削除」ボタンにイベントリスナーを設定
+    const deleteFilterButton = document.getElementById('delete-this-filter');
+    if (deleteFilterButton) {
+        console.log("'このフィルタを削除' button found, adding event listener.");
+        deleteFilterButton.addEventListener('click', () => {
+            console.log("'このフィルタを削除' button clicked!");
+            deleteCurrentFilter(); // フィルタ削除関数を呼び出し
+        });
+    } else {
+        console.error("'このフィルタを削除' button not found!");
+    }
+
+
+    console.log("manager.js setup complete.");
 });
-
-
-// TODO: 他の条件のUIやロジック、フィルタ一覧表示、インポート/エクスポートなどを実装
