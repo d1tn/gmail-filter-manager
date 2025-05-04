@@ -1,5 +1,3 @@
-/* manager.css */
-
 /* == 全体的なスタイル == */
 :root {
     font-size: 14px;
@@ -45,21 +43,25 @@ input {
         padding: 0 0.5rem;
         margin: 0;
         cursor: pointer;
-        user-select: none; /* ラベルのテキストを選択できないようにする（クリックしやすくするため）*/
+        user-select: none;
+        /* ラベルのテキストを選択できないようにする（クリックしやすくするため）*/
     }
-    &.label:hover, &.label:has(input[type="checkbox"]:checked) {
+
+    &.label:hover,
+    &.label:has(input[type="checkbox"]:checked) {
         background-color: #ddeeff;
         cursor: pointer;
         border-radius: 0.3rem;
         font-weight: bold;
     }
+
     &.input {
-        margin-right: 0.5rem; 
+        margin-right: 0.5rem;
     }
 }
 
 /* 左右分割表示 */
-.two-pane-container{
+.two-pane-container {
     display: flex;
 
     /* 左側表示領域のサイズ調整 */
@@ -80,6 +82,7 @@ input {
         margin-top: 2.5rem;
         margin-bottom: 1.0rem;
     }
+
     /* ファイル名セクション */
     .filter-name {
         #filter-name-input {
@@ -91,11 +94,12 @@ input {
     }
 
     .filter-process {
-        .filter-process-items{
+        .filter-process-items {
             display: flex;
             flex-wrap: wrap;
             flex-direction: row;
-            .filter-process-item{
+
+            .filter-process-item {
                 margin-right: 1.0rem;
                 padding: 0;
             }
@@ -114,59 +118,41 @@ input {
 
 /* 各条件項目（From, To, 件名など）を囲むコンテナ */
 .condition-item {
-    /* 共通クラス */
     margin-bottom: 3.0rem;
-    /* 各項目の下の余白 */
 }
 
 /* 各条件項目のラベル（From:, To: など） */
 .condition-item label {
-    /* 共通クラス .condition-item の中の label タグ */
     display: block;
-    /* ラベルをブロック要素にして入力フィールドの上に配置 */
     margin-bottom: 0.4rem;
-    /* ラベルの下の余白 */
     font-size: 1.0rem;
     font-weight: bold;
     color: #202124;
 }
 
-
 /* == 条件項目の UI スタイル (一般化) == */
-
 /* 入力フィールドコンテナと+ORボタン全体を囲むコンテナ */
 .condition-input-area {
-    /* 共通クラス */
     display: flex;
-    /* 中の要素（入力コンテナとORボタン）を横並びにする */
     align-items: center;
     padding: 0;
 }
-.condition-input-area > label {
+
+.condition-input-area>label {
     min-width: 5.0rem;
 }
 
-
 /* 入力フィールドと+ANDボタンを一体化させるコンテナ */
 .input-and-button-container {
-    /* 既存または共通クラス */
     display: flex;
-    /* 中の要素（入力フィールドと+ANDボタン、入力フォーム内のチップ）を横並びにする */
     align-items: center;
-    /* 縦方向の中央揃え */
     flex-grow: 1;
-    /* 利用可能なスペースを占有 */
     padding: 0.5rem 1.0rem;
-    /* 入力フィールド自体のボーダーは削除 */
     background: #E9EEF5;
     border-radius: 5.0rem;
-    /* コンテナに角丸を設定 */
     overflow: hidden;
-    /* 中の要素が角丸からはみ出さないように */
     max-width: none;
-    /* 親要素のmax-widthを引き継ぐ場合 */
     gap: 0.4rem;
-    /* 中の要素（チップ、入力フィールド、ボタン）間の隙間をgapで設定 */
 }
 
 /* 入力フィールド自体のスタイル */
@@ -181,131 +167,91 @@ input {
 
 /* +AND ボタンのスタイル */
 .add-and-button {
-    /* 共通クラス */
     flex-shrink: 0;
-    /* ボタンのサイズを固定 */
     padding: 0.3rem 0.9rem;
-    /* ボタン自体のボーダーも削除（コンテナのボーダーを使う） */
     border-radius: 5.0rem;
-    /* 角丸はコンテナで行うのでボタン自体は0 */
     cursor: pointer;
     font-size: 1rem;
     background-color: transparent;
-    /* 赤っぽい背景色 */
     color: #666;
 }
 
 .add-and-button:hover {
-    /* 共通クラス */
     background-color: #ddd;
-    /* 赤っぽい背景色 */
 }
 
 
 /* +OR ボタンのスタイルは独立して設定 */
 .add-or-button {
-    /* 共通クラス */
     flex-shrink: 0;
     margin-left: 0.5rem;
     padding: 0.3rem 0.9rem;
     border-radius: 5.0rem;
     cursor: pointer;
     font-size: 1rem;
-    /* 入力フィールド+ANDコンテナとの間の余白 */
     color: #666;
-    /* 青っぽい文字色 */
     background-color: transparent;
-    /* 青っぽい背景色 */
 }
 
 .add-or-button:hover {
-    /* 共通クラス */
     color: #2980b9;
-    /* 青っぽい文字色 */
     background-color: #ddeeff;
 }
 
 /* OR接続テキスト */
 .condition-or-connector {
-    /* 共通クラス */
     font-size: 1.0rem;
-    /* 大きなフォントサイズ */
     font-weight: bold;
     margin-top: 0.5rem 0;
-    /* 上下のマージン */
     padding: 0.5rem 6.0rem;
     color: #555;
-    /* 色を調整 */
-    /* ★★★ 要素が空のときは非表示にする（JavaScriptで制御） ★★★ */
     display: none;
-    /* デフォルトで非表示 */
 }
 
 /* チップ表示エリア全体を囲むコンテナ */
 .condition-chips-display {
-    /* 共通クラス */
     display: none;
-    /* デフォルトで非表示 */
-    padding-left:5.0rem;
+    padding-left: 5.0rem;
     display: flex;
-    /* デフォルトの表示はflex */
     flex-wrap: wrap;
-    /* 要素が多すぎるときに折り返す */
     align-items: center;
-    /* 縦方向の中央揃え */
     gap: 0.5rem;
-    /* ORグループとORインジケーター間の隙間 */
     background-color: #fff;
-    /* 背景色 */
 }
 
 /* 下部表示エリアに追加される各ORグループのコンテナ */
 .or-group {
-    /* 共通クラス */
     border-radius: 5.0rem;
     padding: 0.5rem 1.0rem;
     color: #202124;
     display: flex;
-    /* 中の要素（チップ、削除ボタン）を横並びにする */
     flex-wrap: wrap;
-    /* チップが多すぎるときに折り返す */
     align-items: center;
     gap: 0.7rem;
-    /* ORグループ内の要素間の隙間 */
     background-color: #dddddd;
-    /* ORグループの背景色 */
     position: relative;
-    /* 削除ボタンの絶対位置指定の基準 */
 }
 
 /* 下部エリアのORインジケーター（2個目以降のORグループとORグループの間） */
 .or-indicator {
-    /* 共通クラス */
     font-weight: bold;
-    /* margin-right は親の gap で設定 */
     color: #555;
-    /* 色を調整 */
     flex-shrink: 0;
-    /* 縮まないようにする */
 }
 
 /* 個々のチップのスタイル */
 .chip {
-    /* 共通クラス */
     display: inline-flex;
     align-items: center;
     border-radius: 1.0rem;
-    /* 角丸 */
+
     padding: 0.4rem 1.0rem;
-    /* 上下のパディングを少し増やす */
     font-size: 0.9rem;
     box-sizing: border-box;
-    /* パディングとボーダーをサイズに含める */
 }
 
 /* アドレスチップのスタイル */
 .address-chip {
-    /* 共通クラス */
     background-color: #DDDDDD;
     color: #202124;
     line-height: 1.5;
@@ -313,7 +259,6 @@ input {
 
 .or-group .chip {
     padding: 0 0;
-    /* 上下のパディングを少し増やす */
     background-color: #DDDDDD;
 }
 
@@ -324,30 +269,24 @@ input {
 
 }
 
+/* 下部エリアのANDインジケーター */
 .or-group .chip.operator-chip {
-    /* 下部エリアのANDインジケーター */
     background-color: #666;
-    /* グレー系の背景色 */
     color: #fff;
-    /* 白文字 */
     padding: 0 0.5rem;
     line-height: 1.5;
 }
 
 /* 演算子チップのスタイル */
 .operator-chip {
-    /* 共通クラス */
     background-color: #666;
-    /* グレー系の背景色 */
     color: #fff;
-    /* 白文字 */
     line-height: 1.5;
     padding: 0 0.5rem;
 }
 
 /* 入力フォーム内のチップに付く削除ボタン */
 button.remove-chip {
-    /* タグ名と共通クラス */
     background: none;
     color: #202124;
     cursor: pointer;
@@ -358,98 +297,71 @@ button.remove-chip {
 }
 
 button.remove-chip:hover {
-    /* タグ名と共通クラス */
     color: #333;
 }
 
 /* ORグループ削除ボタンのスタイル */
 button.remove-or-group-button {
-    /* タグ名と共通クラス */
     background: none;
     color: #202124;
     cursor: pointer;
     font-size: 0.9rem;
     margin-left: auto;
-    /* 右端に配置 */
     flex-shrink: 0;
 }
 
 button.remove-or-group-button:hover {
-    /* タグ名と共通クラス */
     color: #e74c3c;
 }
 
 
 /* == その他 == */
-
-/* フィルタ一覧コンテナのスタイル */
-#filter-list-container {
-    margin-top: 30px;
-    /* ここにフィルタ一覧のスタイルを記述 */
-}
-
-/* 新しく追加する横並び用コンテナのスタイル */
 .horizontal-conditions {
-    display: flex; /* Flexboxを適用して子要素を横並びに */
-    gap: 20px; /* 子要素間の隙間を調整（適宜変更してください） */
-    align-items: flex-start; /* 子要素を上揃えにする（必要に応じて変更） */
-    margin-top: 1.5rem; /* 上の要素との間隔を調整 */
+    display: flex;
+    align-items: left;
+    margin-top: 1.5rem;
+    gap: 20px;
 }
 
-/* 横並びにした condition-item のスタイル調整（必要であれば） */
-.horizontal-conditions .condition-item {
-    /* 必要に応じて、個々の横並びアイテムの幅などを調整 */
-    flex-grow: 1; /* 利用可能なスペースを均等に分配（必要であれば） */
-    /* margin-bottom は親要素で設定されているので個別に調整しない */
-}
-
-
-/* サイズ 条件項目の入力エリア (.condition-input-area に .size-value も付いている場合) */
-/* このスタイルは、サイズ条件の入力エリア全体内の要素のレイアウトを制御します */
-.condition-item[data-condition-type="size"] > .condition-input-area.size-value {
-    display: flex; /* Flexbox レイアウトを適用 */
-    align-items: center; /* 子要素を縦方向中央揃え */
-    gap: 0.5rem; /* 子要素間の隙間を調整 */
-    flex-wrap: wrap; /* 画面幅が狭い場合に折り返す */
+/* サイズ 条件項目の入力エリア */
+.condition-item[data-condition-type="size"]>.condition-input-area.size-value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 /* サイズ条件入力エリア内のラベル */
-.condition-item[data-condition-type="size"] > .condition-input-area.size-value > label {
-    /* ラベルの幅を固定する場合や、右側に余白を追加する場合 */
-    flex-shrink: 0; /* 縮まないように */
-    margin-right: 0.5rem; /* ラベルの右側に少し余白 */
+.condition-item[data-condition-type="size"]>.condition-input-area.size-value>label {
+    flex-shrink: 0;
+    margin-right: 0.5rem;
 }
 
 /* サイズ条件入力エリア内のプルダウン要素 (比較演算子、単位) */
-.condition-item[data-condition-type="size"] > .condition-input-area.size-value > select {
-     /* プルダウンの基本的なスタイル調整 */
-    flex-shrink: 0; /* 縮まないように */
-    padding: 0.5rem; /* プルダウンのパディング */
-    border: none; /* ボーダー */
-    border-radius: 0.5rem; /* 角丸 */
-    background-color: #E9EEF5; /* 背景色をinputコンテナと合わせるなど */
+.condition-item[data-condition-type="size"]>.condition-input-area.size-value>select {
+    flex-shrink: 0;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #E9EEF5;
 }
 
 /* サイズ値入力欄を囲むコンテナ */
-.condition-item[data-condition-type="size"] > .condition-input-area.size-value > .input-and-button-container {
-    /* このコンテナ自体も Flex item として振る舞い、中の input を制御します */
-    flex-grow: 0; /* サイズ値入力コンテナは必要以上に広がらないように */
-    /* ユーザーさんが提供された max-width, padding, margin はここに適用されると想定 */
-    max-width: 4.5rem; /* 例: サイズ入力欄の最大幅 */
-    padding: 0.5rem 1.0rem; /* input-and-button-container のパディング */
-    background: #E9EEF5; /* 背景色 */
-    border-radius: 0.5rem; /* 角丸 */
-    overflow: hidden; /* 角丸からはみ出さないように */
-    display: flex; /* 中の input を Flexbox で制御 */
-    align-items: center; /* 中の input を縦方向中央揃え */
+.condition-item[data-condition-type="size"]>.condition-input-area.size-value>.input-and-button-container {
+    flex-grow: 0;
+    max-width: 4.5rem;
+    padding: 0.5rem 1.0rem;
+    background: #E9EEF5;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
 }
 
-/* サイズ値入力欄自体 */
-.condition-item[data-condition-type="size"] > .condition-input-area.size-value .condition-input.size-value {
-    /* サイズ値入力欄自体のスタイル */
-    flex-grow: 1; /* 利用可能なスペースを占有 */
-    border: none; /* ボーダーなし */
-    background: transparent; /* 背景透明 */
-    padding: 0; /* 親コンテナ (.input-and-button-container) でパディングを設定している場合 */
-    min-width: 3rem; /* 最小幅 */
+.condition-item[data-condition-type="size"]>.condition-input-area.size-value .condition-input.size-value {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    padding: 0;
+    min-width: 3rem;
 }
