@@ -91,24 +91,28 @@ input {
 
     /* 左側表示領域のサイズ調整 */
     .left-pane {
-        width: 18rem;
-
-        h2 {
-            font-size: 1.5rem;
-            margin-left: 1.5rem;
-            margin-bottom: 0.5rem;
+        .filter-list {
+            width: 18rem;
+            h2 {
+                font-size: 1.5rem;
+                margin-left: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
         }
+    }
+    .right-pane {
+        min-width: 50rem;
     }
 }
 
 /* 左側セクション */
 
 .filter-list {
+    width: 100%;
     margin: 1.5rem 0;
 
     .filter-list-item {
         list-style: none;
-        margin-bottom: 0.0rem;
 
         button {
             line-height: 2.5rem;
@@ -136,7 +140,6 @@ input {
     padding: 1.0rem 1.5rem;
     border-radius: 1.0rem;
     background-color: #fff;
-    max-width: 50rem;
     margin: 0 1.5rem;
 
     h3 {
@@ -399,21 +402,25 @@ button.remove-or-group-button:hover {
     display: flex;
     justify-self: flex-end;
     gap: 1.0rem;
-    button{
+
+    button {
         border-radius: 0.5rem;
         line-height: 2.5rem;
         padding: 0 1.0rem;
     }
-    #copy-this-filter{
-        &:hover{
-        background-color: #ebf3ff;
-        color: #2980b9;
+
+    #copy-this-filter {
+        &:hover {
+            background-color: #ebf3ff;
+            color: #2980b9;
         }
     }
+
     #delete-this-filter {
         background-color: transparent;
         color: #c0392b;
-        &:hover{
+
+        &:hover {
             background-color: #ffebeb;
             color: #c0392b;
         }
