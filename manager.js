@@ -335,6 +335,14 @@ function selectFilter(index) {
     displayFilterDetails(filters[currentFilterIndex]);
 
     console.log(`Selected filter index: ${currentFilterIndex}`);
+
+    // 選択されたフィルタのデータを右ペインに表示する
+    displayFilterDetails(filters[currentFilterIndex]);
+
+    console.log(`Selected filter index: ${currentFilterIndex}`);
+    
+    // 削除ボタンの状態を更新
+    updateDeleteButtonState();
 }
 
 // --- 条件項目の表示/非表示を更新するヘルパー関数（renderCondition内で使用） ---
@@ -1002,6 +1010,12 @@ function deleteCurrentFilter() {
         console.warn("No filter selected to delete.");
         return; // 選択されているフィルタがない場合は何もしない
     }
+    
+    // フィルタが1件しかない場合は処理を中断（アラートは表示しない）
+    if (filters.length <= 1) {
+        console.warn("Cannot delete the last filter.");
+        return;
+    }
 
     // 確認ダイアログを表示
     const filterName = filters[currentFilterIndex].name;
@@ -1013,33 +1027,42 @@ function deleteCurrentFilter() {
     }
 
     console.log(`Deleting filter at index: ${currentFilterIndex}`);
-
-    // filters 配列から対象のフィルタを削除
     filters.splice(currentFilterIndex, 1);
-
     console.log("Filter deleted. Remaining filters:", filters);
-
-    // フィルタ一覧を再描画
     renderFilterList();
-
+    
     // 削除後の選択状態を決定
     if (filters.length === 0) {
-        // フィルタが全てなくなった場合
         currentFilterIndex = -1;
-        displayFilterDetails(null); // 右ペインをクリア
+        displayFilterDetails(null);
         console.log("All filters deleted. Right pane cleared.");
     } else {
-        // フィルタが残っている場合、削除された位置の次にあったフィルタを選択
-        // ただし、リストの最後を削除した場合は、新しい最後のフィルタを選択
         const newIndexToSelect = Math.min(currentFilterIndex, filters.length - 1);
-        selectFilter(newIndexToSelect); // 新しいインデックスのフィルタを選択
+        selectFilter(newIndexToSelect);
         console.log(`Filter deleted. Selecting filter at new index: ${newIndexToSelect}`);
     }
-
-    // TODO: chrome.storage にフィルタデータを保存する処理を呼び出す (後で実装)
-    // saveFiltersToStorage();
+    
+    // 削除ボタンの状態を更新
+    updateDeleteButtonState();
 }
 
+// --- 削除ボタンの状態を更新する関数 ---
+// 削除ボタンの状態を更新する関数
+function updateDeleteButtonState() {
+    const deleteFilterButton = document.getElementById('delete-this-filter');
+    if (deleteFilterButton) {
+        // フィルタが1件以下の場合は削除ボタンを無効化
+        if (filters.length <= 1) {
+            deleteFilterButton.disabled = true;
+            deleteFilterButton.title = "最低1件のフィルタは必要です";
+            deleteFilterButton.classList.add('disabled-button');
+        } else {
+            deleteFilterButton.disabled = false;
+            deleteFilterButton.title = "このフィルタを削除";
+            deleteFilterButton.classList.remove('disabled-button');
+        }
+    }
+}
 
 // --- ページの読み込みが完了したら実行される処理 ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -1070,6 +1093,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // 無題のフィルタのIDで選択する
             selectFilterById(newFilter.id);
             console.log("New filter should be rendered and selected.");
+            // 削除ボタンの状態を更新
+            updateDeleteButtonState();
         });
     } else {
         console.error("'+ フィルタを追加' button not found!");

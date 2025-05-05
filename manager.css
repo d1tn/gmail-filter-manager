@@ -430,5 +430,11 @@ button.remove-or-group-button:hover {
             background-color: #ffebeb;
             color: #c0392b;
         }
+
+        &.disabled-button{
+            background-color: transparent;
+            color: #666;
+            cursor: not-allowed;
+        }
     }
 }
