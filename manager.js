@@ -1360,35 +1360,35 @@ function generateToConditionXML(toConditions) {
     // 複数のORグループがある場合は複合条件として処理
     if (toConditions.length > 1) {
         // OR条件グループをフォーマット
-        const toParts = toConditions.map(orGroup => {
+        const includeParts = toConditions.map(orGroup => {
             // ANDキーワードを除去して実際の値だけを取得
             const values = orGroup.filter(item => item !== 'AND');
             if (values.length === 1) {
                 // 単一値の場合はそのまま
-                return `to:${escapeXml(values[0])}`;
+                return escapeXml(values[0]);
             } else {
                 // 複数値（AND条件）の場合は括弧でグループ化
-                const andCondition = values.map(v => `to:${escapeXml(v)}`).join(' AND ');
+                const andCondition = values.map(v => escapeXml(v)).join(' AND ');
                 return `(${andCondition})`;
             }
         });
 
         // すべてのOR条件を組み合わせる
-        const combinedQuery = toParts.join(' OR ');
-        xml += `    <apps:property name="hasTheWord" value="${escapeXml(combinedQuery)}"/>\n`;
+        const combinedQuery = includeParts.join(' OR ');
+        xml += `    <apps:property name="to" value="${escapeXml(combinedQuery)}"/>\n`;
     } else if (toConditions.length === 1) {
-        // 単一のORグループの場合（シンプルなto条件）
+        // 単一のORグループの場合
         const orGroup = toConditions[0];
         // ANDキーワードを除去して実際の値だけを取得
         const values = orGroup.filter(item => item !== 'AND');
 
         if (values.length === 1) {
-            // 単一のアドレスの場合
+            // 単一のキーワードの場合
             xml += `    <apps:property name="to" value="${escapeXml(values[0])}"/>\n`;
         } else {
-            // 複数アドレス（AND条件）の場合はto:形式で
-            const andCondition = values.map(v => `to:${escapeXml(v)}`).join(' AND ');
-            xml += `    <apps:property name="hasTheWord" value="${escapeXml(andCondition)}"/>\n`;
+            // 複数キーワード（AND条件）の場合
+            const andCondition = values.map(v => escapeXml(v)).join(' AND ');
+            xml += `    <apps:property name="to" value="${escapeXml(andCondition)}"/>\n`;
         }
     }
 
