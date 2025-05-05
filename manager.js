@@ -1484,24 +1484,38 @@ function generateDoesNotHaveTheWordConditionXML(excludesConditions) {
     let xml = '';
 
     // 複数のORグループがある場合は複合条件として処理
-    // 「含まない」条件ではOR関係は複雑なため、すべてを個別のdoesNotHaveTheWord条件として扱う
-    if (excludesConditions.length > 0) {
-        // 各ORグループを個別の条件としてフォーマット
-        excludesConditions.forEach(orGroup => {
+    if (excludesConditions.length > 1) {
+        // OR条件グループをフォーマット
+        const includeParts = excludesConditions.map(orGroup => {
             // ANDキーワードを除去して実際の値だけを取得
             const values = orGroup.filter(item => item !== 'AND');
-
             if (values.length === 1) {
-                // 単一のキーワードの場合
-                xml += `    <apps:property name="doesNotHaveTheWord" value="${escapeXml(values[0])}"/>\n`;
+                // 単一値の場合はそのまま
+                return escapeXml(values[0]);
             } else {
-                // 複数キーワード（AND条件）の場合
-                // 「含まない」のAND条件は複雑なため、個別の条件として扱う
-                values.forEach(value => {
-                    xml += `    <apps:property name="doesNotHaveTheWord" value="${escapeXml(value)}"/>\n`;
-                });
+                // 複数値（AND条件）の場合は括弧でグループ化
+                const andCondition = values.map(v => escapeXml(v)).join(' AND ');
+                return `(${andCondition})`;
             }
         });
+
+        // すべてのOR条件を組み合わせる
+        const combinedQuery = includeParts.join(' OR ');
+        xml += `    <apps:property name="doesNotHaveTheWord" value="${escapeXml(combinedQuery)}"/>\n`;
+    } else if (excludesConditions.length === 1) {
+        // 単一のORグループの場合
+        const orGroup = excludesConditions[0];
+        // ANDキーワードを除去して実際の値だけを取得
+        const values = orGroup.filter(item => item !== 'AND');
+
+        if (values.length === 1) {
+            // 単一のキーワードの場合
+            xml += `    <apps:property name="doesNotHaveTheWord" value="${escapeXml(values[0])}"/>\n`;
+        } else {
+            // 複数キーワード（AND条件）の場合
+            const andCondition = values.map(v => escapeXml(v)).join(' AND ');
+            xml += `    <apps:property name="doesNotHaveTheWord" value="${escapeXml(andCondition)}"/>\n`;
+        }
     }
 
     return xml;
@@ -1527,6 +1541,184 @@ function generateSizeConditionXML(sizeCondition) {
 
     return xml;
 }
+
+// Gmailフィルタ形式のXMLからフィルタを読み込む関数
+// Gmailフィルタ形式のXMLからフィルタを読み込む関数
+function importFiltersFromXML(xmlContent) {
+    try {
+        console.log("XMLのインポートを開始します");
+        // XMLパーサーを作成
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlContent, "application/xml");
+
+        // XMLパースエラーをチェック
+        const parserError = xmlDoc.querySelector('parsererror');
+        if (parserError) {
+            throw new Error("XML解析エラー: " + parserError.textContent);
+        }
+
+        // 全エントリを取得
+        const entries = xmlDoc.querySelectorAll('entry');
+        const importedFilters = [];
+
+        // 各エントリーを処理
+        entries.forEach(entry => {
+            // 新しいフィルタオブジェクトを作成
+            const filter = createNewFilterData();
+
+            // フィルタ名を取得（XMLコメント内）
+            const titleElement = entry.querySelector('title');
+            if (titleElement) {
+                const titleContent = titleElement.innerHTML;
+                const nameMatch = titleContent.match(/<!--\s*(.*?)\s*-->/);
+                if (nameMatch && nameMatch[1]) {
+                    filter.name = nameMatch[1].trim();
+                    console.log(`フィルタ名を検出: "${filter.name}"`);
+                }
+            }
+
+            // 各プロパティを取得
+            const properties = entry.querySelectorAll('apps\\:property');
+            properties.forEach(property => {
+                const name = property.getAttribute('name');
+                const value = property.getAttribute('value');
+
+                // プロパティに基づいてフィルタを設定
+                switch (name) {
+                    case 'from':
+                        filter.conditions.from = [[value]];
+                        break;
+                    case 'to':
+                        filter.conditions.to = [[value]];
+                        break;
+                    case 'subject':
+                        filter.conditions.subject = [[value]];
+                        break;
+                    case 'hasTheWord':
+                        // 簡略化: 単一の条件として扱う
+                        filter.conditions.includes = [[value]];
+                        break;
+                    case 'doesNotHaveTheWord':
+                        filter.conditions.excludes = [[value]];
+                        break;
+                    case 'hasAttachment':
+                        filter.conditions.hasAttachment = (value === 'true');
+                        break;
+                    case 'size':
+                    case 'sizeOperator':
+                    case 'sizeUnit':
+                        if (name === 'size') {
+                            filter.conditions.size.value = parseInt(value) || 0;
+                        }
+                        if (name === 'sizeOperator') {
+                            filter.conditions.size.operator = (value === 's_sl') ? 'larger_than' : 'smaller_than';
+                        }
+                        if (name === 'sizeUnit') {
+                            filter.conditions.size.unit = value;
+                        }
+                        break;
+                    // アクション(処理)の設定
+                    case 'shouldArchive':
+                        filter.actions.skipInbox = (value === 'true');
+                        break;
+                    case 'shouldMarkAsRead':
+                        filter.actions.markAsRead = (value === 'true');
+                        break;
+                    case 'shouldStar':
+                        filter.actions.star = (value === 'true');
+                        break;
+                    case 'label':
+                        filter.actions.applyLabel.enabled = true;
+                        filter.actions.applyLabel.labelName = value;
+                        break;
+                    case 'forwardTo':
+                        filter.actions.forward.enabled = true;
+                        filter.actions.forward.forwardAddress = value;
+                        break;
+                    case 'shouldTrash':
+                        filter.actions.delete = (value === 'true');
+                        break;
+                    case 'shouldNeverSpam':
+                        filter.actions.notSpam = (value === 'true');
+                        break;
+                    case 'shouldAlwaysMarkAsImportant':
+                        filter.actions.alwaysImportant = (value === 'true');
+                        break;
+                    case 'shouldNeverMarkAsImportant':
+                        filter.actions.neverImportant = (value === 'true');
+                        break;
+                    case 'smartLabelToApply':
+                        filter.actions.applyCategory.enabled = true;
+                        filter.actions.applyCategory.category = value;
+                        break;
+                }
+            });
+
+            console.log("インポートされたフィルタ:", filter);
+            importedFilters.push(filter);
+        });
+
+        // 既存のフィルタと結合するか、置き換えるか確認
+        if (filters.length > 0 && importedFilters.length > 0) {
+            if (confirm(`${importedFilters.length}個のフィルタを読み込みました。既存の${filters.length}個のフィルタと統合しますか？「キャンセル」を選択すると、既存のフィルタを全て置き換えます。`)) {
+                // 統合する場合
+                filters = filters.concat(importedFilters);
+            } else {
+                // 置き換える場合
+                filters = importedFilters;
+            }
+        } else {
+            // 既存のフィルタがない場合は置き換え
+            filters = importedFilters;
+        }
+
+        // フィルタ一覧を更新
+        renderFilterList();
+
+        // 最初のフィルタを選択
+        if (filters.length > 0) {
+            selectFilter(0);
+        } else {
+            currentFilterIndex = -1;
+            displayFilterDetails(null);
+        }
+
+        console.log(`${importedFilters.length}個のフィルタを正常にインポートしました`);
+        return importedFilters.length;
+    } catch (error) {
+        console.error("フィルタのインポート中にエラーが発生しました:", error);
+        alert("フィルタのインポート中にエラーが発生しました: " + error.message);
+        return 0;
+    }
+}
+
+// 「フィルタを読み込む」ボタンの処理を実装
+document.getElementById('import-filter').addEventListener('click', function () {
+    // ファイル選択ダイアログを表示
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xml';
+
+    input.onchange = function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const xmlContent = e.target.result;
+            const count = importFiltersFromXML(xmlContent);
+            if (count > 0) {
+                alert(`${count}個のフィルタを正常にインポートしました。`);
+            }
+        };
+        reader.onerror = function () {
+            alert("ファイルの読み込み中にエラーが発生しました。");
+        };
+        reader.readAsText(file);
+    };
+
+    input.click();
+});
 
 // --- ページの読み込みが完了したら実行される処理 ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -1616,28 +1808,28 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCurrentFilterData(); // データ更新
         });
     });
-    
+
     // サイズ条件に関する入力要素の監視
     const sizeValueInput = document.getElementById('condition-size-value-input');
     const sizeOperatorSelect = document.getElementById('condition-size-operator');
     const sizeUnitSelect = document.getElementById('condition-size-unit');
 
     if (sizeValueInput) {
-        sizeValueInput.addEventListener('input', function() {
+        sizeValueInput.addEventListener('input', function () {
             console.log(`サイズ値変更: ${this.value}`);
             updateCurrentFilterData();
         });
     }
 
     if (sizeOperatorSelect) {
-        sizeOperatorSelect.addEventListener('change', function() {
+        sizeOperatorSelect.addEventListener('change', function () {
             console.log(`サイズ演算子変更: ${this.value}`);
             updateCurrentFilterData();
         });
     }
 
     if (sizeUnitSelect) {
-        sizeUnitSelect.addEventListener('change', function() {
+        sizeUnitSelect.addEventListener('change', function () {
             console.log(`サイズ単位変更: ${this.value}`);
             updateCurrentFilterData();
         });
@@ -1646,12 +1838,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 添付ファイルチェックボックスの監視
     const hasAttachmentCheckbox = document.getElementById('condition-has-attachment');
     if (hasAttachmentCheckbox) {
-        hasAttachmentCheckbox.addEventListener('change', function() {
+        hasAttachmentCheckbox.addEventListener('change', function () {
             console.log(`添付ファイル条件変更: ${this.checked}`);
             updateCurrentFilterData();
         });
     }
-    
+
     // TODO: 既存のフィルタデータがあれば chrome.storage から読み込む処理を実装 (後で)
     // 初期表示として空のフィルタリストを作成し、最初のフィルタを選択状態にする
     if (filters.length === 0) {
