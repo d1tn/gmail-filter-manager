@@ -113,11 +113,11 @@
                             <input type="checkbox" id="process-apply-category" class="app-form-checkbox input">適用するカテゴリ:
                             <select id="process-apply-category-select" class="app-form-select">
                                 <option value="">カテゴリを選択</option>
-                                <option value="primary">メイン</option>
-                                <option value="social">ソーシャル</option>
-                                <option value="updates">新着</option>
-                                <option value="forums">フォーラム</option>
-                                <option value="promotions">プロモーション</option>
+                                <option value="^smartlabel_personal">メイン</option>
+                                <option value="^smartlabel_social">ソーシャル</option>
+                                <option value="^smartlabel_notification">新着</option>
+                                <option value="^smartlabel_group">フォーラム</option>
+                                <option value="^smartlabel_promo">プロモーション</option>
                             </select>
                         </label>
                         </div>
@@ -207,9 +207,9 @@
                                             class="app-form-input size-value" placeholder="値" min="0">
                                     </div>
                                     <select id="condition-size-unit" class="app-form-select size-unit">
-                                        <option value="m">MB</option>
-                                        <option value="k">KB</option>
-                                        <option value="b">バイト</option>
+                                        <option value="s_smb">MB</option>
+                                        <option value="s_skb">KB</option>
+                                        <option value="s_sb">バイト</option>
                                     </select>
                                 </div>
                             </div>
