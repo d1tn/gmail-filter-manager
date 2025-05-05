@@ -1311,14 +1311,16 @@ document.getElementById('export-filter').addEventListener('click', function () {
     }, 0);
 });
 
-// FROM条件をXML形式に変換する関数
-function generateFromConditionXML(fromConditions) {
+// 条件をXML形式に変換する共通関数
+function generateConditionXML(conditions, propertyName) {
+    if (!conditions || conditions.length === 0) return '';
+    
     let xml = '';
 
     // 複数のORグループがある場合は複合条件として処理
-    if (fromConditions.length > 1) {
+    if (conditions.length > 1) {
         // OR条件グループをフォーマット
-        const includeParts = fromConditions.map(orGroup => {
+        const conditionParts = conditions.map(orGroup => {
             // ANDキーワードを除去して実際の値だけを取得
             const values = orGroup.filter(item => item !== 'AND');
             if (values.length === 1) {
@@ -1332,189 +1334,21 @@ function generateFromConditionXML(fromConditions) {
         });
 
         // すべてのOR条件を組み合わせる
-        const combinedQuery = includeParts.join(' OR ');
-        xml += `    <apps:property name="from" value="${escapeXml(combinedQuery)}"/>\n`;
-    } else if (fromConditions.length === 1) {
+        const combinedQuery = conditionParts.join(' OR ');
+        xml += `    <apps:property name="${propertyName}" value="${escapeXml(combinedQuery)}"/>\n`;
+    } else if (conditions.length === 1) {
         // 単一のORグループの場合
-        const orGroup = fromConditions[0];
+        const orGroup = conditions[0];
         // ANDキーワードを除去して実際の値だけを取得
         const values = orGroup.filter(item => item !== 'AND');
 
         if (values.length === 1) {
             // 単一のキーワードの場合
-            xml += `    <apps:property name="from" value="${escapeXml(values[0])}"/>\n`;
+            xml += `    <apps:property name="${propertyName}" value="${escapeXml(values[0])}"/>\n`;
         } else {
             // 複数キーワード（AND条件）の場合
             const andCondition = values.map(v => escapeXml(v)).join(' AND ');
-            xml += `    <apps:property name="from" value="${escapeXml(andCondition)}"/>\n`;
-        }
-    }
-
-    return xml;
-}
-
-// TO条件をXML形式に変換する関数
-function generateToConditionXML(toConditions) {
-    let xml = '';
-
-    // 複数のORグループがある場合は複合条件として処理
-    if (toConditions.length > 1) {
-        // OR条件グループをフォーマット
-        const includeParts = toConditions.map(orGroup => {
-            // ANDキーワードを除去して実際の値だけを取得
-            const values = orGroup.filter(item => item !== 'AND');
-            if (values.length === 1) {
-                // 単一値の場合はそのまま
-                return escapeXml(values[0]);
-            } else {
-                // 複数値（AND条件）の場合は括弧でグループ化
-                const andCondition = values.map(v => escapeXml(v)).join(' AND ');
-                return `(${andCondition})`;
-            }
-        });
-
-        // すべてのOR条件を組み合わせる
-        const combinedQuery = includeParts.join(' OR ');
-        xml += `    <apps:property name="to" value="${escapeXml(combinedQuery)}"/>\n`;
-    } else if (toConditions.length === 1) {
-        // 単一のORグループの場合
-        const orGroup = toConditions[0];
-        // ANDキーワードを除去して実際の値だけを取得
-        const values = orGroup.filter(item => item !== 'AND');
-
-        if (values.length === 1) {
-            // 単一のキーワードの場合
-            xml += `    <apps:property name="to" value="${escapeXml(values[0])}"/>\n`;
-        } else {
-            // 複数キーワード（AND条件）の場合
-            const andCondition = values.map(v => escapeXml(v)).join(' AND ');
-            xml += `    <apps:property name="to" value="${escapeXml(andCondition)}"/>\n`;
-        }
-    }
-
-    return xml;
-}
-
-// 件名条件をXML形式に変換する関数
-function generateSubjectConditionXML(subjectConditions) {
-    let xml = '';
-
-    // 複数のORグループがある場合は複合条件として処理
-    if (subjectConditions.length > 1) {
-        // OR条件グループをフォーマット
-        const includeParts = subjectConditions.map(orGroup => {
-            // ANDキーワードを除去して実際の値だけを取得
-            const values = orGroup.filter(item => item !== 'AND');
-            if (values.length === 1) {
-                // 単一値の場合はそのまま
-                return escapeXml(values[0]);
-            } else {
-                // 複数値（AND条件）の場合は括弧でグループ化
-                const andCondition = values.map(v => escapeXml(v)).join(' AND ');
-                return `(${andCondition})`;
-            }
-        });
-
-        // すべてのOR条件を組み合わせる
-        const combinedQuery = includeParts.join(' OR ');
-        xml += `    <apps:property name="subject" value="${escapeXml(combinedQuery)}"/>\n`;
-    } else if (subjectConditions.length === 1) {
-        // 単一のORグループの場合
-        const orGroup = subjectConditions[0];
-        // ANDキーワードを除去して実際の値だけを取得
-        const values = orGroup.filter(item => item !== 'AND');
-
-        if (values.length === 1) {
-            // 単一のキーワードの場合
-            xml += `    <apps:property name="subject" value="${escapeXml(values[0])}"/>\n`;
-        } else {
-            // 複数キーワード（AND条件）の場合
-            const andCondition = values.map(v => escapeXml(v)).join(' AND ');
-            xml += `    <apps:property name="subject" value="${escapeXml(andCondition)}"/>\n`;
-        }
-    }
-
-    return xml;
-}
-
-// 含むキーワード条件をXML形式に変換する関数
-function generateHasTheWordConditionXML(includesConditions) {
-    let xml = '';
-
-    // 複数のORグループがある場合は複合条件として処理
-    if (includesConditions.length > 1) {
-        // OR条件グループをフォーマット
-        const includeParts = includesConditions.map(orGroup => {
-            // ANDキーワードを除去して実際の値だけを取得
-            const values = orGroup.filter(item => item !== 'AND');
-            if (values.length === 1) {
-                // 単一値の場合はそのまま
-                return escapeXml(values[0]);
-            } else {
-                // 複数値（AND条件）の場合は括弧でグループ化
-                const andCondition = values.map(v => escapeXml(v)).join(' AND ');
-                return `(${andCondition})`;
-            }
-        });
-
-        // すべてのOR条件を組み合わせる
-        const combinedQuery = includeParts.join(' OR ');
-        xml += `    <apps:property name="hasTheWord" value="${escapeXml(combinedQuery)}"/>\n`;
-    } else if (includesConditions.length === 1) {
-        // 単一のORグループの場合
-        const orGroup = includesConditions[0];
-        // ANDキーワードを除去して実際の値だけを取得
-        const values = orGroup.filter(item => item !== 'AND');
-
-        if (values.length === 1) {
-            // 単一のキーワードの場合
-            xml += `    <apps:property name="hasTheWord" value="${escapeXml(values[0])}"/>\n`;
-        } else {
-            // 複数キーワード（AND条件）の場合
-            const andCondition = values.map(v => escapeXml(v)).join(' AND ');
-            xml += `    <apps:property name="hasTheWord" value="${escapeXml(andCondition)}"/>\n`;
-        }
-    }
-
-    return xml;
-}
-
-// 含まないキーワード条件をXML形式に変換する関数
-function generateDoesNotHaveTheWordConditionXML(excludesConditions) {
-    let xml = '';
-
-    // 複数のORグループがある場合は複合条件として処理
-    if (excludesConditions.length > 1) {
-        // OR条件グループをフォーマット
-        const includeParts = excludesConditions.map(orGroup => {
-            // ANDキーワードを除去して実際の値だけを取得
-            const values = orGroup.filter(item => item !== 'AND');
-            if (values.length === 1) {
-                // 単一値の場合はそのまま
-                return escapeXml(values[0]);
-            } else {
-                // 複数値（AND条件）の場合は括弧でグループ化
-                const andCondition = values.map(v => escapeXml(v)).join(' AND ');
-                return `(${andCondition})`;
-            }
-        });
-
-        // すべてのOR条件を組み合わせる
-        const combinedQuery = includeParts.join(' OR ');
-        xml += `    <apps:property name="doesNotHaveTheWord" value="${escapeXml(combinedQuery)}"/>\n`;
-    } else if (excludesConditions.length === 1) {
-        // 単一のORグループの場合
-        const orGroup = excludesConditions[0];
-        // ANDキーワードを除去して実際の値だけを取得
-        const values = orGroup.filter(item => item !== 'AND');
-
-        if (values.length === 1) {
-            // 単一のキーワードの場合
-            xml += `    <apps:property name="doesNotHaveTheWord" value="${escapeXml(values[0])}"/>\n`;
-        } else {
-            // 複数キーワード（AND条件）の場合
-            const andCondition = values.map(v => escapeXml(v)).join(' AND ');
-            xml += `    <apps:property name="doesNotHaveTheWord" value="${escapeXml(andCondition)}"/>\n`;
+            xml += `    <apps:property name="${propertyName}" value="${escapeXml(andCondition)}"/>\n`;
         }
     }
 
@@ -1542,7 +1376,6 @@ function generateSizeConditionXML(sizeCondition) {
     return xml;
 }
 
-// Gmailフィルタ形式のXMLからフィルタを読み込む関数
 // Gmailフィルタ形式のXMLからフィルタを読み込む関数
 function importFiltersFromXML(xmlContent) {
     try {
@@ -1690,6 +1523,31 @@ function importFiltersFromXML(xmlContent) {
         alert("フィルタのインポート中にエラーが発生しました: " + error.message);
         return 0;
     }
+}
+
+// FROM条件をXML形式に変換する関数
+function generateFromConditionXML(fromConditions) {
+    return generateConditionXML(fromConditions, 'from');
+}
+
+// TO条件をXML形式に変換する関数
+function generateToConditionXML(toConditions) {
+    return generateConditionXML(toConditions, 'to');
+}
+
+// 件名条件をXML形式に変換する関数
+function generateSubjectConditionXML(subjectConditions) {
+    return generateConditionXML(subjectConditions, 'subject');
+}
+
+// 含むキーワード条件をXML形式に変換する関数
+function generateHasTheWordConditionXML(includesConditions) {
+    return generateConditionXML(includesConditions, 'hasTheWord');
+}
+
+// 含まないキーワード条件をXML形式に変換する関数
+function generateDoesNotHaveTheWordConditionXML(excludesConditions) {
+    return generateConditionXML(excludesConditions, 'doesNotHaveTheWord');
 }
 
 // 「フィルタを読み込む」ボタンの処理を実装
