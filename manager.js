@@ -1402,22 +1402,22 @@ function generateSubjectConditionXML(subjectConditions) {
     // 複数のORグループがある場合は複合条件として処理
     if (subjectConditions.length > 1) {
         // OR条件グループをフォーマット
-        const subjectParts = subjectConditions.map(orGroup => {
+        const includeParts = subjectConditions.map(orGroup => {
             // ANDキーワードを除去して実際の値だけを取得
             const values = orGroup.filter(item => item !== 'AND');
             if (values.length === 1) {
                 // 単一値の場合はそのまま
-                return `subject:${escapeXml(values[0])}`;
+                return escapeXml(values[0]);
             } else {
                 // 複数値（AND条件）の場合は括弧でグループ化
-                const andCondition = values.map(v => `subject:${escapeXml(v)}`).join(' AND ');
+                const andCondition = values.map(v => escapeXml(v)).join(' AND ');
                 return `(${andCondition})`;
             }
         });
 
         // すべてのOR条件を組み合わせる
-        const combinedQuery = subjectParts.join(' OR ');
-        xml += `    <apps:property name="hasTheWord" value="${escapeXml(combinedQuery)}"/>\n`;
+        const combinedQuery = includeParts.join(' OR ');
+        xml += `    <apps:property name="subject" value="${escapeXml(combinedQuery)}"/>\n`;
     } else if (subjectConditions.length === 1) {
         // 単一のORグループの場合
         const orGroup = subjectConditions[0];
@@ -1428,9 +1428,9 @@ function generateSubjectConditionXML(subjectConditions) {
             // 単一のキーワードの場合
             xml += `    <apps:property name="subject" value="${escapeXml(values[0])}"/>\n`;
         } else {
-            // 複数キーワード（AND条件）の場合はsubject:形式で
-            const andCondition = values.map(v => `subject:${escapeXml(v)}`).join(' AND ');
-            xml += `    <apps:property name="hasTheWord" value="${escapeXml(andCondition)}"/>\n`;
+            // 複数キーワード（AND条件）の場合
+            const andCondition = values.map(v => escapeXml(v)).join(' AND ');
+            xml += `    <apps:property name="subject" value="${escapeXml(andCondition)}"/>\n`;
         }
     }
 
