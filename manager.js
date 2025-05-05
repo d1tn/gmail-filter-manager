@@ -693,6 +693,9 @@ function updateCurrentFilterData() {
         console.log(`カテゴリを設定: enabled=${applyCategoryCheckbox.checked}, category=${currentFilter.actions.applyCategory.category}`);
     }
 
+    // 変更を保存
+    saveFiltersToStorage();
+
     console.log("Updated filter data:", currentFilter);
 }
 
@@ -1013,7 +1016,7 @@ function duplicateCurrentFilter() {
     console.log("Filter duplicated and new filter selected.");
 
     // TODO: chrome.storage にフィルタデータを保存する処理を呼び出す (後で実装)
-    // saveFiltersToStorage();
+    saveFiltersToStorage();
 }
 
 // --- フィルタを削除する関数 ---
@@ -1057,6 +1060,10 @@ function deleteCurrentFilter() {
 
     // 削除ボタンの状態を更新
     updateDeleteButtonState();
+
+    // 変更を保存
+    saveFiltersToStorage();
+
 }
 
 // --- 削除ボタンの状態を更新する関数 ---
@@ -1151,8 +1158,8 @@ function reorderFilters(oldIndex, newIndex) {
 
     console.log("Filters reordered successfully");
 
-    // TODO: フィルタデータを保存
-    // saveFiltersToStorage();
+    // 変更を保存
+    saveFiltersToStorage();
 }
 
 // Gmail互換のXMLフィルタを生成する関数
@@ -1314,7 +1321,7 @@ document.getElementById('export-filter').addEventListener('click', function () {
 // 条件をXML形式に変換する共通関数
 function generateConditionXML(conditions, propertyName) {
     if (!conditions || conditions.length === 0) return '';
-    
+
     let xml = '';
 
     // 複数のORグループがある場合は複合条件として処理
@@ -1550,6 +1557,83 @@ function generateDoesNotHaveTheWordConditionXML(excludesConditions) {
     return generateConditionXML(excludesConditions, 'doesNotHaveTheWord');
 }
 
+// 環境判定関数も更新
+function isExtensionEnvironment() {
+    return typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local;
+}
+
+// 読み込んだデータを処理する関数
+function handleLoadedData(loadedFilters) {
+    if (loadedFilters && Array.isArray(loadedFilters) && loadedFilters.length > 0) {
+        // データがあればそれを使用
+        filters = loadedFilters;
+        console.log('保存されたフィルタを読み込みました:', filters.length, '件');
+
+        // フィルタ一覧を描画
+        renderFilterList();
+
+        // 最初のフィルタを選択
+        selectFilter(0);
+    } else {
+        // 保存データがない場合は初期フィルタを作成
+        console.log("ストレージからフィルタが見つからないか、データが無効です。初期フィルタを作成します。");
+        const initialFilter = createNewFilterData();
+        filters = [initialFilter]; // 空の配列に初期フィルタを追加
+
+        // フィルタ一覧を描画
+        renderFilterList();
+
+        // 作成したフィルタを選択
+        selectFilterById(initialFilter.id);
+
+        // 初期フィルタをストレージに保存
+        saveFiltersToStorage();
+    }
+
+    // 削除ボタンの状態を更新
+    updateDeleteButtonState();
+}
+
+// 保存されたフィルタデータを読み込む関数
+function loadFiltersFromStorage() {
+    console.log("ストレージからフィルタデータの読み込みを開始します");
+
+    if (isExtensionEnvironment()) {
+        // Chrome拡張環境
+        chrome.storage.local.get('filters', function (result) {
+            handleLoadedData(result.filters);
+        });
+    } else {
+        // 通常のWeb環境（開発時）
+        try {
+            const savedData = localStorage.getItem('gmail_filters');
+            const parsedData = savedData ? JSON.parse(savedData) : null;
+            handleLoadedData(parsedData);
+        } catch (e) {
+            console.error('フィルタ設定の読み込みに失敗しました：', e);
+            handleLoadedData(null);
+        }
+    }
+}
+
+// フィルタデータを保存する関数
+function saveFiltersToStorage() {
+    if (isExtensionEnvironment()) {
+        // Chrome拡張環境
+        chrome.storage.local.set({ 'filters': filters }, function () {
+            console.log('フィルタ設定が保存されました（chrome.storage.local）');
+        });
+    } else {
+        // 通常のWeb環境（開発時）
+        try {
+            localStorage.setItem('gmail_filters', JSON.stringify(filters));
+            console.log('フィルタ設定が保存されました（localStorage）');
+        } catch (e) {
+            console.error('フィルタ設定の保存に失敗しました：', e);
+        }
+    }
+}
+
 // 「フィルタを読み込む」ボタンの処理を実装
 document.getElementById('import-filter').addEventListener('click', function () {
     // ファイル選択ダイアログを表示
@@ -1702,7 +1786,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // TODO: 既存のフィルタデータがあれば chrome.storage から読み込む処理を実装 (後で)
+    // TODO: 既存のフィルタデータがあれば chrome.storage から読み込む
+    loadFiltersFromStorage();
+
     // 初期表示として空のフィルタリストを作成し、最初のフィルタを選択状態にする
     if (filters.length === 0) {
         console.log("No filters found, creating initial filter.");
