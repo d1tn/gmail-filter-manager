@@ -1047,7 +1047,6 @@ function deleteCurrentFilter() {
 }
 
 // --- 削除ボタンの状態を更新する関数 ---
-// 削除ボタンの状態を更新する関数
 function updateDeleteButtonState() {
     const deleteFilterButton = document.getElementById('delete-this-filter');
     if (deleteFilterButton) {
