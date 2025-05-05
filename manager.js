@@ -1692,6 +1692,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("New filter should be rendered and selected.");
             // 削除ボタンの状態を更新
             updateDeleteButtonState();
+            
+            // 明示的に保存処理を呼び出す
+            saveFiltersToStorage();
         });
     } else {
         console.error("'+ フィルタを追加' button not found!");
