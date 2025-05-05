@@ -91,7 +91,6 @@ function renderFilterList() {
     }
 
     // 既存のフィルタ項目をクリア（「＋ フィルタを追加」ボタン以外）
-    // manager.html で「＋ フィルタを追加」ボタンの li に id="add-new-filter-item" が付与されている前提
     filterListUl.querySelectorAll('.filter-list-item:not(#add-new-filter-item)').forEach(item => item.remove());
 
     // filters 配列の各フィルタに対してリスト項目を作成
@@ -101,42 +100,40 @@ function renderFilterList() {
         // データ属性としてフィルタのIDとインデックスを保持
         listItem.dataset.filterId = filter.id;
         listItem.dataset.filterIndex = index;
-
+    
         const button = document.createElement('button');
-        // ★★★ ここを修正: フィルタ名が空の場合はデフォルト名を表示 ★★★
-        button.textContent = filter.name || "無題のフィルタ"; // filter.name が空文字列や null, undefined の場合は "無題のフィルタ" を使用
-        // または、より明示的に:
-        // if (filter.name === "") {
-        //     button.textContent = "無題のフィルタ";
-        // } else {
-        //     button.textContent = filter.name;
-        // }
-        button.classList.add('filter-list-button'); // スタイル用クラス
-        button.type = 'button'; // フォーム送信を防ぐ
-
+        button.textContent = filter.name || "無題のフィルタ";
+        button.classList.add('filter-list-button');
+        button.type = 'button';
+    
         // クリックイベントでフィルタを選択状態にする
         button.addEventListener('click', () => {
-            // インデックスではなくIDでフィルタを特定する方が、並べ替えなどでインデックスが変わった際に安全です
             selectFilterById(filter.id);
         });
-
+    
+        // ドラッグハンドルを追加（右側に配置）
+        const dragHandle = document.createElement('span');
+        dragHandle.classList.add('drag-handle');
+        dragHandle.innerHTML = '&#8942;&#8942;'; // 縦に並んだ6点（2つの縦3点リーダー）
+    
         // 現在選択されているフィルタであれば、アクティブなスタイルを適用
         if (filter.id === (filters[currentFilterIndex] ? filters[currentFilterIndex].id : null)) {
-             listItem.classList.add('active'); // li 要素にactiveクラスを付ける
-         }
-
-
+            listItem.classList.add('active');
+        }
+    
+        // 子要素を追加（ボタンが先、ドラッグハンドルが後）
         listItem.appendChild(button);
+        listItem.appendChild(dragHandle);
+        
         // 「＋ フィルタを追加」ボタンの li 要素の前に挿入
-        const addNewFilterItem = filterListUl.querySelector('#add-new-filter-item'); // IDで確実に取得
+        const addNewFilterItem = filterListUl.querySelector('#add-new-filter-item');
         if (addNewFilterItem) {
-             addNewFilterItem.before(listItem);
+            addNewFilterItem.before(listItem);
         } else {
-             // もし「＋ フィルタを追加」ボタンが見つからない場合は末尾に追加 (フォールバック)
-             filterListUl.appendChild(listItem);
+            filterListUl.appendChild(listItem);
         }
     });
-     console.log("Filter list rendering complete.");
+    console.log("Filter list rendering complete.");
 }
 
 // --- フィルタを選択し、右ペインに表示する関数 (IDで選択) ---
@@ -1063,6 +1060,85 @@ function updateDeleteButtonState() {
     }
 }
 
+// フィルタリストのドラッグ＆ドロップソート機能
+function setupFilterListSorting() {
+    const filterListUl = document.getElementById('filter-list');
+    if (!filterListUl) {
+        console.error("Filter list UL element not found for sorting!");
+        return;
+    }
+    
+    // Sortable.jsライブラリを使用する場合
+    if (typeof Sortable !== 'undefined') {
+        console.log("Initializing Sortable.js for filter list");
+        
+        new Sortable(filterListUl, {
+            animation: 150,
+            handle: '.drag-handle', // ドラッグハンドルのみドラッグ可能に
+            draggable: '.filter-list-item:not(#add-new-filter-item)', // 「＋ フィルタを追加」ボタン以外をドラッグ可能に
+            filter: '.filter-list-button', // ボタン自体はドラッグの開始エリアとしない
+            onStart: function(evt) {
+                console.log("Drag started", evt);
+            },
+            onEnd: function(evt) {
+                console.log("Drag ended", evt);
+                // ドラッグ終了時に配列の順序を更新（add-new-filter-itemの位置を考慮）
+                
+                // フィルタ項目のインデックスを調整（add-new-filter-itemを考慮）
+                const oldIndex = evt.oldIndex;
+                const newIndex = evt.newIndex;
+                
+                console.log(`Moving filter from index ${oldIndex} to ${newIndex}`);
+                
+                // 配列の順序を更新
+                reorderFilters(oldIndex, newIndex);
+            }
+        });
+        
+        console.log("Sortable.js initialized for filter list");
+    } else {
+        console.warn('Sortable.js not loaded - drag & drop ordering unavailable');
+    }
+}
+
+// filters配列の順序を更新する関数
+function reorderFilters(oldIndex, newIndex) {
+    console.log(`Reordering filters: ${oldIndex} -> ${newIndex}`);
+    
+    // 範囲チェック
+    if (oldIndex >= filters.length || newIndex >= filters.length || oldIndex < 0 || newIndex < 0) {
+        console.error(`Invalid indices for reordering: oldIndex=${oldIndex}, newIndex=${newIndex}, filters.length=${filters.length}`);
+        return;
+    }
+    
+    // 現在選択中のフィルタのIDを保存
+    const currentFilterId = filters[currentFilterIndex]?.id;
+    console.log(`Current active filter ID before reordering: ${currentFilterId}`);
+    
+    // 配列の要素を移動
+    const movedFilter = filters.splice(oldIndex, 1)[0];
+    filters.splice(newIndex, 0, movedFilter);
+    
+    console.log("Filters after reordering:", filters.map(f => `${f.id}:${f.name || "無題"}`));
+    
+    // currentFilterIndexを更新（IDで一致するフィルタを検索）
+    if (currentFilterId) {
+        const newIndex = filters.findIndex(filter => filter.id === currentFilterId);
+        if (newIndex !== -1) {
+            currentFilterIndex = newIndex;
+            console.log(`Updated currentFilterIndex to ${currentFilterIndex} for filter ID ${currentFilterId}`);
+        }
+    }
+    
+    // 新しい順序でフィルタ一覧を再描画
+    renderFilterList();
+    
+    console.log("Filters reordered successfully");
+    
+    // TODO: フィルタデータを保存
+    // saveFiltersToStorage();
+}
+
 // --- ページの読み込みが完了したら実行される処理 ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOMContentLoaded event fired.");
@@ -1076,6 +1152,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.warn("No filter condition items found.");
     }
+
+    // ここにドラッグアンドドロップ機能の初期化
+    setupFilterListSorting();
 
 
     // 「＋ フィルタを追加」ボタンにイベントリスナーを設定

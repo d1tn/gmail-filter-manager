@@ -93,7 +93,8 @@ input {
     .left-pane {
         section {
             width: 18rem;
-            margin-bottom: 1.5rem;;
+            margin-bottom: 1.5rem;
+            ;
 
             h2 {
                 font-size: 1.5rem;
@@ -104,6 +105,7 @@ input {
 
         li {
             list-style: none;
+            border-radius: 0 5.0rem 5.0rem 0;
 
             button {
                 line-height: 2.5rem;
@@ -128,8 +130,46 @@ input {
                 background: #eee;
             }
 
-            &.active button {
-                background: #D3E3FD;
+            &.filter-list-item {
+                display: flex;
+                align-items: center;
+                transition: background-color 0.2s ease;
+                position: relative;
+
+                &.active button {
+                    background: #D3E3FD;
+                }
+
+                /* ドラッグハンドルのスタイル */
+                .drag-handle {
+                    position: absolute;
+                    right: 1.2rem;
+                    font-size: 1.1rem;
+                    top: 1.1rem;
+                    /* 上下中央に配置するための基準点 */
+                    transform: translateY(-50%);
+                    /* 上下中央に配置 */
+                    cursor: grab;
+                    color: #666;
+                    z-index: 10;
+                    /* ボタンの上に表示されるようにする */
+
+                    &:active {
+                        cursor: grabbing;
+                    }
+                }
+
+                /* ドラッグ中のスタイル */
+                &.sortable-ghost {
+                    opacity: 0.5;
+                    background-color: #e0e0e0;
+                }
+
+                &.sortable-chosen {
+                    background-color: #f0f0f0;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                }
+
             }
 
         }
@@ -431,7 +471,7 @@ button.remove-or-group-button:hover {
             color: #c0392b;
         }
 
-        &.disabled-button{
+        &.disabled-button {
             background-color: transparent;
             color: #666;
             cursor: not-allowed;
