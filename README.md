@@ -73,3 +73,5 @@ A: ページの再読み込みを試すか、拡張機能が有効になって�
 ## フィードバック・貢献
 
 バグ報告や機能リクエストは、GitHub Issuesまたはお問い合わせフォームからお願いします。
+- GitHub Issue: https://github.com/d1tn/gmail-filter-manager/issues
+- お問い合わせフォーム: https://forms.gle/Gj64pauUAAjTNBKP7
