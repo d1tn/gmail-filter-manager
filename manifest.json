@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Gmail Filter Manager",
   "version": "1.0",
-  "description": "GUI-based Gmail filter management.",
+  "description": "Gmailのフィルタを直感的なGUIで簡単に作成・管理できる拡張機能",
   "permissions": [
     "activeTab",
     "storage",
@@ -12,7 +12,10 @@
     {
       "resources": [
         "docs/*",
-        "lib/*"
+        "lib/*",
+        "manager.html",
+        "manager.js",
+        "manager.css"
       ],
       "matches": [
         "<all_urls>"
@@ -40,9 +43,17 @@
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
-    }
+    },
+    "default_title": "Gmail Filter Manager"
   },
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "author": "Your Name",
+  "homepage_url": "https://github.com/d1tn/gmail-filter-manager"
 }
