@@ -10,7 +10,7 @@ let filters = [];
 // 現在選択されているフィルタのインデックスを保持
 let currentFilterIndex = -1;
 
-// --- 汎用的なヘルパー関数（条件項目に依存しないもの） ---
+// 汎用的なヘルパー関数（条件項目に依存しないもの）
 
 // チップを作成 (汎用化)
 function createChip(text, type) {
@@ -46,7 +46,7 @@ function createOrGroupRemoveButton() {
     return removeButton;
 }
 
-// --- 無題のフィルタデータを作成する関数 ---
+// 無題のフィルタデータを作成する関数
 function createNewFilterData() {
     // デフォルト値を持つ無題のフィルタオブジェクトを生成
     const newFilter = {
@@ -81,7 +81,7 @@ function createNewFilterData() {
     return newFilter;
 }
 
-// --- フィルタ一覧を更新する関数 ---
+// フィルタ一覧を更新する関数
 function renderFilterList() {
     console.log("Rendering filter list...");
     const filterListUl = document.getElementById('filter-list');
@@ -136,7 +136,7 @@ function renderFilterList() {
     console.log("Filter list rendering complete.");
 }
 
-// --- フィルタを選択し、右ペインに表示する関数 (IDで選択) ---
+// フィルタを選択し、右ペインに表示する関数 (IDで選択)
 function selectFilterById(filterId) {
     console.log(`Attempting to select filter with ID: ${filterId}`);
     const index = filters.findIndex(filter => filter.id === filterId);
@@ -152,7 +152,7 @@ function selectFilterById(filterId) {
     }
 }
 
-// --- 選択されたフィルタのデータを右ペインに表示する関数 ---
+// 選択されたフィルタのデータを右ペインに表示する関数
 function displayFilterDetails(filter) {
     console.log("Displaying filter details:", filter);
     // 右ペインの要素をクリアする処理（フィルタが選択されていない場合や無題のフィルタ表示前）
@@ -318,7 +318,7 @@ function displayFilterDetails(filter) {
     }
 }
 
-// --- フィルタを選択し、右ペインに表示する関数 (インデックスで選択) ---
+// フィルタを選択し、右ペインに表示する関数 (インデックスで選択)
 function selectFilter(index) {
     console.log(`Selecting filter by index: ${index}`);
     if (index < 0 || index >= filters.length) {
@@ -349,7 +349,7 @@ function selectFilter(index) {
     updateDeleteButtonState();
 }
 
-// --- 条件項目の表示/非表示を更新するヘルパー関数（renderCondition内で使用） ---
+// 条件項目の表示/非表示を更新するヘルパー関数（renderCondition内で使用）
 function updateDisplayVisibilityOfCondition(conditionItemElement) {
     const chipsDisplay = conditionItemElement.querySelector('.condition-chips-display');
     const orConnector = conditionItemElement.querySelector('.condition-or-connector');
@@ -382,7 +382,7 @@ function updateDisplayVisibilityOfCondition(conditionItemElement) {
     }
 }
 
-// --- フィルタデータの conditions 部分を右ペインの条件入力エリアのチップ表示に反映する関数 ---
+// フィルタデータの conditions 部分を右ペインの条件入力エリアのチップ表示に反映する関数
 function renderCondition(conditionType, conditionData) {
     console.log(`Rendering condition: ${conditionType}`, conditionData);
     const conditionItemElement = document.querySelector(`.filter-condition-item[data-condition-type="${conditionType}"]`);
@@ -425,7 +425,7 @@ function renderCondition(conditionType, conditionData) {
     conditionData.forEach((orGroup, orIndex) => {
         // 最初のORグループの場合
         if (orIndex === 0) {
-            // --- 修正箇所: 最初のORグループの要素を、最後の要素を入力フォームに、それ以前をチップとして表示 ---
+            // 修正箇所: 最初のORグループの要素を、最後の要素を入力フォームに、それ以前をチップとして表示
             if (orGroup.length > 0) {
                 const lastValue = orGroup[orGroup.length - 1]; // 最後の要素を取得
 
@@ -447,7 +447,7 @@ function renderCondition(conditionType, conditionData) {
                     }
                 }
             }
-            // --- 修正箇所終了 ---
+            // 修正箇所終了
 
             // 最初のORグループに対応する下部表示エリアは空のまま（入力フォームで表現されるため）
 
@@ -493,7 +493,7 @@ function renderCondition(conditionType, conditionData) {
     console.log(`Finished rendering condition: ${conditionType}`); // ログを追加
 }
 
-// --- 右ペインの入力値の変更を現在のフィルタデータに反映させる関数 ---
+// 右ペインの入力値の変更を現在のフィルタデータに反映させる関数
 function updateCurrentFilterData() {
     console.log("Updating current filter data...");
     if (currentFilterIndex === -1 || !filters[currentFilterIndex]) {
@@ -699,7 +699,7 @@ function updateCurrentFilterData() {
     console.log("Updated filter data:", currentFilter);
 }
 
-// --- 各条件項目にロジックを設定する関数 ---
+// 各条件項目にロジックを設定する関数
 function setupConditionItem(conditionItemElement) {
     const inputElement = conditionItemElement.querySelector('.app-form-input');
     const addAndButton = conditionItemElement.querySelector('.add-and-button');
@@ -977,7 +977,7 @@ function setupConditionItem(conditionItemElement) {
     }
 }
 
-// --- フィルタを複製する関数 ---
+// フィルタを複製する関数
 function duplicateCurrentFilter() {
     console.log("Attempting to duplicate current filter.");
     if (currentFilterIndex === -1) {
@@ -1019,7 +1019,7 @@ function duplicateCurrentFilter() {
     saveFiltersToStorage();
 }
 
-// --- フィルタを削除する関数 ---
+// フィルタを削除する関数
 function deleteCurrentFilter() {
     console.log("Attempting to delete current filter.");
     if (currentFilterIndex === -1) {
@@ -1066,7 +1066,7 @@ function deleteCurrentFilter() {
 
 }
 
-// --- 削除ボタンの状態を更新する関数 ---
+// 削除ボタンの状態を更新する関数
 function updateDeleteButtonState() {
     const deleteFilterButton = document.getElementById('delete-this-filter');
     if (deleteFilterButton) {
@@ -1753,7 +1753,7 @@ function importFiltersFromXML(xmlContent) {
 }
 
 
-// --- ページの読み込みが完了したら実行される処理 ---
+// ページの読み込みが完了したら実行される処理
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOMContentLoaded event fired.");
     // 全ての条件項目要素を取得し、ロジックを設定
