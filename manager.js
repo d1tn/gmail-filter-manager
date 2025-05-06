@@ -1383,155 +1383,6 @@ function generateSizeConditionXML(sizeCondition) {
     return xml;
 }
 
-// Gmailフィルタ形式のXMLからフィルタを読み込む関数
-function importFiltersFromXML(xmlContent) {
-    try {
-        console.log("XMLのインポートを開始します");
-        // XMLパーサーを作成
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlContent, "application/xml");
-
-        // XMLパースエラーをチェック
-        const parserError = xmlDoc.querySelector('parsererror');
-        if (parserError) {
-            throw new Error("XML解析エラー: " + parserError.textContent);
-        }
-
-        // 全エントリを取得
-        const entries = xmlDoc.querySelectorAll('entry');
-        const importedFilters = [];
-
-        // 各エントリーを処理
-        entries.forEach(entry => {
-            // 新しいフィルタオブジェクトを作成
-            const filter = createNewFilterData();
-
-            // フィルタ名を取得（XMLコメント内）
-            const titleElement = entry.querySelector('title');
-            if (titleElement) {
-                const titleContent = titleElement.innerHTML;
-                const nameMatch = titleContent.match(/<!--\s*(.*?)\s*-->/);
-                if (nameMatch && nameMatch[1]) {
-                    filter.name = nameMatch[1].trim();
-                    console.log(`フィルタ名を検出: "${filter.name}"`);
-                }
-            }
-
-            // 各プロパティを取得
-            const properties = entry.querySelectorAll('apps\\:property');
-            properties.forEach(property => {
-                const name = property.getAttribute('name');
-                const value = property.getAttribute('value');
-
-                // プロパティに基づいてフィルタを設定
-                switch (name) {
-                    case 'from':
-                        filter.conditions.from = [[value]];
-                        break;
-                    case 'to':
-                        filter.conditions.to = [[value]];
-                        break;
-                    case 'subject':
-                        filter.conditions.subject = [[value]];
-                        break;
-                    case 'hasTheWord':
-                        // 簡略化: 単一の条件として扱う
-                        filter.conditions.includes = [[value]];
-                        break;
-                    case 'doesNotHaveTheWord':
-                        filter.conditions.excludes = [[value]];
-                        break;
-                    case 'hasAttachment':
-                        filter.conditions.hasAttachment = (value === 'true');
-                        break;
-                    case 'size':
-                    case 'sizeOperator':
-                    case 'sizeUnit':
-                        if (name === 'size') {
-                            filter.conditions.size.value = parseInt(value) || 0;
-                        }
-                        if (name === 'sizeOperator') {
-                            filter.conditions.size.operator = (value === 's_sl') ? 'larger_than' : 'smaller_than';
-                        }
-                        if (name === 'sizeUnit') {
-                            filter.conditions.size.unit = value;
-                        }
-                        break;
-                    // アクション(処理)の設定
-                    case 'shouldArchive':
-                        filter.actions.skipInbox = (value === 'true');
-                        break;
-                    case 'shouldMarkAsRead':
-                        filter.actions.markAsRead = (value === 'true');
-                        break;
-                    case 'shouldStar':
-                        filter.actions.star = (value === 'true');
-                        break;
-                    case 'label':
-                        filter.actions.applyLabel.enabled = true;
-                        filter.actions.applyLabel.labelName = value;
-                        break;
-                    case 'forwardTo':
-                        filter.actions.forward.enabled = true;
-                        filter.actions.forward.forwardAddress = value;
-                        break;
-                    case 'shouldTrash':
-                        filter.actions.delete = (value === 'true');
-                        break;
-                    case 'shouldNeverSpam':
-                        filter.actions.notSpam = (value === 'true');
-                        break;
-                    case 'shouldAlwaysMarkAsImportant':
-                        filter.actions.alwaysImportant = (value === 'true');
-                        break;
-                    case 'shouldNeverMarkAsImportant':
-                        filter.actions.neverImportant = (value === 'true');
-                        break;
-                    case 'smartLabelToApply':
-                        filter.actions.applyCategory.enabled = true;
-                        filter.actions.applyCategory.category = value;
-                        break;
-                }
-            });
-
-            console.log("インポートされたフィルタ:", filter);
-            importedFilters.push(filter);
-        });
-
-        // 既存のフィルタと結合するか、置き換えるか確認
-        if (filters.length > 0 && importedFilters.length > 0) {
-            if (confirm(`${importedFilters.length}個のフィルタを読み込みました。既存の${filters.length}個のフィルタと統合しますか？「キャンセル」を選択すると、既存のフィルタを全て置き換えます。`)) {
-                // 統合する場合
-                filters = filters.concat(importedFilters);
-            } else {
-                // 置き換える場合
-                filters = importedFilters;
-            }
-        } else {
-            // 既存のフィルタがない場合は置き換え
-            filters = importedFilters;
-        }
-
-        // フィルタ一覧を更新
-        renderFilterList();
-
-        // 最初のフィルタを選択
-        if (filters.length > 0) {
-            selectFilter(0);
-        } else {
-            currentFilterIndex = -1;
-            displayFilterDetails(null);
-        }
-
-        console.log(`${importedFilters.length}個のフィルタを正常にインポートしました`);
-        return importedFilters.length;
-    } catch (error) {
-        console.error("フィルタのインポート中にエラーが発生しました:", error);
-        alert("フィルタのインポート中にエラーが発生しました: " + error.message);
-        return 0;
-    }
-}
-
 // FROM条件をXML形式に変換する関数
 function generateFromConditionXML(fromConditions) {
     return generateConditionXML(fromConditions, 'from');
@@ -1662,6 +1513,246 @@ document.getElementById('import-filter').addEventListener('click', function () {
     input.click();
 });
 
+// 条件文字列を解析して条件データ構造に変換する関数
+function parseConditionString(conditionStr) {
+    console.log(`条件文字列を解析: "${conditionStr}"`);
+
+    // 結果を格納する配列（OR条件ごとのグループの配列）
+    const result = [];
+
+    try {
+        // OR で分割
+        const orParts = conditionStr.split(' OR ');
+        console.log(`OR分割結果:`, orParts);
+
+        orParts.forEach(orPart => {
+            // 括弧を除去して整形
+            const cleanPart = orPart.replace(/^\(|\)$/g, '').trim();
+            console.log(`整形済み部分: "${cleanPart}"`);
+
+            if (cleanPart.includes(' AND ')) {
+                // AND条件の場合
+                const andParts = cleanPart.split(' AND ');
+                const andGroup = [];
+
+                // 最初の値を追加
+                andGroup.push(andParts[0].trim());
+
+                // 残りの値はAND演算子を間に挟んで追加
+                for (let i = 1; i < andParts.length; i++) {
+                    andGroup.push('AND');
+                    andGroup.push(andParts[i].trim());
+                }
+
+                console.log(`ANDグループ:`, andGroup);
+                result.push(andGroup);
+            } else {
+                // 単一条件の場合
+                console.log(`単一条件: "${cleanPart}"`);
+                result.push([cleanPart]);
+            }
+        });
+    } catch (error) {
+        console.error(`条件文字列の解析中にエラー: ${error.message}`, error);
+        // エラー時には単一条件として処理
+        result.push([conditionStr]);
+    }
+
+    console.log(`解析結果:`, result);
+    return result;
+}
+
+// Gmailフィルタ形式のXMLからフィルタを読み込む関数
+function importFiltersFromXML(xmlContent) {
+    try {
+        console.log("XMLのインポートを開始します");
+        // XMLパーサーを作成
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlContent, "application/xml");
+
+        // XMLパースエラーをチェック
+        const parserError = xmlDoc.querySelector('parsererror');
+        if (parserError) {
+            throw new Error("XML解析エラー: " + parserError.textContent);
+        }
+
+        // 全エントリを取得
+        const entries = xmlDoc.querySelectorAll('entry');
+        console.log(`${entries.length}個のフィルタエントリを検出しました`);
+        
+        const importedFilters = [];
+
+        // 各エントリーを処理
+        entries.forEach((entry, entryIndex) => {
+            console.log(`フィルタエントリ #${entryIndex + 1} の処理を開始`);
+            
+            // 新しいフィルタオブジェクトを作成
+            const filter = createNewFilterData();
+
+            // フィルタ名を取得（XMLコメント内）
+            const titleElement = entry.querySelector('title');
+            if (titleElement) {
+                const titleContent = titleElement.innerHTML;
+                const nameMatch = titleContent.match(/<!--\s*(.*?)\s*-->/);
+                if (nameMatch && nameMatch[1]) {
+                    filter.name = nameMatch[1].trim();
+                    console.log(`フィルタ名を検出: "${filter.name}"`);
+                }
+            }
+
+            // 各プロパティを取得（複数の選択方法を試す）
+            let properties = entry.querySelectorAll('apps\\:property');
+            if (properties.length === 0) {
+                // 名前空間を無視して試行
+                properties = entry.querySelectorAll('property');
+            }
+            if (properties.length === 0) {
+                // 完全修飾名で試行
+                properties = entry.querySelectorAll('*[name]');
+            }
+            
+            console.log(`${properties.length}個のプロパティを検出しました`);
+
+            // 各プロパティを処理
+            properties.forEach(property => {
+                const name = property.getAttribute('name');
+                const value = property.getAttribute('value');
+                
+                console.log(`プロパティ: ${name} = ${value}`);
+
+                // プロパティに基づいてフィルタを設定
+                try {
+                    switch (name) {
+                        case 'from':
+                            filter.conditions.from = parseConditionString(value);
+                            console.log(`From条件を設定: `, filter.conditions.from);
+                            break;
+                        case 'to':
+                            filter.conditions.to = parseConditionString(value);
+                            console.log(`To条件を設定: `, filter.conditions.to);
+                            break;
+                        case 'subject':
+                            filter.conditions.subject = parseConditionString(value);
+                            console.log(`Subject条件を設定: `, filter.conditions.subject);
+                            break;
+                        case 'hasTheWord':
+                            filter.conditions.includes = parseConditionString(value);
+                            console.log(`Contains条件を設定: `, filter.conditions.includes);
+                            break;
+                        case 'doesNotHaveTheWord':
+                            filter.conditions.excludes = parseConditionString(value);
+                            console.log(`Excludes条件を設定: `, filter.conditions.excludes);
+                            break;
+                        case 'hasAttachment':
+                            filter.conditions.hasAttachment = (value === 'true');
+                            console.log(`HasAttachment条件を設定: ${filter.conditions.hasAttachment}`);
+                            break;
+                        case 'size':
+                            filter.conditions.size.value = parseInt(value) || 0;
+                            console.log(`Size値を設定: ${filter.conditions.size.value}`);
+                            break;
+                        case 'sizeOperator':
+                            filter.conditions.size.operator = (value === 's_sl') ? 'larger_than' : 'smaller_than';
+                            console.log(`Size演算子を設定: ${filter.conditions.size.operator}`);
+                            break;
+                        case 'sizeUnit':
+                            filter.conditions.size.unit = value;
+                            console.log(`Size単位を設定: ${filter.conditions.size.unit}`);
+                            break;
+                        // アクション(処理)の設定
+                        case 'shouldArchive':
+                            filter.actions.skipInbox = (value === 'true');
+                            console.log(`SkipInbox処理を設定: ${filter.actions.skipInbox}`);
+                            break;
+                        case 'shouldMarkAsRead':
+                            filter.actions.markAsRead = (value === 'true');
+                            console.log(`MarkAsRead処理を設定: ${filter.actions.markAsRead}`);
+                            break;
+                        case 'shouldStar':
+                            filter.actions.star = (value === 'true');
+                            console.log(`Star処理を設定: ${filter.actions.star}`);
+                            break;
+                        case 'label':
+                            filter.actions.applyLabel.enabled = true;
+                            filter.actions.applyLabel.labelName = value;
+                            console.log(`Label処理を設定: enabled=${filter.actions.applyLabel.enabled}, name=${filter.actions.applyLabel.labelName}`);
+                            break;
+                        case 'forwardTo':
+                            filter.actions.forward.enabled = true;
+                            filter.actions.forward.forwardAddress = value;
+                            console.log(`Forward処理を設定: enabled=${filter.actions.forward.enabled}, address=${filter.actions.forward.forwardAddress}`);
+                            break;
+                        case 'shouldTrash':
+                            filter.actions.delete = (value === 'true');
+                            console.log(`Delete処理を設定: ${filter.actions.delete}`);
+                            break;
+                        case 'shouldNeverSpam':
+                            filter.actions.notSpam = (value === 'true');
+                            console.log(`NotSpam処理を設定: ${filter.actions.notSpam}`);
+                            break;
+                        case 'shouldAlwaysMarkAsImportant':
+                            filter.actions.alwaysImportant = (value === 'true');
+                            console.log(`AlwaysImportant処理を設定: ${filter.actions.alwaysImportant}`);
+                            break;
+                        case 'shouldNeverMarkAsImportant':
+                            filter.actions.neverImportant = (value === 'true');
+                            console.log(`NeverImportant処理を設定: ${filter.actions.neverImportant}`);
+                            break;
+                        case 'smartLabelToApply':
+                            filter.actions.applyCategory.enabled = true;
+                            filter.actions.applyCategory.category = value;
+                            console.log(`Category処理を設定: enabled=${filter.actions.applyCategory.enabled}, category=${filter.actions.applyCategory.category}`);
+                            break;
+                        default:
+                            console.log(`未処理のプロパティ: ${name} = ${value}`);
+                    }
+                } catch (error) {
+                    console.error(`プロパティ ${name} の処理中にエラー: ${error.message}`, error);
+                }
+            });
+
+            console.log("インポートされたフィルタデータ:", JSON.stringify(filter, null, 2));
+            importedFilters.push(filter);
+        });
+
+        // 既存のフィルタと結合するか、置き換えるか確認
+        if (filters.length > 0 && importedFilters.length > 0) {
+            if (confirm(`${importedFilters.length}個のフィルタを読み込みました。既存の${filters.length}個のフィルタと統合しますか？「キャンセル」を選択すると、既存のフィルタを全て置き換えます。`)) {
+                // 統合する場合
+                filters = filters.concat(importedFilters);
+            } else {
+                // 置き換える場合
+                filters = importedFilters;
+            }
+        } else {
+            // 既存のフィルタがない場合は置き換え
+            filters = importedFilters;
+        }
+
+        // 変更を保存
+        saveFiltersToStorage();
+
+        // フィルタ一覧を更新
+        renderFilterList();
+
+        // 最初のフィルタを選択
+        if (filters.length > 0) {
+            selectFilter(0);
+        } else {
+            currentFilterIndex = -1;
+            displayFilterDetails(null);
+        }
+
+        console.log(`${importedFilters.length}個のフィルタを正常にインポートしました`);
+        return importedFilters.length;
+    } catch (error) {
+        console.error("フィルタのインポート中にエラーが発生しました:", error);
+        alert("フィルタのインポート中にエラーが発生しました: " + error.message);
+        return 0;
+    }
+}
+
+
 // --- ページの読み込みが完了したら実行される処理 ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOMContentLoaded event fired.");
@@ -1692,7 +1783,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("New filter should be rendered and selected.");
             // 削除ボタンの状態を更新
             updateDeleteButtonState();
-            
+
             // 明示的に保存処理を呼び出す
             saveFiltersToStorage();
         });
