@@ -6,45 +6,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gmail Filter Manager</title>
     <link rel="stylesheet" href="manager.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
     <script src="lib/Sortable.min.js"></script>
 </head>
 
 <body>
 
     <header class="app-header">
-        <h1>Gmail Filter Manager</h1>
-        <div class="header-actions">
-            <ul class="submenu">
+        <h1 class="app-title" >Gmail Filter Manager</h1>
+        <div class="header-menu">
+            <ul class="items submenu">
                 <li class="item">
-                    <a href="https://github.com/d1tn/gmail-filter-manager" target="_blank" class="github-link" title="GitHub">
-                        <svg class="github-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    <a href="#" class="readme-link" title="はじめに">
+                        <svg class="icon readme" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                            <path
+                                d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm169.8-90.7c7.9-22.3 29.1-37.3 52.8-37.3l58.3 0c34.9 0 63.1 28.3 63.1 63.1c0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24l0-13.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1c0-8.4-6.8-15.1-15.1-15.1l-58.3 0c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z" />
+                        </svg><span class="text">はじめに</span></a>
+                </li>
+                <li class="item">
+                    <a href="#" class="terms-link" title="利用規約">
+                        <svg class="icon terms" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                            <path
+                                d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z" />
                         </svg>
-                      </a>
+                        </svg><span class="text">利用規約</span></a>
+                </li>
+                <li class="item">
+                    <a href="https://github.com/d1tn/gmail-filter-manager" target="_blank" title="GitHub">
+                        <svg class="icon github" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        </svg>
+                        <span class="text">GitHub</span>
+                    </a>
                 </li>
             </ul>
         </div>
-      </header>
+    </header>
+
+    <!-- モーダルウィンドウ -->
+<!-- モーダルウィンドウ (シンプル版) -->
+<div id="docs-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">ドキュメント</h2>
+            <span class="close-button">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div id="docs-content" class="markdown-content">
+                <p>読み込み中...</p>
+            </div>
+        </div>
+    </div>
+</div>
 
     <div class="two-pane-container">
         <div class="left-pane">
-            <section class="menu">
-                <li class="menu-item">
-                    <button id="export-filter">フィルタを保存する</button>
-                </li>
-                <li class="menu-item">
-                    <button id="import-filter">フィルタを読み込む</button>
-                </li>
-
-            </ul>
+            <section class="menu main">
+                <ul class="items">
+                    <li class="item">
+                        <button id="export-filter">フィルタを保存する</button>
+                    </li>
+                    <li class="item">
+                        <button id="import-filter">フィルタを読み込む</button>
+                    </li>
+                </ul>
             </section>
             <section class="filter-list">
-            <h2>作成したフィルタ</h2>
-            <ul id="filter-list">
-                <li class="filter-list-item" id="add-new-filter-item">
-                    <button id="add-new-filter">＋ フィルタを追加</button>
-                </li>
-            </ul>
+                <h2>フィルタ<span><button id="add-new-filter">＋</button></span></h2>
+                <ul id="filter-list" class="items">
+                </ul>
+            </section>
+            <section class="menu sub">
+                <ul class="items submenu">
+                    <li class="item">
+                        <a href="#" class="readme-link" title="はじめに">
+                            <svg class="icon readme" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                                <path
+                                    d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm169.8-90.7c7.9-22.3 29.1-37.3 52.8-37.3l58.3 0c34.9 0 63.1 28.3 63.1 63.1c0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24l0-13.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1c0-8.4-6.8-15.1-15.1-15.1l-58.3 0c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z" />
+                            </svg><span class="text">はじめに</span></a>
+                    </li>
+                    <li class="item">
+                        <a href="#" class="terms-link" title="利用規約">
+                            <svg class="icon terms" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                                <path
+                                    d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z" />
+                            </svg>
+                            </svg><span class="text">利用規約</span></a>
+                    </li>
+                    <li class="item">
+                        <a href="https://github.com/d1tn/gmail-filter-manager" target="_blank" title="GitHub">
+                            <svg class="icon github" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
+                            <span class="text">GitHub</span>
+                        </a>
+                    </li>
+                </ul>
             </section>
         </div>
 
@@ -122,17 +189,18 @@
                         </div>
 
                         <div class="filter-process-item">
-                        <label for="process-apply-category" class="app-form-checkbox label">
-                            <input type="checkbox" id="process-apply-category" class="app-form-checkbox input">適用するカテゴリ:
-                            <select id="process-apply-category-select" class="app-form-select">
-                                <option value="">カテゴリを選択</option>
-                                <option value="^smartlabel_personal">メイン</option>
-                                <option value="^smartlabel_social">ソーシャル</option>
-                                <option value="^smartlabel_notification">新着</option>
-                                <option value="^smartlabel_group">フォーラム</option>
-                                <option value="^smartlabel_promo">プロモーション</option>
-                            </select>
-                        </label>
+                            <label for="process-apply-category" class="app-form-checkbox label">
+                                <input type="checkbox" id="process-apply-category"
+                                    class="app-form-checkbox input">適用するカテゴリ:
+                                <select id="process-apply-category-select" class="app-form-select">
+                                    <option value="">カテゴリを選択</option>
+                                    <option value="^smartlabel_personal">メイン</option>
+                                    <option value="^smartlabel_social">ソーシャル</option>
+                                    <option value="^smartlabel_notification">新着</option>
+                                    <option value="^smartlabel_group">フォーラム</option>
+                                    <option value="^smartlabel_promo">プロモーション</option>
+                                </select>
+                            </label>
                         </div>
                     </div>
                 </section>
@@ -158,7 +226,8 @@
                             <div class="condition-input-area">
                                 <label for="condition-to-input">To</label>
                                 <div class="input-and-button-container">
-                                    <input type="text" id="condition-to-input" class="app-form-input" placeholder="アドレスを入力">
+                                    <input type="text" id="condition-to-input" class="app-form-input"
+                                        placeholder="アドレスを入力">
                                     <button class="add-and-button" type="button">+ AND</button>
                                 </div>
                                 <button class="add-or-button" type="button">+ OR</button>
@@ -247,9 +316,10 @@
 
     </div>
 
-
-
     <script src="manager.js"></script>
+    <script src="docs/common.js"></script>
+    <script src="docs/readme.js"></script>
+    <script src="docs/terms.js"></script>
 </body>
 
 </html>

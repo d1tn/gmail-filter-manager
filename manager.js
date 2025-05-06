@@ -380,7 +380,7 @@ function updateFilterName(currentFilter) {
         // フィルタ名の変更を左ペインのフィルタ一覧に直接反映
         const filterListUl = document.getElementById('filter-list');
         // data-filter-id を使って該当要素を特定
-        const selectedItemButton = filterListUl.querySelector(`.filter-list-item[data-filter-id="${currentFilter.id}"] button`);
+        const selectedItemButton = filterListUl.querySelector(`.item[data-filter-id="${currentFilter.id}"] button`);
         if (selectedItemButton) {
             // フィルタ名が空の場合はデフォルト名を表示
             selectedItemButton.textContent = currentFilter.name || "無題のフィルタ";
@@ -592,12 +592,13 @@ function renderFilterList() {
     }
 
     // 既存のフィルタ項目をクリア（「＋ フィルタを追加」ボタン以外）
-    filterListUl.querySelectorAll('.filter-list-item:not(#add-new-filter-item)').forEach(item => item.remove());
+    filterListUl.querySelectorAll('.item:not(#add-new-filter-item)').forEach(item => item.remove());
 
     // filters 配列の各フィルタに対してリスト項目を作成
     filters.forEach((filter, index) => {
         const listItem = document.createElement('li');
-        listItem.classList.add('filter-list-item');
+        listItem.classList.add('item');
+        // listItem.classList.add('filter-list-item');
         // データ属性としてフィルタのIDとインデックスを保持
         listItem.dataset.filterId = filter.id;
         listItem.dataset.filterIndex = index;
@@ -1009,12 +1010,12 @@ function selectFilter(index) {
     // 既存の選択状態を解除
     const filterListUl = document.getElementById('filter-list');
     if (filterListUl) {
-        filterListUl.querySelectorAll('.filter-list-item').forEach(item => item.classList.remove('active'));
+        filterListUl.querySelectorAll('.item').forEach(item => item.classList.remove('active'));
     }
 
     // 選択状態を設定
     currentFilterIndex = index;
-    const selectedItem = filterListUl.querySelector(`.filter-list-item[data-filter-index="${index}"]`);
+    const selectedItem = filterListUl.querySelector(`.item[data-filter-index="${index}"]`);
     if (selectedItem) {
         selectedItem.classList.add('active');
     }
@@ -1126,7 +1127,7 @@ function setupFilterListSorting() {
         new Sortable(filterListUl, {
             animation: 150,
             handle: '.drag-handle', // ドラッグハンドルのみドラッグ可能に
-            draggable: '.filter-list-item:not(#add-new-filter-item)', // 「＋ フィルタを追加」ボタン以外をドラッグ可能に
+            draggable: '.item:not(#add-new-filter-item)', // 「＋ フィルタを追加」ボタン以外をドラッグ可能に
             filter: '.filter-list-button', // ボタン自体はドラッグの開始エリアとしない
             onStart: function (evt) {
                 console.log("Drag started", evt);

@@ -2,20 +2,35 @@
 :root {
     font-size: 14px;
     margin: 0;
+    font-family: "Noto Sans JP", sans-serif;
+    font-optical-sizing: auto;
+    background-color: #F8FAFD;
+    color: #333;
+
 }
+
+*{
+    font-family: "Noto Sans JP", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+  }
 
 *,
 html,
 body {
-    margin: 0;
     padding: 0;
+    margin: 0;
     transition: 0.3s;
 }
 
+html {
+    height: 100vh;
+}
+
 body {
-    font-family: sans-serif;
-    background-color: #F8FAFD;
-    color: #333;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 h1 {
@@ -29,7 +44,7 @@ h3 {
     color: #666;
 }
 
-li{
+li {
     list-style: none;
 }
 
@@ -87,30 +102,140 @@ input {
 }
 
 
+/* サブメニュー共通 */
+.submenu {
+
+    /* 共通 */
+    .icon {
+        fill: #666;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin: 0 0.5rem;
+    }
+}
+
+/* ヘッダー */
+
+.app-header {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+
+    .app-title {
+        color: #444746;
+        font-size: 1.1rem;
+    }
+
+    .header-menu {
+        .items {
+            display: flex;
+
+            .item {
+                margin: 0 0.5rem;
+
+                a {
+                    display: flex;
+                    align-items: center;
+                    height: 1.5rem;
+                    width: 1.5rem;
+                    text-decoration: none;
+                    border-radius: 50rem;
+                    padding: 0.5rem;
+
+                    &:hover {
+                        background-color: #ddd;
+                    }
+
+                    .icon {
+                        height: 100%;
+                        display: block;
+                        flex-shrink: 0;
+                        margin: 0;
+                        padding: 0;
+                    }
+                }
+            }
+
+            .text {
+                display: none;
+            }
+        }
+    }
+}
+
 
 /* 左右分割表示 */
 .two-pane-container {
     display: flex;
+    height: 100%;
     margin: 1.5rem 0;
+    overflow: hidden;
 
-    /* 左側表示領域のサイズ調整 */
+    /* ------------------------------------------ */
+    /* 左側ペイン */
+    /* ------------------------------------------ */
     .left-pane {
-        section {
-            width: 18rem;
-            margin-bottom: 1.5rem;
-            ;
+        position: relative;
+        flex-shrink: 0;
+        width: 18rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
 
-            h2 {
-                font-size: 1.5rem;
-                margin-left: 1.5rem;
-                margin-bottom: 0.5rem;
+        .menu.main {
+            flex-shrink: 0;
+        }
+
+        .menu.sub {
+            bottom: 0;
+            background-color: #F8FAFD;
+            z-index: 10;
+            padding-top: 1.0rem;
+            padding-bottom: 3.0rem;
+            border-top: 0.1rem solid #ddd;
+
+            a {
+                font-weight: normal;
             }
         }
 
-        li {
-            border-radius: 0 5.0rem 5.0rem 0;
+        section {
+            width: 18rem;
 
-            button {
+            h2 {
+                font-size: 1.2rem;
+                margin-left: 1.5rem;
+                margin-bottom: 0.5rem;
+                margin-top: 2.5rem;
+            }
+        }
+
+        .menu {
+            a {
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+
+                .icon {
+                    height: 1.5rem;
+                    margin-right: 1.0rem;
+                }
+            }
+        }
+
+        li.item {
+            border-radius: 0 5.0rem 5.0rem 0;
+            width: 100%;
+
+            button,
+            a {
+                box-sizing: border-box;
+                font-size: 1.0rem;
                 line-height: 2.5rem;
                 height: 100%;
                 width: 100%;
@@ -120,20 +245,62 @@ input {
                 font-weight: bold;
                 text-align: left;
                 padding-left: 2.0rem;
-                line-height: 2.5rem;
+                user-select: none;
 
                 /* テキスト省略表示 */
-                padding-right: 1.0rem;
+                padding-right: 2.0rem;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
 
-            button:hover {
+            &:hover {
                 background: #eee;
             }
 
-            &.filter-list-item {
+            .active {
+                background: #D3E3FD;
+            }
+        }
+
+        /* フィルタ一覧のitemのみ、ドラッグハンドルの調整 */
+        .filter-list {
+            width: 18rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+
+            h2 {
+                flex-shrink: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                button {
+                    background-color: transparent;
+                    color: #2980b9;
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    border-radius: 50%;
+                    width: 1.8rem;
+                    height: 1.8rem;
+
+                    &:hover {
+                        background-color: #ebf3ff;
+                    }
+                }
+            }
+
+            .items {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+                /* scrollbar-width: none; */
+            }
+
+            .items .item {
                 display: flex;
                 align-items: center;
                 transition: background-color 0.2s ease;
@@ -156,6 +323,7 @@ input {
                     color: #666;
                     z-index: 10;
                     /* ボタンの上に表示されるようにする */
+                    user-select: none;
 
                     &:active {
                         cursor: grabbing;
@@ -170,20 +338,24 @@ input {
 
                 &.sortable-chosen {
                     background-color: #f0f0f0;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                    box-shadow: 0 1.1rem 0.5rem rgba(0, 0, 0, 0.2);
                 }
-
             }
-
         }
+
     }
 
     .right-pane {
         min-width: 50rem;
+        overflow-y: auto;
+
     }
 }
 
-/* 右側セクション */
+/* ------------------------------------------ */
+/* 右側ペイン */
+/* ------------------------------------------ */
+
 /*フィルタ条件セクション全体 */
 .filter-setting-section {
     padding: 1.0rem 1.5rem;
@@ -483,36 +655,108 @@ button.remove-or-group-button:hover {
 }
 
 /* --------------------- */
-/* サブメニュー */
+/* モーダルスタイル */
 /* --------------------- */
 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
 
-.app-header {
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    width: 80%;
+    max-width: 900px;
+    max-height: 80vh;
+    border-radius: 1.0rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
-    margin-bottom: 20px;
+    padding: 1.0rem 1.5rem;
     border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .header-actions {
-    display: flex;
-    align-items: center;
-  }
-  
-  .github-link {
-    display: flex;
-    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.close-button {
+    color: #aaa;
+    font-size: 2.0rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover {
     color: #333;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-  
-  .github-link:hover {
-    opacity: 0.7;
-  }
-  
-  .github-icon {
-    fill: #666;
-  }
+}
+
+.modal-body {
+    flex: 1;
+    overflow: auto;
+}
+
+.markdown-container {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    padding: 0 1.5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 4.0rem;
+
+    h1 {
+        font-size: 1.8rem;
+        padding: 1.5rem 0 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        padding: 1.5rem 0 1rem;
+    }
+
+    h3 {
+        font-size: 1.3rem;
+        padding: 1.2rem 0 0.8rem;
+    }
+
+    p, li {
+        font-size: 1.0rem;
+    }
+
+    ol,ul{
+        padding-left: 1.5rem;
+        list-style-position: outside;
+    }
+
+    ol {
+        li {
+            list-style-type: decimal;
+        }
+    }
+
+    ul {
+        li {
+            list-style-type: disc;
+        }
+    }
+
+    div {
+        margin: 0.5rem 0;
+    }
+}
