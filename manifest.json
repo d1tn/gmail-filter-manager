@@ -8,14 +8,31 @@
     "storage",
     "tabs"
   ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "docs/*",
+        "lib/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
   "host_permissions": [
     "https://mail.google.com/*"
   ],
   "content_scripts": [
     {
-      "matches": ["https://mail.google.com/*"],
-      "js": ["content.js"],
-      "css": ["ui.css"]
+      "matches": [
+        "https://mail.google.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "ui.css"
+      ]
     }
   ],
   "action": {
