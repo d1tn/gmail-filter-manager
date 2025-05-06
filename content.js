@@ -1,6 +1,30 @@
 // Content Script: Gmailページ上で実行される
-
 console.log("Gmail Filter Manager Content Script loaded!");
+
+// コンテンツスクリプト初期化関数
+function initializeContentScript() {
+  // 既存のボタンが残っている場合は削除
+  const existingButton = document.getElementById('gmail-filter-manager-button');
+  if (existingButton && existingButton.parentNode) {
+    existingButton.parentNode.removeChild(existingButton);
+  }
+  
+  // Gmail UIの読み込み完了を待機してから処理を開始
+  waitForGmailToLoad().then(navElement => {
+    observeGmailChanges(navElement);
+  }).catch(error => {
+    console.error("Failed to initialize Gmail Filter Manager:", error);
+  });
+}
+
+// 初期化を実行
+initializeContentScript();
+
+// 拡張機能の再接続イベントを監視（拡張機能が再読み込みされた場合に対応）
+document.addEventListener('extension-reconnect-event', () => {
+  console.log("Extension reconnect event received");
+  initializeContentScript();
+});
 
 // Gmail UIの読み込み完了を待機
 function waitForGmailToLoad() {
@@ -59,13 +83,17 @@ function insertFilterManagerButton(targetElement) {
     filterButton.style.backgroundColor = 'transparent';
   });
   
-  // アイコン (SVGで実装)
-  const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  iconSvg.setAttribute('width', '20');
-  iconSvg.setAttribute('height', '20');
-  iconSvg.setAttribute('viewBox', '0 0 24 24');
-  iconSvg.style.marginRight = '8px';
-  iconSvg.style.fill = '#444746';
+  // アイコン　SVGの代わりにdiv要素でアイコンを表現
+    const iconElement = document.createElement('div');
+    iconElement.className = 'filter-icon';
+    iconElement.style.width = '20px';
+    iconElement.style.height = '20px';
+    iconElement.style.marginRight = '8px';
+    iconElement.style.backgroundColor = '#444746';
+    iconElement.style.maskImage = 'url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDE4aDR2LTJoLTR2Mnp NMyA2djJoMThWNkgzem0zIDdoMTJ2LTJINS12MnoiLz48L3N2Zz4=)';
+    iconElement.style.webkitMaskImage = 'url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDE4aDR2LTJoLTR2Mnp NMyA2djJoMThWNkgzem0zIDdoMTJ2LTJINS12MnoiLz48L3N2Zz4=)';
+    iconElement.style.maskSize = 'cover';
+    iconElement.style.webkitMaskSize = 'cover';
   
   // フィルタアイコンのSVGパス
   const iconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -80,11 +108,79 @@ function insertFilterManagerButton(targetElement) {
   filterButton.appendChild(iconSvg);
   filterButton.appendChild(buttonText);
   
-  // ボタンクリックイベントの設定
-  filterButton.addEventListener('click', () => {
+// ボタンクリックイベントの設定
+filterButton.addEventListener('click', () => {
     console.log("Filter manager button clicked, sending message to background.");
     // Background Service Workerへメッセージを送信
+    try {
+      chrome.runtime.sendMessage({ action: "open_manager_tab" }, response => {
+        if (chrome.runtime.lastError) {
+          console.error("メッセージ送信エラー:", chrome.runtime.lastError);
+          // エラー発生時の再接続処理
+          reconnectExtension();
+          return;
+        }
+        console.log("Response from background:", response);
+      });
+    } catch (error) {
+      console.error("Extension context error:", error);
+      // エラー発生時の再接続処理
+      reconnectExtension();
+    }
+  });
+
+  // 拡張機能の再接続を試みる関数
+function reconnectExtension() {
+    // ユーザーに通知
+    const notification = document.createElement('div');
+    notification.textContent = 'Gmail Filter Managerの接続が切れました。ページを再読み込みしてください。';
+    notification.style.position = 'fixed';
+    notification.style.top = '10px';
+    notification.style.left = '50%';
+    notification.style.transform = 'translateX(-50%)';
+    notification.style.backgroundColor = '#f44336';
+    notification.style.color = 'white';
+    notification.style.padding = '10px';
+    notification.style.borderRadius = '5px';
+    notification.style.zIndex = '9999';
+    document.body.appendChild(notification);
+    
+    // 5秒後に通知を消す
+    setTimeout(() => {
+      if (notification && notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 5000);
+  }
+
+  function isExtensionContextValid() {
+    try {
+      // 拡張機能が有効かチェック
+      return chrome.runtime && typeof chrome.runtime.id === 'string';
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  // ボタンクリックイベントの設定
+  filterButton.addEventListener('click', () => {
+    console.log("Filter manager button clicked");
+    
+    // 拡張機能の状態を確認
+    if (!isExtensionContextValid()) {
+      console.error("Extension context is invalid");
+      reconnectExtension();
+      return;
+    }
+    
+    // 正常な場合はメッセージを送信
+    console.log("Sending message to background");
     chrome.runtime.sendMessage({ action: "open_manager_tab" }, response => {
+      if (chrome.runtime.lastError) {
+        console.error("メッセージ送信エラー:", chrome.runtime.lastError);
+        reconnectExtension();
+        return;
+      }
       console.log("Response from background:", response);
     });
   });
