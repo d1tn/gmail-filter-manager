@@ -4,9 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const termsLinks = document.querySelectorAll('.terms-link');
   
   // GitHubの利用規約URL
-  const markdownUrl = ' https://raw.githubusercontent.com/d1tn/gmail-filter-manager/refs/heads/main/README.md';
-  // const markdownUrl = 'https://raw.githubusercontent.com/d1tn/gmail-filter-manager/refs/heads/main/TERMS.md';
-  const githubUrl = 'https://github.com/d1tn/gmail-filter-manager/blob/main/TERMS.md';
+  const markdownUrl = 'https://raw.githubusercontent.com/d1tn/gmail-filter-manager/refs/heads/main/docs/terms.md';
+  const githubUrl = 'https://github.com/d1tn/gmail-filter-manager/blob/main/docs/terms.md';
   
   // 各リンクにイベントリスナーを設定
   termsLinks.forEach(link => {
