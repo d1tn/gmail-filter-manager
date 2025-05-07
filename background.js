@@ -2,6 +2,12 @@
 
 console.log("Background Service Worker started.");
 
+// 拡張機能アイコンがクリックされたときの処理
+chrome.action.onClicked.addListener(function(tab) {
+    // manager.htmlを新しいタブで開く
+    chrome.tabs.create({ url: chrome.runtime.getURL("manager.html") });
+  });
+
 // Content Scriptからのメッセージを受け取るリスナー
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
