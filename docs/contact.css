@@ -59,7 +59,8 @@
     margin-top: 2rem;
 }
 
-.submit-button {
+.submit-button,
+.complete-button {
     background-color: #2980b9;
     color: white;
     border: none;
@@ -71,11 +72,13 @@
     transition: background-color 0.2s;
 }
 
-.submit-button:hover {
+.submit-button:hover,
+.complete-button:hover {
     background-color: #3498db;
 }
 
-.submit-button:disabled {
+.submit-button:disabled,
+.complete-button:disabled {
     background-color: #95a5a6;
     cursor: not-allowed;
 }
@@ -95,7 +98,6 @@
     background-color: #f5f5f5;
 }
 
-.form-success,
 .form-error {
     background-color: #f8f9fa;
     border-radius: 4px;
@@ -104,21 +106,17 @@
     text-align: center;
 }
 
-.form-success {
-    border-left: 5px solid #27ae60;
-}
-
 .form-error {
     border-left: 5px solid #e74c3c;
 }
 
-.form-success h2,
+h2,
 .form-error h2 {
     margin-top: 0;
     color: #333;
 }
 
-.form-success p,
+p,
 .form-error p {
     margin-bottom: 1.5rem;
 }
@@ -148,4 +146,77 @@
     .cancel-button {
         width: 100%;
     }
+}
+
+/* モーダル関連のスタイル追加 - manager.css または contact.css に追加 */
+
+/* モーダル外クリックでの閉じる動作を無効化した場合のビジュアルフィードバック */
+.modal.no-outside-close {
+    /* オプション: 背景色を少し濃くして重要なダイアログであることを示す */
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* モーダル内の不要なスクロールバーを非表示（コンテンツが長い場合のみスクロール） */
+.modal-body {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* フォーム送信中の視覚的フィードバック */
+.submit-button.submitting {
+    position: relative;
+    color: transparent;
+}
+
+.submit-button.submitting::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 入力エラー表示のスタイル */
+.form-group.has-error input,
+.form-group.has-error select,
+.form-group.has-error textarea {
+    border-color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: none;
+}
+
+.form-group.has-error .error-message {
+    display: block;
+}
+
+/* モーダルのアニメーション */
+.modal {
+    transition: background-color 0.3s ease;
+}
+
+.modal-content {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal.closing .modal-content {
+    transform: translateY(20px);
+    opacity: 0;
 }
