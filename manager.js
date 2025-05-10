@@ -74,6 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 既存のフィルタデータをストレージから読み込む
     loadFiltersFromStorage();
+ 
+    // 「このフィルタを保存する」ボタンにイベントリスナーを設定
+    const exportCurrentFilterButton = document.getElementById('export-this-filter');
+    if (exportCurrentFilterButton) {
+        console.log("'このフィルタを保存' button found, adding event listener.");
+        exportCurrentFilterButton.addEventListener('click', function() {
+            exportFilters('current'); // 「current」モードでエクスポート
+        });
+    } else {
+        console.error("'このフィルタを保存' button not found!");
+    }
 
     // 「このフィルタを複製」ボタンにイベントリスナーを設定
     const duplicateFilterButton = document.getElementById('duplicate-this-filter');
@@ -94,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // エクスポート・インポートボタンのイベントリスナー設定
-    document.getElementById('export-filter').addEventListener('click', exportFilters);
+    document.getElementById('export-filter').addEventListener('click', function() {exportFilters('all');});
     document.getElementById('import-filter').addEventListener('click', showImportDialog);
 
     console.log("manager.js setup complete.");
@@ -1728,9 +1739,38 @@ function setupConditionChangeListeners(conditionItemElement, conditionType, hasA
 //----------------------------------------------------------------------
 
 // フィルタのエクスポート処理を行う関数
-function exportFilters() {
+function exportFilters(mode = 'all') {
+    console.log(`Exporting filters in ${mode} mode.`);
+    
+    // 表示中のフィルタのみモードの場合のチェック
+    if (mode === 'current' && currentFilterIndex === -1) {
+        console.warn("No filter selected to export.");
+        alert("エクスポートするフィルタが選択されていません。");
+        return; // 選択されているフィルタがない場合は何もしない
+    }
+    
+    // エクスポート対象のフィルタ配列を取得
+    let filtersToExport;
+    let fileNamePrefix = 'gmailfilter';
+    
+    if (mode === 'current') {
+        // 表示中のフィルタのみを対象にする
+        const currentFilter = filters[currentFilterIndex];
+        filtersToExport = [currentFilter];
+        
+        // ファイル名にフィルタ名を含める（特殊文字を置換）
+        const safeFilterName = currentFilter.name
+            ? currentFilter.name.replace(/[\\\/\:\*\?\"\<\>\|]/g, '_').substring(0, 30)
+            : "unnamed";
+        fileNamePrefix = `gmailfilter_${safeFilterName}`;
+    } else {
+        // すべてのフィルタを対象にする
+        filtersToExport = filters;
+        fileNamePrefix = 'gmailfilter_all';
+    }
+    
     // XMLデータを生成
-    const xmlContent = generateGmailFilterXML();
+    const xmlContent = generateGmailFilterXML(filtersToExport);
 
     // 現在の日時を取得してファイル名を生成
     const now = new Date();
@@ -1740,7 +1780,7 @@ function exportFilters() {
     const timeStr = ('0' + now.getHours()).slice(-2) +
         ('0' + now.getMinutes()).slice(-2) +
         ('0' + now.getSeconds()).slice(-2);
-    const fileName = `gmailfilter_${dateStr}_${timeStr}.xml`;
+    const fileName = `${fileNamePrefix}_${dateStr}_${timeStr}.xml`;
 
     // XMLをダウンロード
     const blob = new Blob([xmlContent], { type: 'application/xml' });
@@ -1757,8 +1797,10 @@ function exportFilters() {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
     }, 0);
+    
+    const filterCount = filtersToExport.length;
+    console.log(`Exported ${filterCount} filter(s) successfully.`);
 }
-
 // インポートダイアログを表示する関数
 function showImportDialog() {
     // ファイル選択ダイアログを表示
@@ -1788,14 +1830,14 @@ function showImportDialog() {
 }
 
 // Gmail互換のXMLフィルタを生成する関数
-function generateGmailFilterXML() {
+function generateGmailFilterXML(filtersArray) {
     // XMLのヘッダー
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:apps="http://schemas.google.com/apps/2006">\n';
     xml += '  <title>Mail Filters</title>\n';
 
     // 各フィルタをXMLエントリに変換
-    filters.forEach(filter => {
+    filtersArray.forEach(filter => {
         xml += '  <entry>\n';
         xml += '    <category term="filter"></category>\n';
         xml += `    <title><!-- ${filter.name} --></title>\n`; // フィルタ名をXMLコメントとして埋め込み

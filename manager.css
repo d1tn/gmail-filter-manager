@@ -701,15 +701,13 @@ button.remove-or-group-button:hover {
         border-radius: 0.5rem;
         line-height: 2.5rem;
         padding: 0 1.0rem;
-    }
-
-    #duplicate-this-filter {
+        
         &:hover {
             background-color: #ebf3ff;
             color: #2980b9;
         }
     }
-
+    
     #delete-this-filter {
         background-color: transparent;
         color: #c0392b;
