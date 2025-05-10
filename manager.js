@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDeleteButtonState();
             // 明示的に保存処理を呼び出す
             saveFiltersToStorage();
+            // リストを最下部にスクロール
+            scrollFilterListToBottom();
         });
     } else {
         console.error("'+ フィルタを追加' button not found!");
@@ -991,6 +993,20 @@ function updateDeleteButtonState() {
             deleteFilterButton.title = "このフィルタを削除";
             deleteFilterButton.classList.remove('disabled-button');
         }
+    }
+}
+
+// フィルタリストを最下部にスクロールする関数
+function scrollFilterListToBottom() {
+    const filterListContainer = document.querySelector('.filter-list .items');
+    if (filterListContainer) {
+        // スムーズなスクロールでリストの最下部に移動
+        filterListContainer.scrollTo({
+            top: filterListContainer.scrollHeight,
+            behavior: 'smooth'
+        });
+        
+        console.log("Scrolled filter list to bottom");
     }
 }
 
