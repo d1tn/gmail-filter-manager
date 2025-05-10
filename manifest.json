@@ -52,6 +52,9 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://docs.google.com/"
+  },
   "author": "Your Name",
   "homepage_url": "https://github.com/d1tn/gmail-filter-manager"
 }

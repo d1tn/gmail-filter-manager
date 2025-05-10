@@ -1,9 +1,21 @@
 // docs/common.js
-// 最小限のマークダウン処理
 
-function showDocsModal(title) {
+// グローバル変数でモーダルの挙動を制御
+let preventOutsideClickClose = false;
+
+function showDocsModal(title, preventOutsideClick = false) {
     const modal = document.getElementById('docs-modal');
     const modalTitle = document.getElementById('modal-title');
+    
+    // 外部クリックによる閉じる動作の制御フラグを設定
+    preventOutsideClickClose = preventOutsideClick;
+    
+    // モーダルクラスを更新（スタイル変更用）
+    if (preventOutsideClick) {
+        modal.classList.add('no-outside-close');
+    } else {
+        modal.classList.remove('no-outside-close');
+    }
     
     modalTitle.textContent = title;
     modal.style.display = 'block';
@@ -14,11 +26,13 @@ function setupModalEvents() {
     const closeButton = document.querySelector('.close-button');
     
     closeButton.addEventListener('click', function() {
+        // 閉じるボタンでは常に閉じられる
         modal.style.display = 'none';
     });
     
     window.addEventListener('click', function(event) {
-        if (event.target === modal) {
+        // 外部クリックの場合は、preventOutsideClickCloseフラグに基づいて判断
+        if (event.target === modal && !preventOutsideClickClose) {
             modal.style.display = 'none';
         }
     });
