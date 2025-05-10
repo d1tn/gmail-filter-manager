@@ -1,6 +1,24 @@
 // docs/contact.js
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    // バージョン情報を取得するグローバル関数を定義
+    window.getExtensionVersionInfo = function() {
+        try {
+            let version = '不明';
+            
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) {
+                const manifest = chrome.runtime.getManifest();
+                version = manifest.version || '不明';
+            }
+            
+            return version;
+        } catch (error) {
+            console.error('バージョン情報の取得に失敗:', error);
+            return '不明';
+        }
+    };
+
     // お問い合わせリンクを取得
     const contactLinks = document.querySelectorAll('.contact-link');
     
@@ -137,12 +155,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 // フォームデータ取得とバリデーション
                 const type = document.getElementById('contact-type').value;
                 const email = document.getElementById('contact-email').value;
-                const message = document.getElementById('contact-message').value;
+                let message = document.getElementById('contact-message').value;
                 
                 if (!type || !message) {
                     alert('お問い合わせ種別とお問い合わせ内容は必須です。');
                     return;
                 }
+                
+                // バージョン情報を取得して、メッセージの末尾に追加
+                let version = '不明';
+                if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) {
+                    version = chrome.runtime.getManifest().version || '不明';
+                }
+                
+                // メッセージの先頭にバージョン情報を追記
+                message = ` [v${version}] ` + message.trim();
                 
                 // 送信ボタンを無効化
                 const submitButton = document.getElementById('submit-form');
@@ -159,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
                 formData.append('entry.100345935', type);
                 formData.append('entry.1525296493', email);
-                formData.append('entry.447890634', message);
+                formData.append('entry.447890634', message); // バージョン情報が追記されたメッセージ
                 
                 // URLエンコードされた文字列に変換
                 const urlEncodedData = new URLSearchParams(formData).toString();
