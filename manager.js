@@ -695,11 +695,30 @@ function renderFilterList() {
     // 既存のフィルタ項目をクリア（「＋ フィルタを追加」ボタン以外）
     filterListUl.querySelectorAll('.item:not(#add-new-filter-item)').forEach(item => item.remove());
 
+    // レンダリング前にIDの一意性をチェック
+    const usedIds = new Set();
+    let hasFixedIds = false;
+
     // filters 配列の各フィルタに対してリスト項目を作成
     filters.forEach((filter, index) => {
+        // ID値のログと存在チェック
+        console.log(`フィルタ #${index} ID: ${filter.id}, 名前: ${filter.name || "無題"}`);
+        
+        // IDがない、または既に使用されているIDの場合は新しいIDを生成
+        if (!filter.id || usedIds.has(filter.id)) {
+            const oldId = filter.id || '(未設定)';
+            filter.id = Date.now().toString() + "_" + index + "_" + 
+                       Math.random().toString(36).substring(2, 10);
+            console.log(`ID重複または未設定を検出! "${oldId}" → 新ID "${filter.id}" を生成しました`);
+            hasFixedIds = true;
+        }
+        
+        // 使用済みIDとして記録
+        usedIds.add(filter.id);
+        
         const listItem = document.createElement('li');
         listItem.classList.add('item');
-        // listItem.classList.add('filter-list-item');
+        
         // データ属性としてフィルタのIDとインデックスを保持
         listItem.dataset.filterId = filter.id;
         listItem.dataset.filterIndex = index;
@@ -720,7 +739,7 @@ function renderFilterList() {
         dragHandle.innerHTML = '&#8942;&#8942;'; // 縦に並んだ6点（2つの縦3点リーダー）
 
         // 現在選択されているフィルタであれば、アクティブなスタイルを適用
-        if (filter.id === (filters[currentFilterIndex] ? filters[currentFilterIndex].id : null)) {
+        if (currentFilterIndex !== -1 && filter.id === filters[currentFilterIndex].id) {
             listItem.classList.add('active');
         }
 
@@ -736,6 +755,12 @@ function renderFilterList() {
             filterListUl.appendChild(listItem);
         }
     });
+
+    // IDを修正した場合はストレージに保存
+    if (hasFixedIds) {
+        console.log("フィルタIDを修正したため、変更を保存します");
+        saveFiltersToStorage();
+    }
 
     console.log("Filter list rendering complete.");
 }
@@ -2095,6 +2120,12 @@ function importFiltersFromXML(xmlContent) {
 
             // 新しいフィルタオブジェクトを作成
             const filter = createNewFilterData();
+    
+            // 一意性を保証するため、現在時刻 + インデックス + ランダム文字列を使用
+            filter.id = Date.now().toString() + "_" + entryIndex + "_" + 
+                    Math.random().toString(36).substring(2, 10);
+            
+            console.log(`フィルタに一意のID "${filter.id}" を割り当てました`);
 
             // フィルタ名を取得
             extractFilterName(entry, filter);
@@ -2210,6 +2241,20 @@ function handleImportedFilters(importedFilters) {
     if (filters.length > 0 && importedFilters.length > 0) {
         if (confirm(`${importedFilters.length}個のフィルタを読み込みました。既存の${filters.length}個のフィルタと統合しますか？「キャンセル」を選択すると、既存のフィルタを全て置き換えます。`)) {
             // 統合する場合
+            const currentIds = new Set(filters.map(f => f.id));
+
+            // 既存のIDと重複しないようにする
+            importedFilters.forEach(filter => {
+                // 既にIDが存在する場合は新しいIDを生成
+                if (currentIds.has(filter.id)) {
+                    const newId = Date.now().toString() + "_" + 
+                                Math.random().toString(36).substring(2, 10);
+                    console.log(`ID重複を検出: "${filter.id}" → 新ID "${newId}"`);
+                    filter.id = newId;
+                }
+                currentIds.add(filter.id);
+            });
+
             filters = filters.concat(importedFilters);
         } else {
             // 置き換える場合
