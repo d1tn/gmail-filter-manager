@@ -695,11 +695,30 @@ function renderFilterList() {
     // 既存のフィルタ項目をクリア（「＋ フィルタを追加」ボタン以外）
     filterListUl.querySelectorAll('.item:not(#add-new-filter-item)').forEach(item => item.remove());
 
+    // レンダリング前にIDの一意性をチェック
+    const usedIds = new Set();
+    let hasFixedIds = false;
+
     // filters 配列の各フィルタに対してリスト項目を作成
     filters.forEach((filter, index) => {
+        // ID値のログと存在チェック
+        console.log(`フィルタ #${index} ID: ${filter.id}, 名前: ${filter.name || "無題"}`);
+        
+        // IDがない、または既に使用されているIDの場合は新しいIDを生成
+        if (!filter.id || usedIds.has(filter.id)) {
+            const oldId = filter.id || '(未設定)';
+            filter.id = Date.now().toString() + "_" + index + "_" + 
+                       Math.random().toString(36).substring(2, 10);
+            console.log(`ID重複または未設定を検出! "${oldId}" → 新ID "${filter.id}" を生成しました`);
+            hasFixedIds = true;
+        }
+        
+        // 使用済みIDとして記録
+        usedIds.add(filter.id);
+        
         const listItem = document.createElement('li');
         listItem.classList.add('item');
-        // listItem.classList.add('filter-list-item');
+        
         // データ属性としてフィルタのIDとインデックスを保持
         listItem.dataset.filterId = filter.id;
         listItem.dataset.filterIndex = index;
@@ -720,7 +739,7 @@ function renderFilterList() {
         dragHandle.innerHTML = '&#8942;&#8942;'; // 縦に並んだ6点（2つの縦3点リーダー）
 
         // 現在選択されているフィルタであれば、アクティブなスタイルを適用
-        if (filter.id === (filters[currentFilterIndex] ? filters[currentFilterIndex].id : null)) {
+        if (currentFilterIndex !== -1 && filter.id === filters[currentFilterIndex].id) {
             listItem.classList.add('active');
         }
 
@@ -736,6 +755,12 @@ function renderFilterList() {
             filterListUl.appendChild(listItem);
         }
     });
+
+    // IDを修正した場合はストレージに保存
+    if (hasFixedIds) {
+        console.log("フィルタIDを修正したため、変更を保存します");
+        saveFiltersToStorage();
+    }
 
     console.log("Filter list rendering complete.");
 }
@@ -1127,100 +1152,6 @@ function updateUIBasedOnSettings() {
         }
     }
 }
-
-// 設定画面のHTML要素を生成する関数
-// function createSettingsUI() {
-//     // まず既存の設定UIがあるか確認
-//     let settingsSection = document.getElementById('app-settings-section');
-    
-//     if (!settingsSection) {
-//         // 設定セクションを作成
-//         settingsSection = document.createElement('section');
-//         settingsSection.id = 'app-settings-section';
-//         settingsSection.className = 'app-settings-section';
-        
-//         // 設定コンテナを作成
-//         const settingsContainer = document.createElement('div');
-//         settingsContainer.className = 'settings-container';
-        
-//         // 設定タイトル
-//         const settingsTitle = document.createElement('h3');
-//         settingsTitle.textContent = '高度な設定';
-//         settingsContainer.appendChild(settingsTitle);
-        
-//         // 削除機能トグル
-//         const deleteToggleContainer = document.createElement('div');
-//         deleteToggleContainer.className = 'settings-item';
-        
-//         // スイッチラベルを作成
-//         const deleteToggleLabel = document.createElement('label');
-//         deleteToggleLabel.className = 'switch-label';
-//         deleteToggleLabel.htmlFor = 'enable-delete-action';
-        
-//         // トグルスイッチを作成
-//         const deleteToggleSwitch = document.createElement('div');
-//         deleteToggleSwitch.className = 'toggle-switch';
-        
-//         const deleteToggleInput = document.createElement('input');
-//         deleteToggleInput.type = 'checkbox';
-//         deleteToggleInput.id = 'enable-delete-action';
-//         deleteToggleInput.checked = appSettings.enableDeleteAction;
-        
-//         // イベントリスナーを設定
-//         deleteToggleInput.addEventListener('change', function() {
-//             appSettings.enableDeleteAction = this.checked;
-//             saveAppSettings();
-//             updateUIBasedOnSettings();
-            
-//             // 変更を通知
-//             if (this.checked) {
-//                 alert('削除機能が有効になりました。この機能は重要なメールを完全に削除する可能性があります。慎重に使用してください。');
-//             } else {
-//                 alert('削除機能が無効になりました。既存のフィルタで「削除する」がチェックされている場合、それらは一時的に無効化されます。');
-//             }
-//         });
-        
-//         const deleteToggleSlider = document.createElement('span');
-//         deleteToggleSlider.className = 'slider';
-        
-//         deleteToggleSwitch.appendChild(deleteToggleInput);
-//         deleteToggleSwitch.appendChild(deleteToggleSlider);
-        
-//         // ラベルテキスト
-//         const deleteToggleLabelText = document.createElement('span');
-//         deleteToggleLabelText.className = 'label-text';
-//         deleteToggleLabelText.textContent = '削除機能を有効にする';
-        
-//         // 警告テキスト
-//         const deleteToggleWarning = document.createElement('div');
-//         deleteToggleWarning.className = 'setting-warning';
-//         deleteToggleWarning.textContent = '⚠️ この機能を有効にすると、フィルタ条件に一致するメールが完全に削除される可能性があります。重要なメールも削除される可能性があるため、慎重に使用してください。';
-        
-//         // 要素を組み立て
-//         deleteToggleLabel.appendChild(deleteToggleSwitch);
-//         deleteToggleLabel.appendChild(deleteToggleLabelText);
-        
-//         deleteToggleContainer.appendChild(deleteToggleLabel);
-//         deleteToggleContainer.appendChild(deleteToggleWarning);
-        
-//         settingsContainer.appendChild(deleteToggleContainer);
-//         settingsSection.appendChild(settingsContainer);
-        
-//         // 設定セクションをページに追加
-//         const rightPane = document.querySelector('.right-pane');
-//         if (rightPane) {
-//             // フィルタ設定セクションの後に配置
-//             const filterSettingSection = rightPane.querySelector('.filter-setting-section');
-//             if (filterSettingSection) {
-//                 rightPane.insertBefore(settingsSection, filterSettingSection.nextSibling);
-//             } else {
-//                 rightPane.appendChild(settingsSection);
-//             }
-//         }
-//     }
-    
-//     return settingsSection;
-// }
 
 //----------------------------------------------------------------------
 // 5. イベントハンドラと機能実装
@@ -2189,6 +2120,12 @@ function importFiltersFromXML(xmlContent) {
 
             // 新しいフィルタオブジェクトを作成
             const filter = createNewFilterData();
+    
+            // 一意性を保証するため、現在時刻 + インデックス + ランダム文字列を使用
+            filter.id = Date.now().toString() + "_" + entryIndex + "_" + 
+                    Math.random().toString(36).substring(2, 10);
+            
+            console.log(`フィルタに一意のID "${filter.id}" を割り当てました`);
 
             // フィルタ名を取得
             extractFilterName(entry, filter);
@@ -2304,6 +2241,20 @@ function handleImportedFilters(importedFilters) {
     if (filters.length > 0 && importedFilters.length > 0) {
         if (confirm(`${importedFilters.length}個のフィルタを読み込みました。既存の${filters.length}個のフィルタと統合しますか？「キャンセル」を選択すると、既存のフィルタを全て置き換えます。`)) {
             // 統合する場合
+            const currentIds = new Set(filters.map(f => f.id));
+
+            // 既存のIDと重複しないようにする
+            importedFilters.forEach(filter => {
+                // 既にIDが存在する場合は新しいIDを生成
+                if (currentIds.has(filter.id)) {
+                    const newId = Date.now().toString() + "_" + 
+                                Math.random().toString(36).substring(2, 10);
+                    console.log(`ID重複を検出: "${filter.id}" → 新ID "${newId}"`);
+                    filter.id = newId;
+                }
+                currentIds.add(filter.id);
+            });
+
             filters = filters.concat(importedFilters);
         } else {
             // 置き換える場合
