@@ -6,6 +6,12 @@
 //----------------------------------------------------------------------
 console.log("Filter Manager tab loaded!");
 
+// グローバル設定オブジェクト
+let appSettings = {
+    enableDeleteAction: false,  // 削除機能:デフォルトでは無効
+    lastUpdated: new Date().toISOString()
+};
+
 // フィルタデータを保持するための配列（初期値として空の配列）
 let filters = [];
 
@@ -25,6 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.warn("No filter condition items found.");
     }
+
+    // アプリ設定を読み込む
+    loadAppSettings();
 
     // ドラッグアンドドロップ機能の初期化
     setupFilterListSorting();
@@ -47,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDeleteButtonState();
             // 明示的に保存処理を呼び出す
             saveFiltersToStorage();
+            // リストを最下部にスクロール
+            scrollFilterListToBottom();
         });
     } else {
         console.error("'+ フィルタを追加' button not found!");
@@ -63,6 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 既存のフィルタデータをストレージから読み込む
     loadFiltersFromStorage();
+ 
+    // 「このフィルタを保存する」ボタンにイベントリスナーを設定
+    const exportCurrentFilterButton = document.getElementById('export-this-filter');
+    if (exportCurrentFilterButton) {
+        console.log("'このフィルタを保存' button found, adding event listener.");
+        exportCurrentFilterButton.addEventListener('click', function() {
+            exportFilters('current'); // 「current」モードでエクスポート
+        });
+    } else {
+        console.error("'このフィルタを保存' button not found!");
+    }
 
     // 「このフィルタを複製」ボタンにイベントリスナーを設定
     const duplicateFilterButton = document.getElementById('duplicate-this-filter');
@@ -83,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // エクスポート・インポートボタンのイベントリスナー設定
-    document.getElementById('export-filter').addEventListener('click', exportFilters);
+    document.getElementById('export-filter').addEventListener('click', function() {exportFilters('all');});
     document.getElementById('import-filter').addEventListener('click', showImportDialog);
 
     console.log("manager.js setup complete.");
@@ -555,6 +577,19 @@ function updateFilterActions(currentFilter) {
     const deleteCheckbox = document.getElementById('process-delete');
     if (deleteCheckbox) {
         currentFilter.actions.delete = deleteCheckbox.checked;
+        
+        // 削除機能が無効で、チェックがオンの場合の視覚的フィードバック
+        if (currentFilter.actions.delete && !window.appSettings.enableDeleteAction) {
+            const deleteLabel = deleteCheckbox.closest('label');
+            if (deleteLabel) {
+                deleteLabel.classList.add('warning-state');
+            }
+        } else {
+            const deleteLabel = deleteCheckbox.closest('label');
+            if (deleteLabel) {
+                deleteLabel.classList.remove('warning-state');
+            }
+        }
     }
 
     // 迷惑メールにしない
@@ -592,6 +627,58 @@ function updateFilterActions(currentFilter) {
     }
 }
 
+// アプリ設定を保存する関数
+function saveAppSettings() {
+    if (isExtensionEnvironment()) {
+        // Chrome拡張環境
+        chrome.storage.local.set({ 'appSettings': window.appSettings }, function () {
+            console.log('アプリ設定が保存されました（chrome.storage.local）');
+        });
+    } else {
+        // 通常のWeb環境（開発時）
+        try {
+            localStorage.setItem('gmail_filter_app_settings', JSON.stringify(window.appSettings));
+            console.log('アプリ設定が保存されました（localStorage）');
+        } catch (e) {
+            console.error('アプリ設定の保存に失敗しました：', e);
+        }
+    }
+}
+
+// アプリ設定を読み込む関数
+function loadAppSettings() {
+    console.log("アプリ設定の読み込みを開始します");
+
+    if (isExtensionEnvironment()) {
+        // Chrome拡張環境
+        chrome.storage.local.get('appSettings', function (result) {
+            if (result.appSettings) {
+                window.appSettings = result.appSettings;
+                console.log('保存されたアプリ設定を読み込みました:', window.appSettings);
+                updateUIBasedOnSettings();
+            } else {
+                console.log("保存されたアプリ設定が見つかりません。デフォルト設定を使用します。");
+                saveAppSettings(); // デフォルト設定を保存
+            }
+        });
+    } else {
+        // 通常のWeb環境（開発時）
+        try {
+            const savedSettings = localStorage.getItem('gmail_filter_app_settings');
+            if (savedSettings) {
+                window.appSettings = JSON.parse(savedSettings);
+                console.log('保存されたアプリ設定を読み込みました:', window.appSettings);
+                updateUIBasedOnSettings();
+            } else {
+                console.log("保存されたアプリ設定が見つかりません。デフォルト設定を使用します。");
+                saveAppSettings(); // デフォルト設定を保存
+            }
+        } catch (e) {
+            console.error('アプリ設定の読み込みに失敗しました：', e);
+            saveAppSettings(); // デフォルト設定を保存
+        }
+    }
+}
 //----------------------------------------------------------------------
 // 4. UI表示/描画関連
 //----------------------------------------------------------------------
@@ -993,6 +1080,147 @@ function updateDeleteButtonState() {
         }
     }
 }
+
+// フィルタリストを最下部にスクロールする関数
+function scrollFilterListToBottom() {
+    const filterListContainer = document.querySelector('.filter-list .items');
+    if (filterListContainer) {
+        // スムーズなスクロールでリストの最下部に移動
+        filterListContainer.scrollTo({
+            top: filterListContainer.scrollHeight,
+            behavior: 'smooth'
+        });
+        
+        console.log("Scrolled filter list to bottom");
+    }
+}
+
+// 設定に基づいてUIを更新する関数
+function updateUIBasedOnSettings() {
+    // 削除チェックボックスの状態を更新
+    const deleteCheckbox = document.getElementById('process-delete');
+    if (deleteCheckbox) {
+        // 削除機能が無効なら、チェックボックスを無効化
+        deleteCheckbox.disabled = !window.appSettings.enableDeleteAction;
+        
+        // 削除アクションのラベルスタイルを更新
+        const deleteLabel = deleteCheckbox.closest('label');
+        if (deleteLabel) {
+            if (!window.appSettings.enableDeleteAction) {
+                deleteLabel.classList.add('disabled-action');
+                // 無効時の説明を追加
+                let infoSpan = deleteLabel.querySelector('.info-text');
+                if (!infoSpan) {
+                    infoSpan = document.createElement('span');
+                    infoSpan.className = 'info-text';
+                    deleteLabel.appendChild(infoSpan);
+                }
+                infoSpan.textContent = '（「高度な設定」から有効化してください）';
+            } else {
+                deleteLabel.classList.remove('disabled-action');
+                // 有効時は説明を削除
+                const infoSpan = deleteLabel.querySelector('.info-text');
+                if (infoSpan) {
+                    infoSpan.remove();
+                }
+            }
+        }
+    }
+}
+
+// 設定画面のHTML要素を生成する関数
+// function createSettingsUI() {
+//     // まず既存の設定UIがあるか確認
+//     let settingsSection = document.getElementById('app-settings-section');
+    
+//     if (!settingsSection) {
+//         // 設定セクションを作成
+//         settingsSection = document.createElement('section');
+//         settingsSection.id = 'app-settings-section';
+//         settingsSection.className = 'app-settings-section';
+        
+//         // 設定コンテナを作成
+//         const settingsContainer = document.createElement('div');
+//         settingsContainer.className = 'settings-container';
+        
+//         // 設定タイトル
+//         const settingsTitle = document.createElement('h3');
+//         settingsTitle.textContent = '高度な設定';
+//         settingsContainer.appendChild(settingsTitle);
+        
+//         // 削除機能トグル
+//         const deleteToggleContainer = document.createElement('div');
+//         deleteToggleContainer.className = 'settings-item';
+        
+//         // スイッチラベルを作成
+//         const deleteToggleLabel = document.createElement('label');
+//         deleteToggleLabel.className = 'switch-label';
+//         deleteToggleLabel.htmlFor = 'enable-delete-action';
+        
+//         // トグルスイッチを作成
+//         const deleteToggleSwitch = document.createElement('div');
+//         deleteToggleSwitch.className = 'toggle-switch';
+        
+//         const deleteToggleInput = document.createElement('input');
+//         deleteToggleInput.type = 'checkbox';
+//         deleteToggleInput.id = 'enable-delete-action';
+//         deleteToggleInput.checked = appSettings.enableDeleteAction;
+        
+//         // イベントリスナーを設定
+//         deleteToggleInput.addEventListener('change', function() {
+//             appSettings.enableDeleteAction = this.checked;
+//             saveAppSettings();
+//             updateUIBasedOnSettings();
+            
+//             // 変更を通知
+//             if (this.checked) {
+//                 alert('削除機能が有効になりました。この機能は重要なメールを完全に削除する可能性があります。慎重に使用してください。');
+//             } else {
+//                 alert('削除機能が無効になりました。既存のフィルタで「削除する」がチェックされている場合、それらは一時的に無効化されます。');
+//             }
+//         });
+        
+//         const deleteToggleSlider = document.createElement('span');
+//         deleteToggleSlider.className = 'slider';
+        
+//         deleteToggleSwitch.appendChild(deleteToggleInput);
+//         deleteToggleSwitch.appendChild(deleteToggleSlider);
+        
+//         // ラベルテキスト
+//         const deleteToggleLabelText = document.createElement('span');
+//         deleteToggleLabelText.className = 'label-text';
+//         deleteToggleLabelText.textContent = '削除機能を有効にする';
+        
+//         // 警告テキスト
+//         const deleteToggleWarning = document.createElement('div');
+//         deleteToggleWarning.className = 'setting-warning';
+//         deleteToggleWarning.textContent = '⚠️ この機能を有効にすると、フィルタ条件に一致するメールが完全に削除される可能性があります。重要なメールも削除される可能性があるため、慎重に使用してください。';
+        
+//         // 要素を組み立て
+//         deleteToggleLabel.appendChild(deleteToggleSwitch);
+//         deleteToggleLabel.appendChild(deleteToggleLabelText);
+        
+//         deleteToggleContainer.appendChild(deleteToggleLabel);
+//         deleteToggleContainer.appendChild(deleteToggleWarning);
+        
+//         settingsContainer.appendChild(deleteToggleContainer);
+//         settingsSection.appendChild(settingsContainer);
+        
+//         // 設定セクションをページに追加
+//         const rightPane = document.querySelector('.right-pane');
+//         if (rightPane) {
+//             // フィルタ設定セクションの後に配置
+//             const filterSettingSection = rightPane.querySelector('.filter-setting-section');
+//             if (filterSettingSection) {
+//                 rightPane.insertBefore(settingsSection, filterSettingSection.nextSibling);
+//             } else {
+//                 rightPane.appendChild(settingsSection);
+//             }
+//         }
+//     }
+    
+//     return settingsSection;
+// }
 
 //----------------------------------------------------------------------
 // 5. イベントハンドラと機能実装
@@ -1511,9 +1739,38 @@ function setupConditionChangeListeners(conditionItemElement, conditionType, hasA
 //----------------------------------------------------------------------
 
 // フィルタのエクスポート処理を行う関数
-function exportFilters() {
+function exportFilters(mode = 'all') {
+    console.log(`Exporting filters in ${mode} mode.`);
+    
+    // 表示中のフィルタのみモードの場合のチェック
+    if (mode === 'current' && currentFilterIndex === -1) {
+        console.warn("No filter selected to export.");
+        alert("エクスポートするフィルタが選択されていません。");
+        return; // 選択されているフィルタがない場合は何もしない
+    }
+    
+    // エクスポート対象のフィルタ配列を取得
+    let filtersToExport;
+    let fileNamePrefix = 'gmailfilter';
+    
+    if (mode === 'current') {
+        // 表示中のフィルタのみを対象にする
+        const currentFilter = filters[currentFilterIndex];
+        filtersToExport = [currentFilter];
+        
+        // ファイル名にフィルタ名を含める（特殊文字を置換）
+        const safeFilterName = currentFilter.name
+            ? currentFilter.name.replace(/[\\\/\:\*\?\"\<\>\|]/g, '_').substring(0, 30)
+            : "unnamed";
+        fileNamePrefix = `gmailfilter_${safeFilterName}`;
+    } else {
+        // すべてのフィルタを対象にする
+        filtersToExport = filters;
+        fileNamePrefix = 'gmailfilter_all';
+    }
+    
     // XMLデータを生成
-    const xmlContent = generateGmailFilterXML();
+    const xmlContent = generateGmailFilterXML(filtersToExport);
 
     // 現在の日時を取得してファイル名を生成
     const now = new Date();
@@ -1523,7 +1780,7 @@ function exportFilters() {
     const timeStr = ('0' + now.getHours()).slice(-2) +
         ('0' + now.getMinutes()).slice(-2) +
         ('0' + now.getSeconds()).slice(-2);
-    const fileName = `gmailfilter_${dateStr}_${timeStr}.xml`;
+    const fileName = `${fileNamePrefix}_${dateStr}_${timeStr}.xml`;
 
     // XMLをダウンロード
     const blob = new Blob([xmlContent], { type: 'application/xml' });
@@ -1540,8 +1797,10 @@ function exportFilters() {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
     }, 0);
+    
+    const filterCount = filtersToExport.length;
+    console.log(`Exported ${filterCount} filter(s) successfully.`);
 }
-
 // インポートダイアログを表示する関数
 function showImportDialog() {
     // ファイル選択ダイアログを表示
@@ -1571,14 +1830,14 @@ function showImportDialog() {
 }
 
 // Gmail互換のXMLフィルタを生成する関数
-function generateGmailFilterXML() {
+function generateGmailFilterXML(filtersArray) {
     // XMLのヘッダー
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:apps="http://schemas.google.com/apps/2006">\n';
     xml += '  <title>Mail Filters</title>\n';
 
     // 各フィルタをXMLエントリに変換
-    filters.forEach(filter => {
+    filtersArray.forEach(filter => {
         xml += '  <entry>\n';
         xml += '    <category term="filter"></category>\n';
         xml += `    <title><!-- ${filter.name} --></title>\n`; // フィルタ名をXMLコメントとして埋め込み
@@ -1662,9 +1921,13 @@ function generateActionXML(actions) {
     }
 
     // 削除する
-    if (actions.delete) {
+    if (actions.delete && window.appSettings.enableDeleteAction) {
         xml += '    <apps:property name="shouldTrash" value="true"/>\n';
+    } else if (actions.delete && !window.appSettings.enableDeleteAction) {
+        // 削除アクションがチェックされているが機能無効の場合、コメントで残す
+        xml += '    <!-- 削除機能が無効のため、shouldTrashアクションは無視されます -->\n';
     }
+
 
     // 迷惑メールにしない
     if (actions.notSpam) {
