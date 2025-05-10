@@ -739,7 +739,9 @@ function renderFilterList() {
         dragHandle.innerHTML = '&#8942;&#8942;'; // 縦に並んだ6点（2つの縦3点リーダー）
 
         // 現在選択されているフィルタであれば、アクティブなスタイルを適用
-        if (currentFilterIndex !== -1 && filter.id === filters[currentFilterIndex].id) {
+        if (currentFilterIndex !== -1 && 
+            currentFilterIndex < filters.length && 
+            filter.id === filters[currentFilterIndex].id) {
             listItem.classList.add('active');
         }
 
@@ -1175,9 +1177,17 @@ function selectFilterById(filterId) {
 // フィルタを選択し、右ペインに表示する関数 (インデックスで選択)
 function selectFilter(index) {
     console.log(`Selecting filter by index: ${index}`);
+
+    // インデックスが範囲外の場合は調整
     if (index < 0 || index >= filters.length) {
-        console.error(`Invalid filter index: ${index}`);
-        return;
+        if (filters.length > 0) {
+            // 有効な範囲内の最大値に調整
+            index = Math.min(Math.max(0, index), filters.length - 1);
+        } else {
+            currentFilterIndex = -1;
+            displayFilterDetails(null);
+            return;
+        }
     }
 
     // 既存の選択状態を解除
@@ -1191,6 +1201,13 @@ function selectFilter(index) {
     const selectedItem = filterListUl.querySelector(`.item[data-filter-index="${index}"]`);
     if (selectedItem) {
         selectedItem.classList.add('active');
+    }
+
+    // 選択されたフィルタのデータを右ペインに表示する前にチェック
+    if (currentFilterIndex >= 0 && currentFilterIndex < filters.length) {
+        displayFilterDetails(filters[currentFilterIndex]);
+    } else {
+        displayFilterDetails(null);
     }
 
     // 選択されたフィルタのデータを右ペインに表示する
@@ -1262,18 +1279,25 @@ function deleteCurrentFilter() {
         return; // ユーザーがキャンセルした場合
     }
 
-    console.log(`Deleting filter at index: ${currentFilterIndex}`);
-    filters.splice(currentFilterIndex, 1);
+    // ここで削除後に選択するインデックスを先に計算しておく
+    const deleteIndex = currentFilterIndex;
+    const newIndexToSelect = Math.min(currentFilterIndex, filters.length - 2);
+    
+    // 選択状態をクリアしてから削除する - この順番が重要！
+    currentFilterIndex = -1;
+    
+    console.log(`Deleting filter at index: ${deleteIndex}`);
+    filters.splice(deleteIndex, 1);
     console.log("Filter deleted. Remaining filters:", filters);
+    
+    // レンダリング（この時点でcurrentFilterIndex = -1なのでエラーは起きない）
     renderFilterList();
 
     // 削除後の選択状態を決定
     if (filters.length === 0) {
-        currentFilterIndex = -1;
         displayFilterDetails(null);
         console.log("All filters deleted. Right pane cleared.");
     } else {
-        const newIndexToSelect = Math.min(currentFilterIndex, filters.length - 1);
         selectFilter(newIndexToSelect);
         console.log(`Filter deleted. Selecting filter at new index: ${newIndexToSelect}`);
     }
