@@ -37,6 +37,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ドラッグアンドドロップ機能の初期化
     setupFilterListSorting();
+    
+    // バージョン表示機能
+    const displayVersionNumber = function() {
+        const versionElement = document.getElementById('version-display');
+        if (versionElement && chrome.runtime && chrome.runtime.getManifest) {
+            const version = chrome.runtime.getManifest().version || '不明';
+            versionElement.textContent = 'v' + version;
+        }
+    };
+
+    // バージョン表示を実行
+    displayVersionNumber();
 
     // 「＋ フィルタを追加」ボタンにイベントリスナーを設定
     const addNewFilterButton = document.getElementById('add-new-filter');

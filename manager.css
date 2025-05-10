@@ -128,6 +128,12 @@ input {
     .app-title {
         color: #444746;
         font-size: 1.1rem;
+        .version-badge {
+            margin-left: 0.5rem;
+            font-weight: normal;
+            font-size: 0.9rem;
+            color: #999;
+        }
     }
 
     .header-menu {
@@ -364,7 +370,6 @@ input {
                 &.small {
                     font-size: 0.7rem;
                     color: #999;
-
                 }
             }
 
