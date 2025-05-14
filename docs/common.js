@@ -3,6 +3,54 @@
 // グローバル変数でモーダルの挙動を制御
 let preventOutsideClickClose = false;
 
+// UIテキストを多言語化する関数 (data-i18n属性に基づいてテキストを設定)
+// common.js, manager.js, settings.js, contact.js など、HTMLを扱う各JSファイルに配置または参照される想定
+function localizeHtmlPage() {
+    console.log("Localizing HTML page based on data-i18n attributes.");
+
+    // data-i18n-textを持つ要素のtextContentを設定
+    document.querySelectorAll("[data-i18n-text]").forEach(element => {
+        const key = element.getAttribute("data-i18n-text");
+        if (key) {
+             element.textContent = chrome.i18n.getMessage(key) || `[${key}]`;
+             console.log(`Set text for key "${key}" (text): ${element.textContent}`);
+        }
+    });
+
+    // data-i18n-placeholderを持つ要素のplaceholder属性を設定
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+        const key = element.getAttribute("data-i18n-placeholder");
+         if (key && element.placeholder !== undefined) {
+            element.placeholder = chrome.i18n.getMessage(key) || `[${key}]`;
+             console.log(`Set placeholder for key "${key}": ${element.placeholder}`);
+         }
+    });
+
+    // data-i18n-titleを持つ要素のtitle属性を設定
+    document.querySelectorAll("[data-i18n-title]").forEach(element => {
+        const key = element.getAttribute("data-i18n-title");
+         if (key && element.title !== undefined) {
+            element.title = chrome.i18n.getMessage(key) || `[${key}]`;
+             console.log(`Set title for key "${key}": ${element.title}`);
+         }
+    });
+
+    // ★ここを追加★ data-i18n-innerHTMLを持つ要素のinnerHTMLを設定
+    document.querySelectorAll("[data-i18n-innerHTML]").forEach(element => {
+        const key = element.getAttribute("data-i18n-innerHTML");
+        if (key) {
+             // innerHTMLを使用するため、HTMLタグ（例: <br>）が解釈されます
+             element.innerHTML = chrome.i18n.getMessage(key) || `[${key}]`;
+             console.log(`Set innerHTML for key "${key}": ${element.innerHTML}`);
+        }
+    });
+
+
+    // TODO: 他の data-i18n-* 属性が必要であればここに追加
+
+    console.log("HTML page localization complete.");
+}
+
 function showDocsModal(title, preventOutsideClick = false) {
     const modal = document.getElementById('docs-modal');
     const modalTitle = document.getElementById('modal-title');

@@ -2,6 +2,9 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
+    // DOMContentLoaded時にUIテキストの多言語化を適用
+    localizeHtmlPage(); 
+
     // バージョン情報を取得するグローバル関数を定義
     window.getExtensionVersionInfo = function() {
         try {
@@ -45,6 +48,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // お問い合わせフォームのHTMLを生成してモーダルに設定
             docsContent.innerHTML = generateContactFormHTML();
             
+            // 生成したHTML内のテキストも多言語化するために再度localizeHtmlPageを呼び出す
+            if (typeof localizeHtmlPage === 'function') {
+                    localizeHtmlPage(); // ★ 生成したHTMLにも適用 ★
+                    console.log("localizeHtmlPage called again after generating contact form HTML.");
+                } else {
+                    console.error("localizeHtmlPage function not found after generating contact form HTML.");
+                }
+            
+            // バージョン情報を表示
+            displayVersionInfo()
+
             // イベントリスナーを設定
             setupContactFormEventListeners();
             
@@ -64,76 +78,77 @@ document.addEventListener('DOMContentLoaded', function() {
     // お問い合わせフォームのHTML生成
     function generateContactFormHTML() {
         return `
-        <div class="contact-form-container markdown-container">
-            <p>Gmail Filter Managerに関するご質問、ご意見、不具合報告などをお寄せください。</p>
-            
+            <div class="contact-form-container markdown-container">
+            <p data-i18n-text="contactFormDescription"></p>
+
             <form id="contact-form" class="contact-form">
                 <div class="form-group">
-                    <label for="contact-type">お問い合わせ種別<span class="required">*</span></label>
+                    <label for="contact-type" data-i18n-text="contactFormTypeLabel"></label><span class="required">*</span>
                     <select id="contact-type" name="entry.100345935" required>
-                        <option value="">選択してください</option>
-                        <option value="ご質問・使い方について">ご質問・使い方について</option>
-                        <option value="機能追加のご要望">機能追加のご要望</option>
-                        <option value="不具合のご報告">不具合のご報告</option>
-                        <option value="ご意見・感想">ご意見・感想</option>
-                        <option value="その他">その他</option>
+                        <option value="" data-i18n-text="contactFormTypePlaceholder"></option>
+                        <option value="ご質問・使い方について" data-i18n-text="contactFormTypeQuestion"></option>
+                        <option value="機能追加のご要望" data-i18n-text="contactFormTypeFeatureRequest"></option>
+                        <option value="不具合のご報告" data-i18n-text="contactFormTypeBugReport"></option>
+                        <option value="ご意見・感想" data-i18n-text="contactFormTypeFeedback"></option>
+                        <option value="その他" data-i18n-text="contactFormTypeOther"></option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="contact-email">メールアドレス（任意）</label>
-                    <input type="email" id="contact-email" name="entry.1525296493" placeholder="返信が必要な場合にご記入ください">
-                    <p class="form-help">※返信はお約束できかねます。あらかじめご了承ください</p>
+                    <label for="contact-email" data-i18n-text="contactFormEmailLabel"></label>
+                    <input type="email" id="contact-email" name="entry.1525296493" data-i18n-placeholder="contactFormEmailPlaceholder">
+                    <p class="form-help" data-i18n-text="contactFormEmailHelp"></p>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="contact-message">お問い合わせ内容<span class="required">*</span></label>
-                    <textarea id="contact-message" name="entry.447890634" rows="6" required placeholder="具体的な内容をご記入ください。不具合の場合は、発生状況や再現手順も併せてお知らせください。"></textarea>
+                    <label for="contact-message" data-i18n-text="contactFormMessageLabel"></label><span class="required">*</span>
+                    <textarea id="contact-message" name="entry.447890634" rows="6" required data-i18n-placeholder="contactFormMessagePlaceholder"></textarea>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="contact-version">拡張機能のバージョン情報</label>
-                    <p class="form-help">${getVersionInfo()}</p>
+                    <label for="contact-version" data-i18n-text="contactFormVersionLabel"></label>
+                    <p class="form-help"><span id="version-display"></span></p>
                 </div>
-                
+
                 <div class="form-actions">
-                    <button type="submit" id="submit-form" class="submit-button">送信する</button>
-                    <button type="button" id="cancel-form" class="cancel-button">キャンセル</button>
+                    <button type="submit" id="submit-form" class="submit-button" data-i18n-text="contactFormSubmitButton"></button>
+                    <button type="button" id="cancel-form" class="cancel-button" data-i18n-text="contactFormCancelButton"></button>
                 </div>
+                    <p class="error-message" id="form-validation-error" style="display: none;"></p>
             </form>
-            
+
             <div id="form-success" class="form-success" style="display: none;">
-                <h2>送信完了</h2>
-                <p>お問い合わせが送信されました。</p>
-                <button type="button" id="close-success" class="complete-button">閉じる</button>
+                <h2 data-i18n-text="contactFormSuccessTitle"></h2>
+                <p data-i18n-text="contactFormSuccessMessage"></p>
+                <button type="button" id="close-success" class="complete-button" data-i18n-text="contactFormCloseButton"></button>
             </div>
-            
-            <div id="form-error" class="form-error" style="display: none;">
-                <h2>送信エラー</h2>
-                <p>お問い合わせの送信中にエラーが発生しました。</p>
-                <p>インターネット接続をご確認のうえ、再度お試しください。</p>
-                <button type="button" id="retry-submit" class="retry-button">再試行</button>
-                <button type="button" id="close-error" class="complete-button">閉じる</button>
+
+                <div id="form-error" class="form-error" style="display: none;">
+                <h2 data-i18n-text="contactFormErrorTitle"></h2>
+                <p data-i18n-text="contactFormErrorMessage"></p>
+                <p class="help-text" data-i18n-text="contactFormErrorHelp"></p>
+                <button type="button" id="retry-submit" class="retry-button" data-i18n-text="contactFormRetryButton"></button>
+                <button type="button" id="close-error" class="complete-button" data-i18n-text="contactFormCloseButton"></button>
             </div>
+
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         `;
     }
     
     // バージョン情報を取得する関数
-    function getVersionInfo() {
-        try {
-            let version = '不明';
-            
-            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) {
-                const manifest = chrome.runtime.getManifest();
-                version = manifest.version || '不明';
-            }
-            
-            return `バージョン ${version}`;
-        } catch (error) {
-            console.error('バージョン情報の取得に失敗:', error);
-            return '取得できませんでした';
+     function displayVersionInfo() {
+        const versionElement = document.getElementById('version-display');
+        if (versionElement) {
+            // グローバル関数 window.getExtensionVersionInfo() を呼び出し
+            const version = window.getExtensionVersionInfo();
+             // chrome.i18n.getMessageにプレースホルダと引数を渡す
+             if (version === chrome.i18n.getMessage('contactFormVersionError') || version === '不明') { // バージョン取得失敗時
+                  versionElement.textContent = chrome.i18n.getMessage('contactFormVersionError'); // ★ エラーメッセージを多言語化 ★
+             } else {
+                  // contactFormVersionInfo のメッセージに $1 プレースホルダがある前提
+                  versionElement.textContent = chrome.i18n.getMessage('contactFormVersionInfo', [version]); // ★ バージョン情報を多言語化 ★
+             }
         }
     }
     
