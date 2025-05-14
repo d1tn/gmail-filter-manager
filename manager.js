@@ -22,6 +22,9 @@ let currentFilterIndex = -1;
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOMContentLoaded event fired.");
 
+    // UIテキストの多言語化を適用 (data-i18n属性を使用)
+    localizeHtmlPage();
+
     // 全ての条件項目要素を取得し、ロジックを設定
     const conditionItems = document.querySelectorAll('.filter-condition-item');
     if (conditionItems.length > 0) {
@@ -210,6 +213,47 @@ function setupFilterProcessEvents() {
             updateCurrentFilterData();
         });
     }
+}
+
+
+// HTMLファイル内の data-i18n-* 属性を持つ要素のテキストをローカライズする汎用関数
+function localizeHtmlPage() {
+    console.log("Localizing HTML page based on data-i18n attributes.");
+
+    // data-i18n-textを持つ要素のtextContentを設定
+    document.querySelectorAll("[data-i18n-text]").forEach(element => {
+        const key = element.getAttribute("data-i18n-text");
+        if (key) {
+             // chrome.i18n.getMessage()で翻訳テキストを取得
+             // キーが見つからない場合のためにフォールバックテキストも設定すると安全です
+             element.textContent = chrome.i18n.getMessage(key) || `[${key}]`;
+             console.log(`Set text for key "${key}": ${element.textContent}`);
+        }
+    });
+
+    // data-i18n-placeholderを持つ要素のplaceholder属性を設定
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+        const key = element.getAttribute("data-i18n-placeholder");
+         // placeholder属性を持つ要素か確認してから設定
+         if (key && element.placeholder !== undefined) {
+            element.placeholder = chrome.i18n.getMessage(key) || `[${key}]`;
+             console.log(`Set placeholder for key "${key}": ${element.placeholder}`);
+         }
+    });
+
+    // data-i18n-titleを持つ要素のtitle属性を設定
+    document.querySelectorAll("[data-i18n-title]").forEach(element => {
+        const key = element.getAttribute("data-i18n-title");
+         // title属性を持つ要素か確認してから設定
+         if (key && element.title !== undefined) {
+            element.title = chrome.i18n.getMessage(key) || `[${key}]`;
+             console.log(`Set title for key "${key}": ${element.title}`);
+         }
+    });
+
+    // TODO: data-i18n-valueなど、他の属性で多言語化が必要なものがあればここに追加
+
+    console.log("HTML page localization complete.");
 }
 
 //----------------------------------------------------------------------
