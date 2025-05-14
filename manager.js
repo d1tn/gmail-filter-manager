@@ -216,46 +216,6 @@ function setupFilterProcessEvents() {
 }
 
 
-// HTMLファイル内の data-i18n-* 属性を持つ要素のテキストをローカライズする汎用関数
-function localizeHtmlPage() {
-    console.log("Localizing HTML page based on data-i18n attributes.");
-
-    // data-i18n-textを持つ要素のtextContentを設定
-    document.querySelectorAll("[data-i18n-text]").forEach(element => {
-        const key = element.getAttribute("data-i18n-text");
-        if (key) {
-             // chrome.i18n.getMessage()で翻訳テキストを取得
-             // キーが見つからない場合のためにフォールバックテキストも設定すると安全です
-             element.textContent = chrome.i18n.getMessage(key) || `[${key}]`;
-             console.log(`Set text for key "${key}": ${element.textContent}`);
-        }
-    });
-
-    // data-i18n-placeholderを持つ要素のplaceholder属性を設定
-    document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
-        const key = element.getAttribute("data-i18n-placeholder");
-         // placeholder属性を持つ要素か確認してから設定
-         if (key && element.placeholder !== undefined) {
-            element.placeholder = chrome.i18n.getMessage(key) || `[${key}]`;
-             console.log(`Set placeholder for key "${key}": ${element.placeholder}`);
-         }
-    });
-
-    // data-i18n-titleを持つ要素のtitle属性を設定
-    document.querySelectorAll("[data-i18n-title]").forEach(element => {
-        const key = element.getAttribute("data-i18n-title");
-         // title属性を持つ要素か確認してから設定
-         if (key && element.title !== undefined) {
-            element.title = chrome.i18n.getMessage(key) || `[${key}]`;
-             console.log(`Set title for key "${key}": ${element.title}`);
-         }
-    });
-
-    // TODO: data-i18n-valueなど、他の属性で多言語化が必要なものがあればここに追加
-
-    console.log("HTML page localization complete.");
-}
-
 //----------------------------------------------------------------------
 // 2. ユーティリティ関数
 //----------------------------------------------------------------------
@@ -475,7 +435,7 @@ function updateFilterName(currentFilter) {
         const selectedItemButton = filterListUl.querySelector(`.item[data-filter-id="${currentFilter.id}"] button`);
         if (selectedItemButton) {
             // フィルタ名が空の場合はデフォルト名を表示
-            selectedItemButton.textContent = currentFilter.name || "無題のフィルタ";
+            selectedItemButton.textContent = currentFilter.name || chrome.i18n.getMessage('managerFilterListUnnamed');
             console.log(`Left pane filter name updated to: "${selectedItemButton.textContent}"`);
         }
     }
@@ -780,7 +740,7 @@ function renderFilterList() {
         listItem.dataset.filterIndex = index;
 
         const button = document.createElement('button');
-        button.textContent = filter.name || "無題のフィルタ";
+        button.textContent = filter.name || chrome.i18n.getMessage('managerFilterListUnnamed');
         button.classList.add('filter-list-button');
         button.type = 'button';
 

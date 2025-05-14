@@ -4,7 +4,7 @@
     "sourcefile": "manifest.json"
   },
   "extensionDescription": {
-    "message": "Gmailのフィルタを直感的なGUIで簡単に作成・管理できる拡張機能。フィルタは外部に送信されません。",
+    "message": "A Chrome extension to easily create and manage Gmail filters with an intuitive GUI. Filter contents are not sent externally.",
     "sourcefile": "manifest.json"
   },
   "extensionDefaultTitle": {
@@ -12,11 +12,11 @@
     "sourcefile": "manifest.json"
   },
   "contentButtonOpenManager": {
-    "message": "フィルタ管理を開く",
+    "message": "Open Filter Manager",
     "sourcefile": "content.js"
   },
   "contentAlertExtensionInvalid": {
-    "message": "Gmail Filter Managerの接続が切れました。ページを再読み込みしてください。",
+    "message": "Gmail Filter Manager connection lost. Please reload the page.",
     "sourcefile": "content.js"
   },
   "managerTitle": {
@@ -28,11 +28,11 @@
     "sourcefile": "manager.html"
   },
   "managerMenuAbout": {
-    "message": "このツールについて",
+    "message": "About this tool",
     "sourcefile": "manager.html"
   },
   "managerMenuTerms": {
-    "message": "利用規約",
+    "message": "Terms of Service",
     "sourcefile": "manager.html"
   },
   "managerMenuGithub": {
@@ -40,131 +40,131 @@
     "sourcefile": "manager.html"
   },
   "managerMenuSettings": {
-    "message": "高度な設定",
+    "message": "Advanced Settings",
     "sourcefile": "manager.html"
   },
   "managerMenuContact": {
-    "message": "お問い合わせ",
+    "message": "Contact",
     "sourcefile": "manager.html"
   },
   "managerMainExportAll": {
-    "message": "フィルタをエクスポート",
+    "message": "Export Filters",
     "sourcefile": "manager.html"
   },
   "managerMainImport": {
-    "message": "フィルタをインポート",
+    "message": "Import Filters",
     "sourcefile": "manager.html"
   },
   "managerFilterListTitle": {
-    "message": "フィルタ",
+    "message": "Filters",
     "sourcefile": "manager.html"
   },
   "managerFilterListUnnamed": {
-    "message": "無題のフィルタ",
+    "message": "Untitled Filter",
     "sourcefile": "manager.js"
   },
   "managerSupportTitle": {
-    "message": "開発支援",
+    "message": "Support Development",
     "sourcefile": "manager.html"
   },
   "managerSupportDescription": {
-    "message": "いつものお買い物をこのリンクから行うだけで、開発支援になります！",
+    "message": "Shopping through this link helps support development at no extra cost to you!",
     "sourcefile": "manager.html"
   },
   "managerSupportButton": {
-    "message": "Amazonで買い物をする",
+    "message": "Shop on Amazon",
     "sourcefile": "manager.html"
   },
   "managerSupportNote": {
-    "message": "開発者はAmazonアソシエイトプログラムに参加しており、本リンクを経由したユーザーの商品購入により収益を得ています",
+    "message": "As an Amazon Associate, I earn from qualifying purchases through this link.",
     "sourcefile": "manager.html"
   },
   "managerFilterNamePlaceholder": {
-    "message": "フィルタ名を入力",
+    "message": "Enter filter name",
     "sourcefile": "manager.html"
   },
   "managerProcessTitle": {
-    "message": "処理",
+    "message": "Actions",
     "sourcefile": "manager.html"
   },
   "managerProcessSkipInbox": {
-    "message": "受信トレイをスキップ（アーカイブ）",
+    "message": "Skip the Inbox (Archive it)",
     "sourcefile": "manager.html"
   },
   "managerProcessMarkAsRead": {
-    "message": "既読にする",
+    "message": "Mark as read",
     "sourcefile": "manager.html"
   },
   "managerProcessStar": {
-    "message": "スターを付ける",
+    "message": "Star it",
     "sourcefile": "manager.html"
   },
   "managerProcessApplyLabel": {
-    "message": "ラベルを付ける:",
+    "message": "Apply the label:",
     "sourcefile": "manager.html"
   },
   "managerProcessLabelNamePlaceholder": {
-    "message": "ラベル名を入力",
+    "message": "Enter label name",
     "sourcefile": "manager.html"
   },
   "managerProcessForward": {
-    "message": "転送する:",
+    "message": "Forward to:",
     "sourcefile": "manager.html"
   },
   "managerProcessForwardAddressPlaceholder": {
-    "message": "転送先アドレスを入力",
+    "message": "Enter forwarding address",
     "sourcefile": "manager.html"
   },
   "managerProcessDelete": {
-    "message": "削除する",
+    "message": "Delete it",
     "sourcefile": "manager.html"
   },
    "managerProcessDeleteDisabledInfo": {
-    "message": "（「高度な設定」から有効化してください）",
+    "message": "(Enable in Advanced Settings)",
     "sourcefile": "manager.js"
   },
   "managerProcessNotSpam": {
-    "message": "迷惑メールにしない",
+    "message": "Never send it to Spam",
     "sourcefile": "manager.html"
   },
   "managerProcessAlwaysImportant": {
-    "message": "常に重要マークを付ける",
+    "message": "Always mark it as important",
     "sourcefile": "manager.html"
   },
   "managerProcessNeverImportant": {
-    "message": "重要マークを付けない",
+    "message": "Never mark it as important",
     "sourcefile": "manager.html"
   },
   "managerProcessApplyCategory": {
-    "message": "適用するカテゴリ:",
+    "message": "Categorize as:",
     "sourcefile": "manager.html"
   },
   "managerProcessCategorySelectDefault": {
-    "message": "カテゴリを選択",
+    "message": "Select category",
     "sourcefile": "manager.html"
   },
   "managerProcessCategoryPersonal": {
-    "message": "メイン",
+    "message": "Primary",
     "sourcefile": "manager.html"
   },
   "managerProcessCategorySocial": {
-    "message": "ソーシャル",
+    "message": "Social",
     "sourcefile": "manager.html"
   },
   "managerProcessCategoryNotification": {
-    "message": "新着",
+    "message": "Updates",
     "sourcefile": "manager.html"
   },
   "managerProcessCategoryGroup": {
-    "message": "フォーラム",
+    "message": "Forums",
     "sourcefile": "manager.html"
   },
   "managerProcessCategoryPromo": {
-    "message": "プロモーション",
+    "message": "Promotions",
     "sourcefile": "manager.html"
   },
-   "managerConditionsTitle": {
-    "message": "フィルタ条件",
+  "managerConditionsTitle": {
+    "message": "Filter Conditions",
     "sourcefile": "manager.html"
   },
   "managerConditionFromLabel": {
@@ -176,31 +176,31 @@
     "sourcefile": "manager.html"
   },
   "managerConditionSubjectLabel": {
-    "message": "件名",
+    "message": "Subject",
     "sourcefile": "manager.html"
   },
   "managerConditionIncludesLabel": {
-    "message": "含む",
+    "message": "Has the words",
     "sourcefile": "manager.html"
   },
   "managerConditionExcludesLabel": {
-    "message": "含まない",
+    "message": "Doesn't have",
     "sourcefile": "manager.html"
   },
    "managerConditionSizeLabel": {
-    "message": "サイズ",
+    "message": "Size",
     "sourcefile": "manager.html"
   },
   "managerConditionSizeLargerThan": {
-    "message": "次の値より大きい",
+    "message": "larger than",
     "sourcefile": "manager.html"
   },
   "managerConditionSizeSmallerThan": {
-    "message": "次の値より小さい",
+    "message": "smaller than",
     "sourcefile": "manager.html"
   },
   "managerConditionSizeValuePlaceholder": {
-    "message": "値",
+    "message": "Value",
     "sourcefile": "manager.html"
   },
   "managerConditionSizeUnitMB": {
@@ -212,88 +212,86 @@
     "sourcefile": "manager.html"
   },
   "managerConditionSizeUnitBytes": {
-    "message": "バイト",
-    "sourcefile": "manager.html"
-  },
-  "managerConditionHasAttachment": {
-    "message": "添付ファイルあり",
+    "message": "bytes",
     "sourcefile": "manager.html"
   },
    "managerConditionFromPlaceholder": {
-    "message": "アドレスを入力",
+    "message": "Enter address",
     "sourcefile": "manager.html"
   },
    "managerConditionToPlaceholder": {
-    "message": "アドレスを入力",
+    "message": "Enter address",
     "sourcefile": "manager.html"
   },
    "managerConditionSubjectPlaceholder": {
-    "message": "キーワードを入力",
+    "message": "Enter keywords",
     "sourcefile": "manager.html"
   },
    "managerConditionIncludesPlaceholder": {
-    "message": "キーワードを入力",
+    "message": "Enter keywords",
     "sourcefile": "manager.html"
   },
    "managerConditionExcludesPlaceholder": {
-    "message": "キーワードを入力",
+    "message": "Enter keywords",
     "sourcefile": "manager.html"
   },
   "managerConditionOrConnectorText": {
     "message": "OR",
     "sourcefile": "manager.html"
   },
-
+  "managerConditionHasAttachment": {
+    "message": "Has attachment",
+    "sourcefile": "manager.html"
+  },
   "managerActionExportThis": {
-    "message": "このフィルタをエクスポート",
+    "message": "Export This Filter",
     "sourcefile": "manager.html"
   },
   "managerActionDuplicate": {
-    "message": "このフィルタを複製",
+    "message": "Duplicate This Filter",
     "sourcefile": "manager.html"
   },
   "managerActionDelete": {
-    "message": "このフィルタを削除",
+    "message": "Delete This Filter",
     "sourcefile": "manager.html"
   },
   "managerActionDeleteTooltip": {
-    "message": "最低1件のフィルタは必要です",
+    "message": "At least one filter is required",
     "sourcefile": "manager.html"
   },
   "managerActionDeleteConfirm": {
-    "message": "フィルタ \"$1\" を削除してもよろしいですか？\nこの操作は元に戻せません。",
+    "message": "Are you sure you want to delete filter \"$1\"?\nThis action cannot be undone.",
     "placeholders": {
       "1": {
         "content": "$1",
-        "example": "無題のフィルタ"
+        "example": "Untitled Filter"
       }
     },
     "sourcefile": "manager.js"
   },
   "managerModalDocsTitle": {
-    "message": "ドキュメント",
+    "message": "Documentation",
     "sourcefile": "manager.html"
   },
    "managerModalDocsLoading": {
-    "message": "読み込み中...",
+    "message": "Loading...",
     "sourcefile": "manager.html"
   },
   "managerImportDialogSelectFileError": {
-    "message": "ファイルの読み込み中にエラーが発生しました。",
+    "message": "An error occurred while reading the file.",
     "sourcefile": "manager.js"
   },
   "managerImportSuccess": {
-    "message": "$1個のフィルタを正常にインポートしました。",
+    "message": "Successfully imported $1 filter(s).",
     "placeholders": {
       "1": {
         "content": "$1",
         "example": "3"
       }
-    },
-    "sourcefile": "manager.js"
+    }
   },
   "managerImportConfirmMerge": {
-    "message": "$1個のフィルタを読み込みました。既存の$2個のフィルタと統合しますか？「キャンセル」を選択すると、既存のフィルタを全て置き換えます。",
+    "message": "$1 filter(s) imported. Do you want to merge them with the existing $2 filter(s)? Selecting 'Cancel' will replace all existing filters.",
     "placeholders": {
       "1": {
         "content": "$1",
@@ -307,163 +305,161 @@
     "sourcefile": "manager.js"
   },
   "managerImportError": {
-    "message": "フィルタのインポート中にエラーが発生しました: $1",
+    "message": "An error occurred while importing filters: $1",
     "placeholders": {
       "1": {
         "content": "$1",
-        "example": "XML解析エラー"
+        "example": "XML parsing error"
       }
-    },
-    "sourcefile": "manager.js"
+    }
   },
   "managerXmlParseError": {
-    "message": "XML解析エラー: $1",
+    "message": "XML parsing error: $1",
     "placeholders": {
       "1": {
         "content": "$1",
-        "example": "無効なXML形式"
+        "example": "Invalid XML format"
       }
-    },
-    "sourcefile": "manager.js"
+    }
   },
   "managerFilterNotFound": {
-    "message": "保存されたフィルタが見つからないか、データが無効です。初期フィルタを作成します。",
+    "message": "No saved filters found or data is invalid. Creating initial filter.",
     "sourcefile": "manager.js"
   },
   "managerAppSettingsNotFound": {
-    "message": "保存されたアプリ設定が見つかりません。デフォルト設定を使用します。",
+    "message": "No saved app settings found. Using default settings.",
     "sourcefile": "manager.js"
   },
   "termsTitle": {
-    "message": "利用規約",
+    "message": "Terms of Service",
     "sourcefile": "docs/terms.md"
   },
   "termsLastUpdated": {
-    "message": "最終更新日:",
+    "message": "Last Updated:",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionSummary": {
-    "message": "概要",
+    "message": "Summary",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionTerms": {
-    "message": "利用条件",
+    "message": "Terms and Conditions",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionPrivacy": {
-    "message": "プライバシーポリシー",
+    "message": "Privacy Policy",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionInfoCollected": {
-    "message": "収集する情報",
+    "message": "Information Collected",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionInfoPurpose": {
-    "message": "情報の利用目的",
+    "message": "Purpose of Information Use",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionInfoThirdParty": {
-    "message": "第三者への提供",
+    "message": "Provision to Third Parties",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionDisclaimer": {
-    "message": "免責事項",
+    "message": "Disclaimer",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionNoWarranty": {
-    "message": "保証の否認",
+    "message": "No Warranty",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionLimitLiability": {
-    "message": "責任の制限",
+    "message": "Limitation of Liability",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionFilterResponsibility": {
-    "message": "フィルタ設定の責任",
+    "message": "Responsibility for Filter Settings",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionIntellectualProperty": {
-    "message": "知的財産権",
+    "message": "Intellectual Property Rights",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionChanges": {
-    "message": "本規約の変更",
+    "message": "Changes to These Terms",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionGoverningLaw": {
-    "message": "準拠法および管轄裁判所",
+    "message": "Governing Law and Jurisdiction",
     "sourcefile": "docs/terms.md"
   },
   "termsSectionContact": {
-    "message": "お問い合わせ",
+    "message": "Contact Information",
     "sourcefile": "docs/terms.md"
   },
   "readmeWhatIsItTitle": {
-    "message": "どんなツール？",
+    "message": "What is this tool?",
     "sourcefile": "docs/about.md"
   },
   "readmeHistoryTitle": {
-    "message": "更新履歴（ソースコード上の反映日で、ストア上のリリース日と異なる場合があります）",
+    "message": "Update History (Reflects source code commit dates, may differ from store release dates)",
     "sourcefile": "docs/about.md"
   },
    "contactFormDescription": {
-    "message": "Gmail Filter Managerに関するご質問、ご意見、不具合報告などをお寄せください。",
+    "message": "Please send us your questions, feedback, bug reports, or other inquiries regarding Gmail Filter Manager.",
     "sourcefile": "contact.js"
   },
   "contactFormTypeLabel": {
-    "message": "お問い合わせ種別",
+    "message": "Inquiry Type",
     "sourcefile": "contact.js"
   },
   "contactFormTypePlaceholder": {
-    "message": "選択してください",
+    "message": "Select inquiry type",
     "sourcefile": "contact.js"
   },
   "contactFormTypeQuestion": {
-    "message": "ご質問・使い方について",
+    "message": "Question / Usage",
     "sourcefile": "contact.js"
   },
   "contactFormTypeFeatureRequest": {
-    "message": "機能追加のご要望",
+    "message": "Feature Request",
     "sourcefile": "contact.js"
   },
   "contactFormTypeBugReport": {
-    "message": "不具合のご報告",
+    "message": "Bug Report",
     "sourcefile": "contact.js"
   },
   "contactFormTypeFeedback": {
-    "message": "ご意見・感想",
+    "message": "Feedback / Comments",
     "sourcefile": "contact.js"
   },
   "contactFormTypeOther": {
-    "message": "その他",
+    "message": "Other",
     "sourcefile": "contact.js"
   },
   "contactFormEmailLabel": {
-    "message": "メールアドレス（任意）",
+    "message": "Email Address (Optional)",
     "sourcefile": "contact.js"
   },
   "contactFormEmailPlaceholder": {
-    "message": "返信が必要な場合にご記入ください",
+    "message": "Enter if a reply is needed",
     "sourcefile": "contact.js"
   },
   "contactFormEmailHelp": {
-    "message": "※返信はお約束できかねます。あらかじめご了承ください",
+    "message": "*Please note that we may not be able to reply.",
     "sourcefile": "contact.js"
   },
   "contactFormMessageLabel": {
-    "message": "お問い合わせ内容",
+    "message": "Inquiry Details",
     "sourcefile": "contact.js"
   },
   "contactFormMessagePlaceholder": {
-    "message": "具体的な内容をご記入ください。不具合の場合は、発生状況や再現手順も併せてお知らせください。",
+    "message": "Please enter specific details. For bug reports, include situation and reproduction steps.",
     "sourcefile": "contact.js"
   },
   "contactFormVersionLabel": {
-    "message": "拡張機能のバージョン情報",
+    "message": "Extension Version Info",
     "sourcefile": "contact.js"
   },
   "contactFormVersionInfo": {
-    "message": "バージョン $1",
+    "message": "Version $1",
      "placeholders": {
       "1": {
         "content": "$1",
@@ -473,67 +469,67 @@
     "sourcefile": "contact.js"
   },
   "contactFormVersionError": {
-    "message": "取得できませんでした",
+    "message": "Could not retrieve",
     "sourcefile": "contact.js"
   },
   "contactFormSubmitButton": {
-    "message": "送信する",
+    "message": "Send",
     "sourcefile": "contact.js"
   },
   "contactFormSubmittingButton": {
-    "message": "送信中...",
+    "message": "Sending...",
     "sourcefile": "contact.js"
   },
   "contactFormCancelButton": {
-    "message": "キャンセル",
+    "message": "Cancel",
     "sourcefile": "contact.js"
   },
   "contactFormSuccessTitle": {
-    "message": "送信完了",
+    "message": "Sent Successfully",
     "sourcefile": "contact.js"
   },
   "contactFormSuccessMessage": {
-    "message": "お問い合わせが送信されました。",
+    "message": "Your inquiry has been sent.",
     "sourcefile": "contact.js"
   },
   "contactFormErrorTitle": {
-    "message": "送信エラー",
+    "message": "Sending Error",
     "sourcefile": "contact.js"
   },
   "contactFormErrorMessage": {
-    "message": "お問い合わせの送信中にエラーが発生しました。",
+    "message": "An error occurred while sending your inquiry.",
     "sourcefile": "contact.js"
   },
   "contactFormErrorHelp": {
-    "message": "インターネット接続をご確認のうえ、再度お試しください。",
+    "message": "Please check your internet connection and try again.",
     "sourcefile": "contact.js"
   },
   "contactFormRetryButton": {
-    "message": "再試行",
+    "message": "Retry",
     "sourcefile": "contact.js"
   },
   "contactFormCloseButton": {
-    "message": "閉じる",
+    "message": "Close",
     "sourcefile": "contact.js"
   },
   "contactFormValidationRequired": {
-    "message": "お問い合わせ種別とお問い合わせ内容は必須です。",
+    "message": "Inquiry Type and Inquiry Details are required.",
     "sourcefile": "contact.js"
   },
   "contactFormCancelConfirm": {
-    "message": "入力内容が失われますが、お問い合わせをキャンセルしますか？",
+    "message": "Cancel inquiry? Your input will be lost.",
     "sourcefile": "contact.js"
   },
    "commonModalLoadingErrorTitle": {
-    "message": "読み込みエラー",
+    "message": "Loading Error",
     "sourcefile": "common.js"
   },
   "commonModalLoadingErrorMessage": {
-    "message": "ドキュメントの読み込みに失敗しました。",
+    "message": "Failed to load document.",
     "sourcefile": "common.js"
   },
    "commonModalLoadingErrorDetails": {
-    "message": "エラー詳細: $1",
+    "message": "Error Details: $1",
      "placeholders": {
       "1": {
         "content": "$1",
@@ -543,11 +539,11 @@
     "sourcefile": "common.js"
   },
   "commonModalReloadLink": {
-    "message": "再読み込み",
+    "message": "Reload",
     "sourcefile": "common.js"
   },
   "commonMarkdownRenderError": {
-    "message": "マークダウンの表示中にエラーが発生しました: $1",
+    "message": "Error rendering markdown: $1",
      "placeholders": {
       "1": {
         "content": "$1",
@@ -557,55 +553,55 @@
     "sourcefile": "common.js"
   },
   "settingsTitle": {
-    "message": "高度な設定",
+    "message": "Advanced Settings",
     "sourcefile": "settings.js"
   },
   "settingsDescription": {
-    "message": "これらの設定は、本拡張機能の特別な機能を制御します。",
+    "message": "These settings control special features of this extension.",
     "sourcefile": "settings.js"
   },
   "settingsDeleteSectionTitle": {
-    "message": "メールの削除（危険な操作）",
+    "message": "Email Deletion (Dangerous Operation)",
     "sourcefile": "settings.js"
   },
   "settingsEnableDeleteLabel": {
-    "message": "メールの削除機能を有効にする",
+    "message": "Enable email deletion feature",
     "sourcefile": "settings.js"
   },
   "settingsDeleteWarning": {
-    "message": "⚠️ この機能を有効にすると、フィルタ条件に一致するメールが完全に削除される可能性があります。<br>重要なメールも削除される可能性があるため慎重に使用してください。<br>本拡張機能を利用したメールの削除は利用者の自己責任であり、開発者は一切の責任を負いかねます。",
+    "message": "⚠️ Enabling this feature may permanently delete emails matching filter criteria.<br>Use with caution as important emails may be deleted.<br>You are solely responsible for email deletion using this extension, and the developer is not liable for any damages.",
     "sourcefile": "settings.js"
   },
   "settingsDeleteInfoTitle": {
-    "message": "メールの削除機能について",
+    "message": "About the email deletion feature",
     "sourcefile": "settings.js"
   },
   "settingsDeleteInfoDisabledText": {
-    "message": "メールの削除機能が無効の場合：",
+    "message": "When email deletion is disabled:",
     "sourcefile": "settings.js"
   },
   "settingsDeleteInfoDisabledBullet1": {
-    "message": "フィルタで「削除する」オプションはグレーアウトされます",
+    "message": "The 'Delete it' filter option will be grayed out.",
     "sourcefile": "settings.js"
   },
   "settingsDeleteInfoDisabledBullet2": {
-    "message": "既存のフィルタで「削除する」が選択されていても、エクスポート時に削除アクションは無視されます",
+    "message": "If 'Delete it' is selected in existing filters, it will be ignored upon export.",
     "sourcefile": "settings.js"
   },
   "settingsDeleteInfoDisabledBullet3": {
-    "message": "このとき、削除アクションはGmail側に反映されません",
+    "message": "In this case, the deletion action will not be applied in Gmail.",
     "sourcefile": "settings.js"
   },
   "settingsDeleteInfoPersistence": {
-    "message": "この設定はブラウザ内に保存され、拡張機能を再起動しても維持されます。",
+    "message": "This setting is saved in your browser and persists even after restarting the extension.",
     "sourcefile": "settings.js"
   },
   "settingsDeleteEnabledAlert": {
-    "message": "削除機能が有効になりました。この機能は重要なメールを完全に削除する可能性があります。慎重に使用してください。",
+    "message": "Deletion feature enabled. This feature can permanently delete important emails. Use with caution.",
     "sourcefile": "settings.js"
   },
   "settingsDeleteDisabledAlert": {
-    "message": "削除機能が無効になりました。既存のフィルタで「削除する」がチェックされている場合、それらは一時的に無効化されます。",
+    "message": "Deletion feature disabled. If 'Delete it' was checked in existing filters, it is temporarily deactivated.",
     "sourcefile": "settings.js"
   }
 }
