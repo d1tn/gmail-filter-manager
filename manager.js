@@ -7,11 +7,10 @@
 console.log("Filter Manager tab loaded!");
 
 // グローバル設定オブジェクト
-let appSettings = {
+window.appSettings = {
     enableDeleteAction: false,  // 削除機能:デフォルトでは無効
     lastUpdated: new Date().toISOString()
 };
-
 // フィルタデータを保持するための配列（初期値として空の配列）
 let filters = [];
 
@@ -40,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ドラッグアンドドロップ機能の初期化
     setupFilterListSorting();
-    
+
     // バージョン表示機能
     const displayVersionNumber = function() {
         const versionElement = document.getElementById('version-display');
@@ -89,12 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 既存のフィルタデータをストレージから読み込む
     loadFiltersFromStorage();
- 
+
     // 「このフィルタを保存する」ボタンにイベントリスナーを設定
     const exportCurrentFilterButton = document.getElementById('export-this-filter');
     if (exportCurrentFilterButton) {
         console.log("'このフィルタを保存' button found, adding event listener.");
-        exportCurrentFilterButton.addEventListener('click', function() {
+        exportCurrentFilterButton.addEventListener('click', function () {
             exportFilters('current'); // 「current」モードでエクスポート
         });
     } else {
@@ -120,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // エクスポート・インポートボタンのイベントリスナー設定
-    document.getElementById('export-filter').addEventListener('click', function() {exportFilters('all');});
+    document.getElementById('export-filter').addEventListener('click', function () { exportFilters('all'); });
     document.getElementById('import-filter').addEventListener('click', showImportDialog);
 
     console.log("manager.js setup complete.");
@@ -257,7 +256,7 @@ function createOrGroupRemoveButton() {
 // XMLの特殊文字をエスケープする関数
 function escapeXml(unsafe) {
     if (!unsafe) return '';
-    
+
     return unsafe.replace(/[<>&'"]/g, function (c) {
         switch (c) {
             case '<': return '&lt;';
@@ -272,7 +271,7 @@ function escapeXml(unsafe) {
 // XML特殊文字をデコードする関数（インポート時に使用）
 function unescapeXml(escapedXml) {
     if (!escapedXml) return '';
-    
+
     return escapedXml
         .replace(/&quot;/g, '"')
         .replace(/&apos;/g, '\'')
@@ -593,7 +592,7 @@ function updateFilterActions(currentFilter) {
     const deleteCheckbox = document.getElementById('process-delete');
     if (deleteCheckbox) {
         currentFilter.actions.delete = deleteCheckbox.checked;
-        
+
         // 削除機能が無効で、チェックがオンの場合の視覚的フィードバック
         if (currentFilter.actions.delete && !window.appSettings.enableDeleteAction) {
             const deleteLabel = deleteCheckbox.closest('label');
@@ -661,39 +660,19 @@ function saveAppSettings() {
     }
 }
 
-// アプリ設定を読み込む関数
+// アプリ設定を読み込む
 function loadAppSettings() {
-    console.log("アプリ設定の読み込みを開始します");
-
-    if (isExtensionEnvironment()) {
-        // Chrome拡張環境
-        chrome.storage.local.get('appSettings', function (result) {
-            if (result.appSettings) {
-                window.appSettings = result.appSettings;
-                console.log('保存されたアプリ設定を読み込みました:', window.appSettings);
-                updateUIBasedOnSettings();
-            } else {
-                console.log("保存されたアプリ設定が見つかりません。デフォルト設定を使用します。");
-                saveAppSettings(); // デフォルト設定を保存
-            }
-        });
-    } else {
-        // 通常のWeb環境（開発時）
-        try {
-            const savedSettings = localStorage.getItem('gmail_filter_app_settings');
-            if (savedSettings) {
-                window.appSettings = JSON.parse(savedSettings);
-                console.log('保存されたアプリ設定を読み込みました:', window.appSettings);
-                updateUIBasedOnSettings();
-            } else {
-                console.log("保存されたアプリ設定が見つかりません。デフォルト設定を使用します。");
-                saveAppSettings(); // デフォルト設定を保存
-            }
-        } catch (e) {
-            console.error('アプリ設定の読み込みに失敗しました：', e);
-            saveAppSettings(); // デフォルト設定を保存
+    console.log("Loading app settings from storage.");
+    chrome.storage.local.get(['appSettings'], function (result) {
+        if (result.appSettings) {
+            appSettings = result.appSettings; // Note: appSettings はローカル変数
+            console.log("App settings loaded:", appSettings);
+        } else {
+            // 設定が見つからない場合、デフォルト設定を使用
+            console.log(chrome.i18n.getMessage('managerAppSettingsNotFound'));
+            saveAppSettings(); // Note: saveAppSettings はローカル関数
         }
-    }
+    });
 }
 //----------------------------------------------------------------------
 // 4. UI表示/描画関連
@@ -719,22 +698,22 @@ function renderFilterList() {
     filters.forEach((filter, index) => {
         // ID値のログと存在チェック
         console.log(`フィルタ #${index} ID: ${filter.id}, 名前: ${filter.name || "無題"}`);
-        
+
         // IDがない、または既に使用されているIDの場合は新しいIDを生成
         if (!filter.id || usedIds.has(filter.id)) {
             const oldId = filter.id || '(未設定)';
-            filter.id = Date.now().toString() + "_" + index + "_" + 
-                       Math.random().toString(36).substring(2, 10);
+            filter.id = Date.now().toString() + "_" + index + "_" +
+                Math.random().toString(36).substring(2, 10);
             console.log(`ID重複または未設定を検出! "${oldId}" → 新ID "${filter.id}" を生成しました`);
             hasFixedIds = true;
         }
-        
+
         // 使用済みIDとして記録
         usedIds.add(filter.id);
-        
+
         const listItem = document.createElement('li');
         listItem.classList.add('item');
-        
+
         // データ属性としてフィルタのIDとインデックスを保持
         listItem.dataset.filterId = filter.id;
         listItem.dataset.filterIndex = index;
@@ -755,8 +734,8 @@ function renderFilterList() {
         dragHandle.innerHTML = '&#8942;&#8942;'; // 縦に並んだ6点（2つの縦3点リーダー）
 
         // 現在選択されているフィルタであれば、アクティブなスタイルを適用
-        if (currentFilterIndex !== -1 && 
-            currentFilterIndex < filters.length && 
+        if (currentFilterIndex !== -1 &&
+            currentFilterIndex < filters.length &&
             filter.id === filters[currentFilterIndex].id) {
             listItem.classList.add('active');
         }
@@ -786,13 +765,14 @@ function renderFilterList() {
 // 選択されたフィルタのデータを右ペインに表示する関数
 function displayFilterDetails(filter) {
     console.log("Displaying filter details:", filter);
-    // 右ペインの要素をクリアする処理
+    // 右ペインの要素をクリアする処理 (元のコードのまま)
     const filterNameInput = document.getElementById('filter-name-input');
 
     // フィルタ名入力欄の表示制御
     if (filterNameInput) {
         // フィルタデータが存在し、かつフィルタ名がデフォルト値の場合は空欄にする
-        if (filter && filter.name === "無題のフィルタ") {
+        // "無題のフィルタ" を多言語化キーで比較
+        if (filter && filter.name === chrome.i18n.getMessage('managerFilterListUnnamed')) { // ★ 多言語化 ★
             filterNameInput.value = ''; // 空文字列を設定
             console.log("Filter name is default, showing placeholder.");
         } else {
@@ -804,35 +784,45 @@ function displayFilterDetails(filter) {
         }
     }
 
+    // フィルタデータがない場合の処理 (元のコードのまま)
     if (!filter) {
         console.warn("No filter data to display.");
-        // フィルタデータがない場合は条件表示エリアも非表示にする
+        // フィルタデータがない場合は条件表示エリアも非表示にする (元のコードのまま)
         document.querySelectorAll('.filter-condition-item').forEach(conditionItemElement => {
-            updateDisplayVisibilityOfCondition(conditionItemElement);
+            updateDisplayVisibilityOfCondition(conditionItemElement); // Assuming this function exists
         });
-        // フィルタ名入力欄もクリア（既に上で処理済みですが念のため）
+        // フィルタ名入力欄もクリア（既に上で処理済みですが念のため） (元のコードのまま)
         if (filterNameInput) {
             filterNameInput.value = '';
         }
-        return; // フィルタデータがない場合はここで終了
+
+        // フィルタデータがない場合もUIの状態を更新する必要があるかもしれないので、ここで呼び出す
+        // 例: 削除機能が無効なら、フィルタがない状態でも削除関連UIは無効のまま表示されるべき場合など
+        if (typeof updateUIBasedOnSettings === 'function') {
+            updateUIBasedOnSettings(); // ★ フィルタがない場合も呼び出す ★
+        } else {
+            console.error("updateUIBasedOnSettings function not found!");
+        }
+
+        return; // フィルタデータがない場合はここで終了 (元のコードのまま)
     }
 
-    // 全ての入力要素をクリア
+    // 全ての入力要素をクリア (Assuming this function exists)
     clearAllInputElements();
 
-    // フィルタ名入力欄にデータを反映
+    // フィルタ名入力欄にデータを反映 (この部分は上の filterNameInput 制御と重複しているように見えるが、元のコードを維持)
     if (filterNameInput) {
         filterNameInput.value = filter.name;
     }
 
-    // 各フィルタ条件のデータを右ペインに反映
+    // 各フィルタ条件のデータを右ペインに反映 (Assuming these functions exist)
     renderCondition('from', filter.conditions.from);
     renderCondition('to', filter.conditions.to);
     renderCondition('subject', filter.conditions.subject);
     renderCondition('includes', filter.conditions.includes);
     renderCondition('excludes', filter.conditions.excludes);
 
-    // サイズ条件の反映
+    // サイズ条件の反映 (元のコードのまま)
     const sizeOperatorSelect = document.getElementById('condition-size-operator');
     const sizeValueInput = document.getElementById('condition-size-value-input');
     const sizeUnitSelect = document.getElementById('condition-size-unit');
@@ -842,14 +832,25 @@ function displayFilterDetails(filter) {
         sizeUnitSelect.value = filter.conditions.size.unit;
     }
 
-    // 添付ファイルあり条件の反映
+    // 添付ファイルあり条件の反映 (元のコードのまま)
     const hasAttachmentCheckbox = document.getElementById('condition-has-attachment');
     if (hasAttachmentCheckbox) {
         hasAttachmentCheckbox.checked = filter.conditions.hasAttachment;
     }
 
-    // フィルタ処理（アクション）のデータを反映
-    displayFilterActions(filter);
+    // フィルタ処理（アクション）のデータを反映 (Assuming this function exists and populates action UI)
+    displayFilterActions(filter); // <-- この関数がアクションUIを生成/更新するはずです
+
+    // ★★★ ここに updateUIBasedOnSettings() の呼び出しを追加 ★★★
+    // displayFilterActions が完了し、削除チェックボックスがDOMにある後に実行
+    if (typeof updateUIBasedOnSettings === 'function') {
+        updateUIBasedOnSettings(); // ★ フィルタデータがある場合に呼び出す ★
+    } else {
+        console.error("updateUIBasedOnSettings function not found!");
+    }
+
+
+    console.log("Filter details displayed."); // このログがあればその直前に追加
 }
 
 // 全ての入力要素をクリアする関数
@@ -1114,15 +1115,18 @@ function updateDeleteButtonState() {
         // フィルタが1件以下の場合は削除ボタンを無効化
         if (filters.length <= 1) {
             deleteFilterButton.disabled = true;
-            deleteFilterButton.title = "最低1件のフィルタは必要です";
+            // ツールチップを多言語化
+            deleteFilterButton.title = chrome.i18n.getMessage('managerActionDeleteTooltip');
             deleteFilterButton.classList.add('disabled-button');
         } else {
             deleteFilterButton.disabled = false;
-            deleteFilterButton.title = "このフィルタを削除";
+            // ツールチップを多言語化
+            deleteFilterButton.title = chrome.i18n.getMessage('managerActionDelete');
             deleteFilterButton.classList.remove('disabled-button');
         }
     }
 }
+
 
 // フィルタリストを最下部にスクロールする関数
 function scrollFilterListToBottom() {
@@ -1133,7 +1137,7 @@ function scrollFilterListToBottom() {
             top: filterListContainer.scrollHeight,
             behavior: 'smooth'
         });
-        
+
         console.log("Scrolled filter list to bottom");
     }
 }
@@ -1141,34 +1145,44 @@ function scrollFilterListToBottom() {
 // 設定に基づいてUIを更新する関数
 function updateUIBasedOnSettings() {
     // 削除チェックボックスの状態を更新
+    // チェックボックスのIDが 'process-delete' である前提
     const deleteCheckbox = document.getElementById('process-delete');
     if (deleteCheckbox) {
         // 削除機能が無効なら、チェックボックスを無効化
+        // window.appSettings がグローバルに定義されている前提
         deleteCheckbox.disabled = !window.appSettings.enableDeleteAction;
-        
+
         // 削除アクションのラベルスタイルを更新
         const deleteLabel = deleteCheckbox.closest('label');
         if (deleteLabel) {
-            if (!window.appSettings.enableDeleteAction) {
+            if (!window.appSettings.enableDeleteAction) { // ★ window.appSettings を参照 ★
                 deleteLabel.classList.add('disabled-action');
                 // 無効時の説明を追加
+                // クラス名 'info-text' のspan要素を探す前提
                 let infoSpan = deleteLabel.querySelector('.info-text');
                 if (!infoSpan) {
                     infoSpan = document.createElement('span');
-                    infoSpan.className = 'info-text';
-                    deleteLabel.appendChild(infoSpan);
+                    infoSpan.className = 'info-text'; // 元のクラス名を使用
+                    infoSpan.style.marginLeft = '10px'; // スタイルも元のコードに合わせる
+                    infoSpan.style.fontSize = '0.8em'; // スタイルも元のコードに合わせる
+                    infoSpan.style.color = '#888'; // スタイルも元のコードに合わせる
+                    deleteLabel.appendChild(infoSpan); // ラベル要素の子要素として追加
                 }
-                infoSpan.textContent = '（「高度な設定」から有効化してください）';
+                // 説明テキストを多言語化
+                infoSpan.textContent = chrome.i18n.getMessage('managerProcessDeleteDisabledInfo'); // ★ 多言語化 ★
+
             } else {
                 deleteLabel.classList.remove('disabled-action');
                 // 有効時は説明を削除
-                const infoSpan = deleteLabel.querySelector('.info-text');
+                const infoSpan = deleteLabel.querySelector('.info-text'); // クラス名 'info-text' のspan要素を探す
                 if (infoSpan) {
                     infoSpan.remove();
                 }
             }
         }
     }
+    // updateDeleteButtonState 関数を呼び出して、左側の削除ボタンの状態も更新
+    updateDeleteButtonState(); // この関数が manager.js 内に定義されている前提
 }
 
 //----------------------------------------------------------------------
@@ -1250,7 +1264,7 @@ function duplicateCurrentFilter() {
 
     // 複製したフィルタに新しいIDと名前を設定
     duplicatedFilter.id = Date.now().toString(); // 新しい一意なIDを生成
-    duplicatedFilter.name = `${originalFilter.name} (コピー)`; // 名前に "(コピー)" を追加
+    duplicatedFilter.name = `${originalFilter.name} (Copied)`; // 名前に "(コピー)" を追加
 
     console.log("Original filter:", originalFilter);
     console.log("Duplicated filter:", duplicatedFilter);
@@ -1298,14 +1312,14 @@ function deleteCurrentFilter() {
     // ここで削除後に選択するインデックスを先に計算しておく
     const deleteIndex = currentFilterIndex;
     const newIndexToSelect = Math.min(currentFilterIndex, filters.length - 2);
-    
+
     // 選択状態をクリアしてから削除する - この順番が重要！
     currentFilterIndex = -1;
-    
+
     console.log(`Deleting filter at index: ${deleteIndex}`);
     filters.splice(deleteIndex, 1);
     console.log("Filter deleted. Remaining filters:", filters);
-    
+
     // レンダリング（この時点でcurrentFilterIndex = -1なのでエラーは起きない）
     renderFilterList();
 
@@ -1508,17 +1522,17 @@ function collectInputFormAndGroup(inputAndButtonContainer, inputElement) {
 function addOrGroupToDisplayArea(chipsDisplay, andGroup) {
     const conditionItemElement = chipsDisplay.closest('.filter-condition-item');
     const orConnector = conditionItemElement.querySelector('.condition-or-connector');
-    
+
     // 既存のORグループが存在する場合のみ、ORインジケーターを追加
     if (chipsDisplay.querySelectorAll('.or-group').length > 0) {
         const orIndicator = createOrGroupIndicator();
         chipsDisplay.appendChild(orIndicator);
     }
-    
+
     // ORグループ全体のコンテナを作成
     const orGroupContainer = document.createElement('div');
     orGroupContainer.classList.add('or-group');
-    
+
     // ANDグループの各要素をORグループに追加
     andGroup.forEach(item => {
         if (item === 'AND') {
@@ -1529,14 +1543,14 @@ function addOrGroupToDisplayArea(chipsDisplay, andGroup) {
             orGroupContainer.appendChild(valueChip);
         }
     });
-    
+
     // ORグループ削除ボタンを追加
     const orGroupRemoveButton = createOrGroupRemoveButton();
     orGroupContainer.appendChild(orGroupRemoveButton);
-    
+
     // ORグループコンテナを下部表示エリアに追加
     chipsDisplay.appendChild(orGroupContainer);
-    
+
     // 表示状態を更新（OR接続テキストも含む）
     const orGroupCount = chipsDisplay.querySelectorAll('.or-group').length;
     if (orGroupCount > 0) {
@@ -1712,23 +1726,23 @@ function setupConditionChangeListeners(conditionItemElement, conditionType, hasA
 // フィルタのエクスポート処理を行う関数
 function exportFilters(mode = 'all') {
     console.log(`Exporting filters in ${mode} mode.`);
-    
+
     // 表示中のフィルタのみモードの場合のチェック
     if (mode === 'current' && currentFilterIndex === -1) {
         console.warn("No filter selected to export.");
         alert("エクスポートするフィルタが選択されていません。");
         return; // 選択されているフィルタがない場合は何もしない
     }
-    
+
     // エクスポート対象のフィルタ配列を取得
     let filtersToExport;
     let fileNamePrefix = 'gmailfilter';
-    
+
     if (mode === 'current') {
         // 表示中のフィルタのみを対象にする
         const currentFilter = filters[currentFilterIndex];
         filtersToExport = [currentFilter];
-        
+
         // ファイル名にフィルタ名を含める（特殊文字を置換）
         const safeFilterName = currentFilter.name
             ? currentFilter.name.replace(/[\\\/\:\*\?\"\<\>\|]/g, '_').substring(0, 30)
@@ -1739,7 +1753,7 @@ function exportFilters(mode = 'all') {
         filtersToExport = filters;
         fileNamePrefix = 'gmailfilter_all';
     }
-    
+
     // XMLデータを生成
     const xmlContent = generateGmailFilterXML(filtersToExport);
 
@@ -1768,7 +1782,7 @@ function exportFilters(mode = 'all') {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
     }, 0);
-    
+
     const filterCount = filtersToExport.length;
     console.log(`Exported ${filterCount} filter(s) successfully.`);
 }
@@ -2015,7 +2029,7 @@ function generateSizeConditionXML(sizeCondition) {
 // 条件文字列を解析して条件データ構造に変換する関数
 function parseConditionString(conditionStr) {
     console.log(`条件文字列を解析: "${conditionStr}"`);
-    
+
     // 空の条件文字列の場合は空配列を返す
     if (!conditionStr || conditionStr.trim() === '') {
         return [];
@@ -2030,20 +2044,20 @@ function parseConditionString(conditionStr) {
         let inParentheses = false;
         let currentPart = '';
         let orParts = [];
-        
+
         for (let i = 0; i < conditionStr.length; i++) {
             const char = conditionStr[i];
-            
+
             if (char === '(') {
                 inParentheses = true;
                 currentPart += char;
             } else if (char === ')') {
                 inParentheses = false;
                 currentPart += char;
-            } else if (!inParentheses && 
-                       conditionStr.substring(i, i + 4) === ' OR ' && 
-                       (i === 0 || conditionStr[i-1] !== '(') && 
-                       (i + 4 >= conditionStr.length || conditionStr[i+4] !== ')')) {
+            } else if (!inParentheses &&
+                conditionStr.substring(i, i + 4) === ' OR ' &&
+                (i === 0 || conditionStr[i - 1] !== '(') &&
+                (i + 4 >= conditionStr.length || conditionStr[i + 4] !== ')')) {
                 orParts.push(currentPart);
                 currentPart = '';
                 i += 3; // ' OR ' の残りをスキップ
@@ -2051,15 +2065,15 @@ function parseConditionString(conditionStr) {
                 currentPart += char;
             }
         }
-        
+
         if (currentPart) {
             orParts.push(currentPart);
         }
-        
+
         if (orParts.length === 0) {
             orParts = [conditionStr]; // 分割に失敗した場合は全体を1つの条件として扱う
         }
-        
+
         console.log(`OR分割結果:`, orParts);
 
         orParts.forEach(orPart => {
@@ -2073,20 +2087,20 @@ function parseConditionString(conditionStr) {
                 let inParentheses = false;
                 let currentPart = '';
                 let andParts = [];
-                
+
                 for (let i = 0; i < cleanPart.length; i++) {
                     const char = cleanPart[i];
-                    
+
                     if (char === '(') {
                         inParentheses = true;
                         currentPart += char;
                     } else if (char === ')') {
                         inParentheses = false;
                         currentPart += char;
-                    } else if (!inParentheses && 
-                               cleanPart.substring(i, i + 5) === ' AND ' && 
-                               (i === 0 || cleanPart[i-1] !== '(') && 
-                               (i + 5 >= cleanPart.length || cleanPart[i+5] !== ')')) {
+                    } else if (!inParentheses &&
+                        cleanPart.substring(i, i + 5) === ' AND ' &&
+                        (i === 0 || cleanPart[i - 1] !== '(') &&
+                        (i + 5 >= cleanPart.length || cleanPart[i + 5] !== ')')) {
                         andParts.push(currentPart.trim());
                         currentPart = '';
                         i += 4; // ' AND ' の残りをスキップ
@@ -2094,15 +2108,15 @@ function parseConditionString(conditionStr) {
                         currentPart += char;
                     }
                 }
-                
+
                 if (currentPart) {
                     andParts.push(currentPart.trim());
                 }
-                
+
                 if (andParts.length === 0) {
                     andParts = [cleanPart]; // 分割に失敗した場合は全体を1つの条件として扱う
                 }
-                
+
                 const andGroup = [];
 
                 // 最初の値を追加
@@ -2160,11 +2174,11 @@ function importFiltersFromXML(xmlContent) {
 
             // 新しいフィルタオブジェクトを作成
             const filter = createNewFilterData();
-    
+
             // 一意性を保証するため、現在時刻 + インデックス + ランダム文字列を使用
-            filter.id = Date.now().toString() + "_" + entryIndex + "_" + 
-                    Math.random().toString(36).substring(2, 10);
-            
+            filter.id = Date.now().toString() + "_" + entryIndex + "_" +
+                Math.random().toString(36).substring(2, 10);
+
             console.log(`フィルタに一意のID "${filter.id}" を割り当てました`);
 
             // フィルタ名を取得
@@ -2226,10 +2240,10 @@ function getPropertiesFromEntry(entry) {
 function processPropertyForImport(property, filter) {
     const name = property.getAttribute('name');
     let value = property.getAttribute('value');
-    
+
     // XMLエスケープ文字列をデコード
     value = unescapeXml(value);
-    
+
     console.log(`プロパティ: ${name} = ${value}`);
 
     try {
@@ -2287,8 +2301,8 @@ function handleImportedFilters(importedFilters) {
             importedFilters.forEach(filter => {
                 // 既にIDが存在する場合は新しいIDを生成
                 if (currentIds.has(filter.id)) {
-                    const newId = Date.now().toString() + "_" + 
-                                Math.random().toString(36).substring(2, 10);
+                    const newId = Date.now().toString() + "_" +
+                        Math.random().toString(36).substring(2, 10);
                     console.log(`ID重複を検出: "${filter.id}" → 新ID "${newId}"`);
                     filter.id = newId;
                 }
