@@ -1,6 +1,6 @@
 {
   "extensionName": {
-    "message": "Gmail Filter Manager",
+    "message": "Gmail Filter Manager - GUIでフィルタを並べ替え、名前付け",
     "sourcefile": "manifest.json"
   },
   "extensionDescription": {
@@ -8,7 +8,7 @@
     "sourcefile": "manifest.json"
   },
   "extensionDefaultTitle": {
-    "message": "Gmail Filter Manager",
+    "message": "Gmail Filter Manager - GUIでフィルタを並べ替え、名前付け",
     "sourcefile": "manifest.json"
   },
   "contentButtonOpenManager": {
