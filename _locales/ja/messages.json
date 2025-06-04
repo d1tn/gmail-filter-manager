@@ -163,6 +163,10 @@
     "message": "プロモーション",
     "sourcefile": "manager.html"
   },
+  "managerProcessDuplicate": {
+    "message": "この処理を複製",
+    "sourcefile": "manager.html"
+  },
    "managerConditionsTitle": {
     "message": "フィルタ条件",
     "sourcefile": "manager.html"
