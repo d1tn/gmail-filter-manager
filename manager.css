@@ -51,10 +51,43 @@ li {
 button {
     border: none;
     cursor: pointer;
+
+    &.action {
+        border-radius: 0.5rem;
+        line-height: 2.5rem;
+        padding: 0 1.0rem;
+
+        &:hover {
+            background-color: #ebf3ff;
+            color: #2980b9;
+        }
+
+        &.danger {
+            background-color: transparent;
+            color: #c0392b;
+
+            &:hover {
+                background-color: #ffebeb;
+                color: #c0392b;
+            }
+
+            &.disabled-button {
+                background-color: transparent;
+                color: #666;
+                cursor: not-allowed;
+            }
+        }
+    }
+
 }
 
 input {
     border: none;
+}
+
+.frex {
+    display: flex;
+    align-items: center;
 }
 
 /* チェックボックス要素共通 */
@@ -746,38 +779,16 @@ button.remove-or-group-button:hover {
     }
 }
 
+#duplicate-this-process {
+    margin-top: 2.5rem;
+    margin-bottom: 1.0rem;
+    margin-left: 1.5rem;
+ }
 
 .filter-actions-section {
     display: flex;
     justify-self: flex-end;
     gap: 1.0rem;
-
-    button {
-        border-radius: 0.5rem;
-        line-height: 2.5rem;
-        padding: 0 1.0rem;
-        
-        &:hover {
-            background-color: #ebf3ff;
-            color: #2980b9;
-        }
-    }
-    
-    #delete-this-filter {
-        background-color: transparent;
-        color: #c0392b;
-
-        &:hover {
-            background-color: #ffebeb;
-            color: #c0392b;
-        }
-
-        &.disabled-button {
-            background-color: transparent;
-            color: #666;
-            cursor: not-allowed;
-        }
-    }
 }
 
 /* --------------------- */
