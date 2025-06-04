@@ -117,6 +117,11 @@ input {
 /* ヘッダー */
 
 .app-header {
+    position: fixed; 
+    background-color: #F8FAFD;
+    box-sizing: border-box;
+    width: 100%;
+    z-index: 1000;
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
@@ -136,42 +141,171 @@ input {
         }
     }
 
-    .header-menu {
-        .items {
-            display: flex;
+}
 
-            .item {
-                margin: 0 0.5rem;
+/* ハンバーガーメニューの開閉用チェックボックス */
+.hidden-checkbox {
+    display: none; 
+}
 
-                a {
-                    display: flex;
-                    align-items: center;
-                    height: 1.5rem;
-                    width: 1.5rem;
-                    text-decoration: none;
-                    border-radius: 50rem;
-                    padding: 0.5rem;
+/* ハンバーガーアイコンのラベル */
+.menu-icon-label {
+    display: flex;
+    align-items: center;
+    height: 1.5rem;
+    width: 1.5rem;
+    text-decoration: none;
+    border-radius: 50rem;
+    padding: 0.5rem;
+    cursor: pointer; /* クリック可能であることを示す */
+    margin: 0 0.5rem; /* 既存の .item スタイルに合わせる */
+}
 
-                    &:hover {
-                        background-color: #ddd;
-                    }
+.menu-icon-label:hover {
+    background-color: #ddd; /* ホバー時の背景色 */
+}
 
-                    .icon {
-                        height: 100%;
-                        display: block;
-                        flex-shrink: 0;
-                        margin: 0;
-                        padding: 0;
-                    }
-                }
-            }
+.menu-icon-label .icon {
+    height: 100%;
+    display: block;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+}
 
-            .text {
-                display: none;
-            }
+/* ハンバーガーメニューのコンテナ */
+.hamburger-menu-container {
+    position: absolute;
+    box-sizing: border-box;
+    padding: 1.5rem 1.0rem;
+    top: calc(100% + 1.0rem);
+    background-color: #F8FAFD; /* 背景色 */
+    border: 1px solid #e0e0e0;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+    width: 23rem; /* メニューの幅 */
+    right: -23rem;
+    transition: max-height 0.3s ease-out, border 0.3s ease-out, box-shadow 0.3s ease-out; /* スムーズなアニメーション */
+    z-index: 999; /* 他の要素より手前に表示 */
+}
+
+.hamburger-menu-container .items {
+    margin-bottom: 1.5rem;
+}
+
+.hamburger-menu-container .item {
+    width: 100%;
+    border-radius: 0.3rem;
+}
+
+.hamburger-menu-container .item a {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    font-size: 1.0rem;
+    line-height: 2.5rem;
+    height: 100%;
+    width: 100%;
+    background: transparent;
+    color: #202124;
+    font-weight: normal;
+    text-align: left;
+    user-select: none;
+    text-decoration: none;
+}
+
+.hamburger-menu-container .item a .icon {
+    height: 1.2rem; /* アイコンのサイズを調整 */
+    margin-right: 0.8rem;
+}
+
+.hamburger-menu-container .item:hover {
+    background: #eee; /* ホバー時の背景色 */
+}
+
+/* ハンバーガーメニューのコンテナの表示/非表示 */
+.hidden-checkbox:checked + .menu-icon-label + .hamburger-menu-container {
+    right: 0.5rem;
+    border: 1px solid #e0e0e0; /* 表示時にボーダーを適用 */
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1); /* 表示時にシャドウを適用 */
+    transition: all 0.3s ease;
+}
+
+
+/* 開発支援エリア */
+.plz-support-me {
+    margin: 0 auto;
+    padding: 1.0rem;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    box-shadow: inset 0 0 0 1px #e5e5e5;
+
+    h2 {
+        margin: 0 auto;
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        font-size: 1.0rem;
+            margin: 0 auto;
+
+        &.small {
+            font-size: 0.7rem;
+            color: #999;
         }
     }
+
+    .support-button {
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        width: 100%;
+        font-size: 1.0rem;
+        font-weight: bold;
+        line-height: 2.5rem;
+        margin: 1.0rem 0;
+        color: #fff;
+        border-radius: 0.5rem;
+        background: #ff9900;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 1;
+
+        &:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.3) 25%,
+                    rgba(255, 255, 255, 0.5) 50%,
+                    rgba(255, 255, 255, 0.3) 75%,
+                    rgba(255, 255, 255, 0) 100%);
+            z-index: -1;
+            transform: skewX(-25deg);
+            opacity: 0;
+            transition: all 0.75s ease;
+        }
+
+        &:hover {
+            background: #ff9900;
+        }
+
+        &:hover:before {
+            opacity: 1;
+            left: 100%;
+            transition: all 0.8s ease;
+        }
+    }
+
 }
+
 
 
 /* 左右分割表示 */
@@ -179,6 +313,7 @@ input {
     display: flex;
     height: 100%;
     margin: 1.5rem 0;
+    padding-top: 4.0rem;
     overflow: hidden;
 
     /* ------------------------------------------ */
@@ -195,19 +330,6 @@ input {
 
         .menu.main {
             flex-shrink: 0;
-        }
-
-        .menu.sub {
-            bottom: 0;
-            background-color: #F8FAFD;
-            z-index: 10;
-            padding-top: 1.0rem;
-            padding-bottom: 5.0rem;
-            border-top: 0.1rem solid #ddd;
-
-            a {
-                font-weight: normal;
-            }
         }
 
         section {
@@ -347,78 +469,6 @@ input {
                     box-shadow: 0 1.1rem 0.5rem rgba(0, 0, 0, 0.2);
                 }
             }
-        }
-
-        .plz-support-me {
-            margin: 1.5rem 0.5rem;
-            /* width: 95%; */
-            padding: 1.0rem;
-            border-radius: 0.5rem;
-            background-color: #fff;
-            box-shadow: inset 0 0 0 1px #e5e5e5;
-
-            h2 {
-                margin: 0 auto;
-                font-size: 1.2rem;
-                text-align: center;
-                margin-bottom: 0.5rem;
-            }
-
-            p {
-                font-size: 1.0rem;
-
-                &.small {
-                    font-size: 0.7rem;
-                    color: #999;
-                }
-            }
-
-            .support-button {
-                display: block;
-                text-align: center;
-                width: 100%;
-                font-size: 1.0rem;
-                font-weight: bold;
-                line-height: 2.5rem;
-                margin: 1.0rem 0;
-                color: #fff;
-                border-radius: 0.5rem;
-                background: #ff9900;
-                position: relative;
-                overflow: hidden;
-                transition: all 0.3s ease;
-                z-index: 1;
-
-                &:before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 200%;
-                    height: 100%;
-                    background: linear-gradient(90deg,
-                            rgba(255, 255, 255, 0) 0%,
-                            rgba(255, 255, 255, 0.3) 25%,
-                            rgba(255, 255, 255, 0.5) 50%,
-                            rgba(255, 255, 255, 0.3) 75%,
-                            rgba(255, 255, 255, 0) 100%);
-                    z-index: -1;
-                    transform: skewX(-25deg);
-                    opacity: 0;
-                    transition: all 0.75s ease;
-                }
-
-                &:hover {
-                    background: #ff9900;
-                }
-
-                &:hover:before {
-                    opacity: 1;
-                    left: 100%;
-                    transition: all 0.8s ease;
-                }
-            }
-
         }
 
     }
