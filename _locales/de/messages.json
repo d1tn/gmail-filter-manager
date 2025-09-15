@@ -1,0 +1,614 @@
+{
+  "extensionName": {
+    "message": "Gmail Filter Manager: Sortieren, Benennen mit einfacher Benutzeroberfläche",
+    "sourcefile": "manifest.json"
+  },
+  "extensionDescription": {
+    "message": "Eine Chrome-Erweiterung zur einfachen Erstellung und Verwaltung von Gmail-Filtern mit einer intuitiven Benutzeroberfläche. Filterinhalte werden nicht extern gesendet.",
+    "sourcefile": "manifest.json"
+  },
+  "extensionDefaultTitle": {
+    "message": "Gmail Filter Manager: Sortieren, Benennen mit einfacher Benutzeroberfläche",
+    "sourcefile": "manifest.json"
+  },
+  "contentButtonOpenManager": {
+    "message": "Filter-Manager öffnen",
+    "sourcefile": "content.js"
+  },
+  "contentAlertExtensionInvalid": {
+    "message": "Verbindung zum Gmail Filter Manager verloren. Bitte laden Sie die Seite neu.",
+    "sourcefile": "content.js"
+  },
+  "managerTitle": {
+    "message": "Gmail Filter Manager",
+    "sourcefile": "manager.html"
+  },
+  "managerHeaderTitle": {
+    "message": "Gmail Filter Manager",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuAbout": {
+    "message": "Über dieses Tool",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuTerms": {
+    "message": "Nutzungsbedingungen",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuGithub": {
+    "message": "GitHub",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuSettings": {
+    "message": "Erweiterte Einstellungen",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuContact": {
+    "message": "Kontakt",
+    "sourcefile": "manager.html"
+  },
+  "managerMainExportAll": {
+    "message": "Filter exportieren",
+    "sourcefile": "manager.html"
+  },
+  "managerMainImport": {
+    "message": "Filter importieren",
+    "sourcefile": "manager.html"
+  },
+  "managerFilterListTitle": {
+    "message": "Filter",
+    "sourcefile": "manager.html"
+  },
+  "managerFilterListUnnamed": {
+    "message": "Unbenannter Filter",
+    "sourcefile": "manager.js"
+  },
+  "managerSupportTitle": {
+    "message": "Entwicklung unterstützen",
+    "sourcefile": "manager.html"
+  },
+  "managerSupportDescription": {
+    "message": "Einkäufe über diesen Link helfen, die Entwicklung zu unterstützen, ohne zusätzliche Kosten für Sie!",
+    "sourcefile": "manager.html"
+  },
+  "managerSupportButton": {
+    "message": "Auf Amazon einkaufen",
+    "sourcefile": "manager.html"
+  },
+  "managerSupportNote": {
+    "message": "Als Amazon-Partner verdiene ich an qualifizierten Käufen über diesen Link.",
+    "sourcefile": "manager.html"
+  },
+  "managerFilterNamePlaceholder": {
+    "message": "Filternamen eingeben",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessTitle": {
+    "message": "Aktionen",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessSkipInbox": {
+    "message": "Posteingang überspringen (archivieren)",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessMarkAsRead": {
+    "message": "Als gelesen markieren",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessStar": {
+    "message": "Mit Stern versehen",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessApplyLabel": {
+    "message": "Label anwenden:",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessLabelNamePlaceholder": {
+    "message": "Label-Namen eingeben",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessForward": {
+    "message": "Weiterleiten an:",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessForwardAddressPlaceholder": {
+    "message": "Weiterleitungsadresse eingeben",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessDelete": {
+    "message": "Löschen",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessDeleteDisabledInfo": {
+    "message": "(In erweiterten Einstellungen aktivieren)",
+    "sourcefile": "manager.js"
+  },
+  "managerProcessNotSpam": {
+    "message": "Niemals als Spam einstufen",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessAlwaysImportant": {
+    "message": "Immer als wichtig markieren",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessNeverImportant": {
+    "message": "Niemals als wichtig markieren",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessApplyCategory": {
+    "message": "Kategorisieren als:",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategorySelectDefault": {
+    "message": "Kategorie auswählen",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryPersonal": {
+    "message": "Allgemein",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategorySocial": {
+    "message": "Soziale Netzwerke",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryNotification": {
+    "message": "Updates",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryGroup": {
+    "message": "Foren",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryPromo": {
+    "message": "Werbung",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessDuplicate": {
+    "message": "Diesen Vorgang duplizieren",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionsTitle": {
+    "message": "Filterbedingungen",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionFromLabel": {
+    "message": "Von",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionToLabel": {
+    "message": "An",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSubjectLabel": {
+    "message": "Betreff",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionIncludesLabel": {
+    "message": "Enthält die Wörter",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionExcludesLabel": {
+    "message": "Enthält nicht",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeLabel": {
+    "message": "Größe",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeLargerThan": {
+    "message": "größer als",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeSmallerThan": {
+    "message": "kleiner als",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeValuePlaceholder": {
+    "message": "Wert",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeUnitMB": {
+    "message": "MB",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeUnitKB": {
+    "message": "KB",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeUnitBytes": {
+    "message": "Bytes",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionFromPlaceholder": {
+    "message": "Adresse eingeben",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionToPlaceholder": {
+    "message": "Adresse eingeben",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSubjectPlaceholder": {
+    "message": "Stichwörter eingeben",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionIncludesPlaceholder": {
+    "message": "Stichwörter eingeben",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionExcludesPlaceholder": {
+    "message": "Stichwörter eingeben",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionOrConnectorText": {
+    "message": "ODER",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionHasAttachment": {
+    "message": "Mit Anhang",
+    "sourcefile": "manager.html"
+  },
+  "managerActionExportThis": {
+    "message": "Diesen Filter exportieren",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDuplicate": {
+    "message": "Diesen Filter duplizieren",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDelete": {
+    "message": "Diesen Filter löschen",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDeleteTooltip": {
+    "message": "Mindestens ein Filter ist erforderlich",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDeleteConfirm": {
+    "message": "Sind Sie sicher, dass Sie den Filter „$1“ löschen möchten?\nDiese Aktion kann nicht rückgängig gemacht werden.",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Unbenannter Filter"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerModalDocsTitle": {
+    "message": "Dokumentation",
+    "sourcefile": "manager.html"
+  },
+  "managerModalDocsLoading": {
+    "message": "Wird geladen...",
+    "sourcefile": "manager.html"
+  },
+  "managerImportDialogSelectFileError": {
+    "message": "Beim Lesen der Datei ist ein Fehler aufgetreten.",
+    "sourcefile": "manager.js"
+  },
+  "managerImportSuccess": {
+    "message": "$1 Filter erfolgreich importiert.",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "3"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerImportConfirmMerge": {
+    "message": "$1 Filter importiert. Möchten Sie sie mit den vorhandenen $2 Filtern zusammenführen? Die Auswahl von 'Abbrechen' ersetzt alle vorhandenen Filter.",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "5"
+      },
+      "2": {
+        "content": "$2",
+        "example": "10"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerImportError": {
+    "message": "Beim Importieren von Filtern ist ein Fehler aufgetreten: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "XML-Analysefehler"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerXmlParseError": {
+    "message": "XML-Analysefehler: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Ungültiges XML-Format"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerFilterNotFound": {
+    "message": "Keine gespeicherten Filter gefunden oder Daten ungültig. Erster Filter wird erstellt.",
+    "sourcefile": "manager.js"
+  },
+  "managerAppSettingsNotFound": {
+    "message": "Keine gespeicherten App-Einstellungen gefunden. Es werden die Standardeinstellungen verwendet.",
+    "sourcefile": "manager.js"
+  },
+  "termsTitle": {
+    "message": "Nutzungsbedingungen",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsLastUpdated": {
+    "message": "Zuletzt aktualisiert:",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionSummary": {
+    "message": "Zusammenfassung",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionTerms": {
+    "message": "Allgemeine Geschäftsbedingungen",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionPrivacy": {
+    "message": "Datenschutzrichtlinie",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionInfoCollected": {
+    "message": "Gesammelte Informationen",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionInfoPurpose": {
+    "message": "Zweck der Informationsnutzung",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionInfoThirdParty": {
+    "message": "Weitergabe an Dritte",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionDisclaimer": {
+    "message": "Haftungsausschluss",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionNoWarranty": {
+    "message": "Keine Garantie",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionLimitLiability": {
+    "message": "Haftungsbeschränkung",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionFilterResponsibility": {
+    "message": "Verantwortung für Filter-Einstellungen",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionIntellectualProperty": {
+    "message": "Rechte an geistigem Eigentum",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionChanges": {
+    "message": "Änderungen an diesen Bedingungen",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionGoverningLaw": {
+    "message": "Anwendbares Recht und Gerichtsstand",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionContact": {
+    "message": "Kontaktinformationen",
+    "sourcefile": "docs/terms.md"
+  },
+  "readmeWhatIsItTitle": {
+    "message": "Was ist dieses Tool?",
+    "sourcefile": "docs/about.md"
+  },
+  "readmeHistoryTitle": {
+    "message": "Update-Verlauf (Spiegelt die Commit-Daten des Quellcodes wider, kann von den Veröffentlichungsdaten im Store abweichen)",
+    "sourcefile": "docs/about.md"
+  },
+  "contactFormDescription": {
+    "message": "Bitte senden Sie uns Ihre Fragen, Feedback, Fehlerberichte oder andere Anfragen bezüglich des Gmail Filter Managers.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeLabel": {
+    "message": "Anfragetyp",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypePlaceholder": {
+    "message": "Anfragetyp auswählen",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeQuestion": {
+    "message": "Frage / Nutzung",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeFeatureRequest": {
+    "message": "Funktionsanfrage",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeBugReport": {
+    "message": "Fehlerbericht",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeFeedback": {
+    "message": "Feedback / Kommentare",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeOther": {
+    "message": "Andere",
+    "sourcefile": "contact.js"
+  },
+  "contactFormEmailLabel": {
+    "message": "E-Mail-Adresse (Optional)",
+    "sourcefile": "contact.js"
+  },
+  "contactFormEmailPlaceholder": {
+    "message": "Eingeben, wenn eine Antwort benötigt wird",
+    "sourcefile": "contact.js"
+  },
+  "contactFormEmailHelp": {
+    "message": "*Bitte beachten Sie, dass wir möglicherweise nicht in der Lage sind, zu antworten.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormMessageLabel": {
+    "message": "Anfragedetails",
+    "sourcefile": "contact.js"
+  },
+  "contactFormMessagePlaceholder": {
+    "message": "Bitte geben Sie spezifische Details ein. Für Fehlerberichte, fügen Sie die Situation und Reproduktionsschritte hinzu.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormVersionLabel": {
+    "message": "Erweiterungs-Versionsinfo",
+    "sourcefile": "contact.js"
+  },
+  "contactFormVersionInfo": {
+    "message": "Version $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "1.1.1"
+      }
+    },
+    "sourcefile": "contact.js"
+  },
+  "contactFormVersionError": {
+    "message": "Konnte nicht abgerufen werden",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSubmitButton": {
+    "message": "Senden",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSubmittingButton": {
+    "message": "Senden...",
+    "sourcefile": "contact.js"
+  },
+  "contactFormCancelButton": {
+    "message": "Abbrechen",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSuccessTitle": {
+    "message": "Erfolgreich gesendet",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSuccessMessage": {
+    "message": "Ihre Anfrage wurde gesendet.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormErrorTitle": {
+    "message": "Sende-Fehler",
+    "sourcefile": "contact.js"
+  },
+  "contactFormErrorMessage": {
+    "message": "Beim Senden Ihrer Anfrage ist ein Fehler aufgetreten.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormErrorHelp": {
+    "message": "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormRetryButton": {
+    "message": "Erneut versuchen",
+    "sourcefile": "contact.js"
+  },
+  "contactFormCloseButton": {
+    "message": "Schließen",
+    "sourcefile": "contact.js"
+  },
+  "contactFormValidationRequired": {
+    "message": "Anfragetyp und Anfragedetails sind erforderlich.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormCancelConfirm": {
+    "message": "Anfrage abbrechen? Ihre Eingabe wird verloren gehen.",
+    "sourcefile": "contact.js"
+  },
+  "commonModalLoadingErrorTitle": {
+    "message": "Ladefehler",
+    "sourcefile": "common.js"
+  },
+  "commonModalLoadingErrorMessage": {
+    "message": "Dokument konnte nicht geladen werden.",
+    "sourcefile": "common.js"
+  },
+  "commonModalLoadingErrorDetails": {
+    "message": "Fehlerdetails: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Nicht gefunden"
+      }
+    },
+    "sourcefile": "common.js"
+  },
+  "commonModalReloadLink": {
+    "message": "Neu laden",
+    "sourcefile": "common.js"
+  },
+  "commonMarkdownRenderError": {
+    "message": "Fehler beim Rendern von Markdown: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Analysefehler"
+      }
+    },
+    "sourcefile": "common.js"
+  },
+  "settingsTitle": {
+    "message": "Erweiterte Einstellungen",
+    "sourcefile": "settings.js"
+  },
+  "settingsDescription": {
+    "message": "Diese Einstellungen steuern spezielle Funktionen dieser Erweiterung.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteSectionTitle": {
+    "message": "E-Mail-Löschung (Gefährliche Operation)",
+    "sourcefile": "settings.js"
+  },
+  "settingsEnableDeleteLabel": {
+    "message": "E-Mail-Löschfunktion aktivieren",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteWarning": {
+    "message": "⚠️ Das Aktivieren dieser Funktion kann E-Mails, die den Filterkriterien entsprechen, dauerhaft löschen.<br>Gehen Sie vorsichtig vor, da wichtige E-Mails gelöscht werden könnten.<br>Sie sind allein für die E-Mail-Löschung mit dieser Erweiterung verantwortlich, und der Entwickler haftet nicht für Schäden.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoTitle": {
+    "message": "Über die E-Mail-Löschfunktion",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledText": {
+    "message": "Wenn die E-Mail-Löschung deaktiviert ist:",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledBullet1": {
+    "message": "Die Filteroption 'Löschen' wird ausgegraut.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledBullet2": {
+    "message": "Wenn 'Löschen' in bestehenden Filtern ausgewählt ist, wird es beim Exportieren ignoriert.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledBullet3": {
+    "message": "In diesem Fall wird die Löschaktion nicht in Gmail angewendet.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoPersistence": {
+    "message": "Diese Einstellung wird in Ihrem Browser gespeichert und bleibt auch nach einem Neustart der Erweiterung erhalten.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteEnabledAlert": {
+    "message": "Löschfunktion aktiviert. Diese Funktion kann wichtige E-Mails dauerhaft löschen. Gehen Sie vorsichtig vor.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteDisabledAlert": {
+    "message": "Löschfunktion deaktiviert. Wenn 'Löschen' in bestehenden Filtern aktiviert war, wird es vorübergehend deaktiviert.",
+    "sourcefile": "settings.js"
+  }
+}

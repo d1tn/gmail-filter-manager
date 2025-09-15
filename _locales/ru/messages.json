@@ -1,0 +1,614 @@
+{
+  "extensionName": {
+    "message": "Gmail Filter Manager: сортировка, именование с простым GUI",
+    "sourcefile": "manifest.json"
+  },
+  "extensionDescription": {
+    "message": "Расширение Chrome для удобного создания и управления фильтрами Gmail с интуитивно понятным графическим интерфейсом. Содержимое фильтров не отправляется вовне.",
+    "sourcefile": "manifest.json"
+  },
+  "extensionDefaultTitle": {
+    "message": "Gmail Filter Manager: сортировка, именование с простым GUI",
+    "sourcefile": "manifest.json"
+  },
+  "contentButtonOpenManager": {
+    "message": "Открыть менеджер фильтров",
+    "sourcefile": "content.js"
+  },
+  "contentAlertExtensionInvalid": {
+    "message": "Соединение с Gmail Filter Manager потеряно. Пожалуйста, перезагрузите страницу.",
+    "sourcefile": "content.js"
+  },
+  "managerTitle": {
+    "message": "Менеджер фильтров Gmail",
+    "sourcefile": "manager.html"
+  },
+  "managerHeaderTitle": {
+    "message": "Менеджер фильтров Gmail",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuAbout": {
+    "message": "Об этом инструменте",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuTerms": {
+    "message": "Условия использования",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuGithub": {
+    "message": "GitHub",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuSettings": {
+    "message": "Расширенные настройки",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuContact": {
+    "message": "Контакты",
+    "sourcefile": "manager.html"
+  },
+  "managerMainExportAll": {
+    "message": "Экспортировать фильтры",
+    "sourcefile": "manager.html"
+  },
+  "managerMainImport": {
+    "message": "Импортировать фильтры",
+    "sourcefile": "manager.html"
+  },
+  "managerFilterListTitle": {
+    "message": "Фильтры",
+    "sourcefile": "manager.html"
+  },
+  "managerFilterListUnnamed": {
+    "message": "Фильтр без названия",
+    "sourcefile": "manager.js"
+  },
+  "managerSupportTitle": {
+    "message": "Поддержать разработку",
+    "sourcefile": "manager.html"
+  },
+  "managerSupportDescription": {
+    "message": "Покупки по этой ссылке помогают поддержать разработку без дополнительных затрат для вас!",
+    "sourcefile": "manager.html"
+  },
+  "managerSupportButton": {
+    "message": "Магазин на Amazon",
+    "sourcefile": "manager.html"
+  },
+  "managerSupportNote": {
+    "message": "Как партнер Amazon, я получаю доход от квалифицированных покупок, сделанных по этой ссылке.",
+    "sourcefile": "manager.html"
+  },
+  "managerFilterNamePlaceholder": {
+    "message": "Введите имя фильтра",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessTitle": {
+    "message": "Действия",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessSkipInbox": {
+    "message": "Пропустить входящие (архивировать)",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessMarkAsRead": {
+    "message": "Отметить как прочитанное",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessStar": {
+    "message": "Пометить звездой",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessApplyLabel": {
+    "message": "Применить метку:",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessLabelNamePlaceholder": {
+    "message": "Введите имя метки",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessForward": {
+    "message": "Переслать на:",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessForwardAddressPlaceholder": {
+    "message": "Введите адрес пересылки",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessDelete": {
+    "message": "Удалить",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessDeleteDisabledInfo": {
+    "message": "(Включить в расширенных настройках)",
+    "sourcefile": "manager.js"
+  },
+  "managerProcessNotSpam": {
+    "message": "Никогда не отправлять в спам",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessAlwaysImportant": {
+    "message": "Всегда помечать как важное",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessNeverImportant": {
+    "message": "Никогда не помечать как важное",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessApplyCategory": {
+    "message": "Категоризировать как:",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategorySelectDefault": {
+    "message": "Выбрать категорию",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryPersonal": {
+    "message": "Основные",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategorySocial": {
+    "message": "Социальные сети",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryNotification": {
+    "message": "Оповещения",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryGroup": {
+    "message": "Форумы",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryPromo": {
+    "message": "Промоакции",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessDuplicate": {
+    "message": "Дублировать это действие",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionsTitle": {
+    "message": "Условия фильтра",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionFromLabel": {
+    "message": "От",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionToLabel": {
+    "message": "Кому",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSubjectLabel": {
+    "message": "Тема",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionIncludesLabel": {
+    "message": "Содержит слова",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionExcludesLabel": {
+    "message": "Не содержит",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeLabel": {
+    "message": "Размер",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeLargerThan": {
+    "message": "больше чем",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeSmallerThan": {
+    "message": "меньше чем",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeValuePlaceholder": {
+    "message": "Значение",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeUnitMB": {
+    "message": "МБ",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeUnitKB": {
+    "message": "КБ",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeUnitBytes": {
+    "message": "байт",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionFromPlaceholder": {
+    "message": "Введите адрес",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionToPlaceholder": {
+    "message": "Введите адрес",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSubjectPlaceholder": {
+    "message": "Введите ключевые слова",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionIncludesPlaceholder": {
+    "message": "Введите ключевые слова",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionExcludesPlaceholder": {
+    "message": "Введите ключевые слова",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionOrConnectorText": {
+    "message": "ИЛИ",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionHasAttachment": {
+    "message": "Имеет вложение",
+    "sourcefile": "manager.html"
+  },
+  "managerActionExportThis": {
+    "message": "Экспортировать этот фильтр",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDuplicate": {
+    "message": "Дублировать этот фильтр",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDelete": {
+    "message": "Удалить этот фильтр",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDeleteTooltip": {
+    "message": "Требуется хотя бы один фильтр",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDeleteConfirm": {
+    "message": "Вы уверены, что хотите удалить фильтр «$1»?\nЭто действие нельзя отменить.",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Фильтр без названия"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerModalDocsTitle": {
+    "message": "Документация",
+    "sourcefile": "manager.html"
+  },
+  "managerModalDocsLoading": {
+    "message": "Загрузка...",
+    "sourcefile": "manager.html"
+  },
+  "managerImportDialogSelectFileError": {
+    "message": "Произошла ошибка при чтении файла.",
+    "sourcefile": "manager.js"
+  },
+  "managerImportSuccess": {
+    "message": "Успешно импортировано $1 фильтров.",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "3"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerImportConfirmMerge": {
+    "message": "Импортировано $1 фильтр(а). Хотите объединить их с существующими $2 фильтр(ами)? Выбор 'Отмена' заменит все существующие фильтры.",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "5"
+      },
+      "2": {
+        "content": "$2",
+        "example": "10"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerImportError": {
+    "message": "Произошла ошибка при импорте фильтров: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Ошибка синтаксического анализа XML"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerXmlParseError": {
+    "message": "Ошибка синтаксического анализа XML: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Неверный формат XML"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerFilterNotFound": {
+    "message": "Не найдено сохраненных фильтров или данные недействительны. Создание начального фильтра.",
+    "sourcefile": "manager.js"
+  },
+  "managerAppSettingsNotFound": {
+    "message": "Не найдено сохраненных настроек приложения. Используются настройки по умолчанию.",
+    "sourcefile": "manager.js"
+  },
+  "termsTitle": {
+    "message": "Условия использования",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsLastUpdated": {
+    "message": "Последнее обновление:",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionSummary": {
+    "message": "Резюме",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionTerms": {
+    "message": "Условия и положения",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionPrivacy": {
+    "message": "Политика конфиденциальности",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionInfoCollected": {
+    "message": "Собранная информация",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionInfoPurpose": {
+    "message": "Цель использования информации",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionInfoThirdParty": {
+    "message": "Предоставление третьим лицам",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionDisclaimer": {
+    "message": "Отказ от ответственности",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionNoWarranty": {
+    "message": "Без гарантии",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionLimitLiability": {
+    "message": "Ограничение ответственности",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionFilterResponsibility": {
+    "message": "Ответственность за настройки фильтра",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionIntellectualProperty": {
+    "message": "Права на интеллектуальную собственность",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionChanges": {
+    "message": "Изменения в настоящих Условиях",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionGoverningLaw": {
+    "message": "Применимое право и юрисдикция",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionContact": {
+    "message": "Контактная информация",
+    "sourcefile": "docs/terms.md"
+  },
+  "readmeWhatIsItTitle": {
+    "message": "Что это за инструмент?",
+    "sourcefile": "docs/about.md"
+  },
+  "readmeHistoryTitle": {
+    "message": "История обновлений (Отражает даты фиксации исходного кода, может отличаться от дат выпуска в магазине)",
+    "sourcefile": "docs/about.md"
+  },
+  "contactFormDescription": {
+    "message": "Пожалуйста, отправьте нам свои вопросы, отзывы, отчеты об ошибках или другие запросы относительно Gmail Filter Manager.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeLabel": {
+    "message": "Тип запроса",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypePlaceholder": {
+    "message": "Выберите тип запроса",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeQuestion": {
+    "message": "Вопрос / Использование",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeFeatureRequest": {
+    "message": "Запрос на новую функцию",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeBugReport": {
+    "message": "Сообщение об ошибке",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeFeedback": {
+    "message": "Отзывы / Комментарии",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeOther": {
+    "message": "Другое",
+    "sourcefile": "contact.js"
+  },
+  "contactFormEmailLabel": {
+    "message": "Адрес электронной почты (Необязательно)",
+    "sourcefile": "contact.js"
+  },
+  "contactFormEmailPlaceholder": {
+    "message": "Введите, если требуется ответ",
+    "sourcefile": "contact.js"
+  },
+  "contactFormEmailHelp": {
+    "message": "*Обратите внимание, что мы можем не иметь возможности ответить.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormMessageLabel": {
+    "message": "Детали запроса",
+    "sourcefile": "contact.js"
+  },
+  "contactFormMessagePlaceholder": {
+    "message": "Пожалуйста, введите конкретные детали. Для сообщений об ошибках, включите описание ситуации и шаги для воспроизведения.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormVersionLabel": {
+    "message": "Информация о версии расширения",
+    "sourcefile": "contact.js"
+  },
+  "contactFormVersionInfo": {
+    "message": "Версия $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "1.1.1"
+      }
+    },
+    "sourcefile": "contact.js"
+  },
+  "contactFormVersionError": {
+    "message": "Не удалось получить",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSubmitButton": {
+    "message": "Отправить",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSubmittingButton": {
+    "message": "Отправка...",
+    "sourcefile": "contact.js"
+  },
+  "contactFormCancelButton": {
+    "message": "Отмена",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSuccessTitle": {
+    "message": "Отправлено успешно",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSuccessMessage": {
+    "message": "Ваш запрос был отправлен.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormErrorTitle": {
+    "message": "Ошибка отправки",
+    "sourcefile": "contact.js"
+  },
+  "contactFormErrorMessage": {
+    "message": "Произошла ошибка при отправке вашего запроса.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormErrorHelp": {
+    "message": "Пожалуйста, проверьте ваше интернет-соединение и попробуйте снова.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormRetryButton": {
+    "message": "Повторить",
+    "sourcefile": "contact.js"
+  },
+  "contactFormCloseButton": {
+    "message": "Закрыть",
+    "sourcefile": "contact.js"
+  },
+  "contactFormValidationRequired": {
+    "message": "Тип запроса и детали запроса обязательны.",
+    "sourcefile": "contact.js"
+  },
+  "contactFormCancelConfirm": {
+    "message": "Отменить запрос? Ваш ввод будет потерян.",
+    "sourcefile": "contact.js"
+  },
+  "commonModalLoadingErrorTitle": {
+    "message": "Ошибка загрузки",
+    "sourcefile": "common.js"
+  },
+  "commonModalLoadingErrorMessage": {
+    "message": "Не удалось загрузить документ.",
+    "sourcefile": "common.js"
+  },
+  "commonModalLoadingErrorDetails": {
+    "message": "Детали ошибки: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Не найдено"
+      }
+    },
+    "sourcefile": "common.js"
+  },
+  "commonModalReloadLink": {
+    "message": "Перезагрузить",
+    "sourcefile": "common.js"
+  },
+  "commonMarkdownRenderError": {
+    "message": "Ошибка при рендеринге markdown: $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "Ошибка синтаксического анализа"
+      }
+    },
+    "sourcefile": "common.js"
+  },
+  "settingsTitle": {
+    "message": "Расширенные настройки",
+    "sourcefile": "settings.js"
+  },
+  "settingsDescription": {
+    "message": "Эти настройки управляют специальными функциями этого расширения.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteSectionTitle": {
+    "message": "Удаление электронной почты (Опасная операция)",
+    "sourcefile": "settings.js"
+  },
+  "settingsEnableDeleteLabel": {
+    "message": "Включить функцию удаления электронной почты",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteWarning": {
+    "message": "⚠️ Включение этой функции может навсегда удалить электронные письма, соответствующие критериям фильтра.<br>Используйте с осторожностью, так как важные электронные письма могут быть удалены.<br>Вы несете полную ответственность за удаление электронной почты с помощью этого расширения, и разработчик не несет ответственности за любой ущерб.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoTitle": {
+    "message": "О функции удаления электронной почты",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledText": {
+    "message": "Когда функция удаления электронной почты отключена:",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledBullet1": {
+    "message": "Опция фильтра 'Удалить' будет серой.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledBullet2": {
+    "message": "Если в существующих фильтрах выбрано 'Удалить', это будет игнорироваться при экспорте.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledBullet3": {
+    "message": "В этом случае действие удаления не будет применено в Gmail.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoPersistence": {
+    "message": "Эта настройка сохраняется в вашем браузере и остается даже после перезапуска расширения.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteEnabledAlert": {
+    "message": "Функция удаления включена. Эта функция может навсегда удалить важные электронные письма. Используйте с осторожностью.",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteDisabledAlert": {
+    "message": "Функция удаления отключена. Если в существующих фильтрах было выбрано 'Удалить', они временно деактивированы.",
+    "sourcefile": "settings.js"
+  }
+}
