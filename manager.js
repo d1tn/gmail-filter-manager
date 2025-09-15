@@ -327,17 +327,22 @@ function createNewFilterData() {
 // フィルタデータを保存する関数
 function saveFiltersToStorage() {
     if (isExtensionEnvironment()) {
-        // Chrome拡張環境
-        chrome.storage.local.set({ 'filters': filters }, function () {
-            console.log('フィルタ設定が保存されました（chrome.storage.local）');
+        // Chrome拡張環境では同期ストレージに保存
+        chrome.storage.sync.set({ 'filters': filters }, function () {
+            if (chrome.runtime.lastError) {
+                console.error('フィルタ設定の同期ストレージへの保存に失敗しました:', chrome.runtime.lastError);
+                // 必要であれば、ここでローカルストレージへのフォールバック保存を検討することもできます。
+            } else {
+                console.log('フィルタ設定が保存されました（chrome.storage.sync）');
+            }
         });
     } else {
-        // 通常のWeb環境（開発時）
+        // 通常のWeb環境（開発時）はlocalStorageを使用
         try {
             localStorage.setItem('gmail_filters', JSON.stringify(filters));
             console.log('フィルタ設定が保存されました（localStorage）');
         } catch (e) {
-            console.error('フィルタ設定の保存に失敗しました：', e);
+            console.error('フィルタ設定のlocalStorageへの保存に失敗しました：', e);
         }
     }
 }
@@ -379,12 +384,50 @@ function loadFiltersFromStorage() {
     console.log("ストレージからフィルタデータの読み込みを開始します");
 
     if (isExtensionEnvironment()) {
-        // Chrome拡張環境
-        chrome.storage.local.get('filters', function (result) {
-            handleLoadedData(result.filters);
+        // 1. 同期ストレージから読み込みを試行
+        chrome.storage.sync.get('filters', function(syncResult) {
+            if (chrome.runtime.lastError) {
+                console.error('同期ストレージの読み込みに失敗:', chrome.runtime.lastError);
+                // エラーが発生した場合、ローカルストレージからの読み込みを試みる
+                loadFiltersFromLocalAsFallback();
+                return;
+            }
+
+            if (syncResult.filters && syncResult.filters.length > 0) {
+                // 1-1. 同期ストレージにデータがあればそれを使用
+                console.log('同期ストレージからフィルタを読み込みました。');
+                handleLoadedData(syncResult.filters);
+            } else {
+                // 1-2. 同期ストレージにデータがない場合、ローカルストレージを確認
+                console.log('同期ストレージにデータが見つかりません。ローカルストレージを確認します。');
+                chrome.storage.local.get('filters', function(localResult) {
+                    if (localResult.filters && localResult.filters.length > 0) {
+                        // 2. ローカルストレージにデータがあれば、それを同期ストレージに移行
+                        console.log('ローカルストレージからデータを検出し、同期ストレージへ移行します。');
+                        
+                        // データを同期ストレージに保存
+                        chrome.storage.sync.set({ 'filters': localResult.filters }, function() {
+                            if (chrome.runtime.lastError) {
+                                console.error('ローカルから同期ストレージへのデータ移行に失敗:', chrome.runtime.lastError);
+                            } else {
+                                console.log('データ移行が成功しました。');
+                                // 移行後、ローカルのデータを削除することも検討できますが、
+                                // 安全のため、まずは残しておくことを推奨します。
+                                // chrome.storage.local.remove('filters');
+                            }
+                        });
+                        // 読み込んだローカルデータでUIを初期化
+                        handleLoadedData(localResult.filters);
+                    } else {
+                        // 3. どちらにもデータがない場合、初期データを作成
+                        console.log('ローカルストレージにもデータが見つかりません。初期フィルタを作成します。');
+                        handleLoadedData(null); // handleLoadedData内で初期フィルタが作成される
+                    }
+                });
+            }
         });
     } else {
-        // 通常のWeb環境（開発時）
+        // 通常のWeb環境（開発時）のロジックは変更なし
         try {
             const savedData = localStorage.getItem('gmail_filters');
             const parsedData = savedData ? JSON.parse(savedData) : null;
@@ -394,6 +437,20 @@ function loadFiltersFromStorage() {
             handleLoadedData(null);
         }
     }
+}
+
+// 同期ストレージの読み込みに失敗した場合のフォールバック関数
+function loadFiltersFromLocalAsFallback() {
+    console.warn('フォールバック：ローカルストレージからフィルタを読み込みます。');
+    chrome.storage.local.get('filters', function (result) {
+        if (result.filters) {
+            console.log('フォールバック読み込み成功。');
+            handleLoadedData(result.filters);
+        } else {
+            console.error('フォールバック読み込み失敗。初期データを作成します。');
+            handleLoadedData(null);
+        }
+    });
 }
 
 // 右ペインの入力値の変更を現在のフィルタデータに反映させる関数
@@ -645,12 +702,14 @@ function updateFilterActions(currentFilter) {
 // アプリ設定を保存する関数
 function saveAppSettings() {
     if (isExtensionEnvironment()) {
-        // Chrome拡張環境
-        chrome.storage.local.set({ 'appSettings': window.appSettings }, function () {
-            console.log('アプリ設定が保存されました（chrome.storage.local）');
+        chrome.storage.sync.set({ 'appSettings': window.appSettings }, function () {
+            if (chrome.runtime.lastError) {
+                console.error('アプリ設定の同期ストレージへの保存に失敗:', chrome.runtime.lastError);
+            } else {
+                console.log('アプリ設定が保存されました（chrome.storage.sync）');
+            }
         });
     } else {
-        // 通常のWeb環境（開発時）
         try {
             localStorage.setItem('gmail_filter_app_settings', JSON.stringify(window.appSettings));
             console.log('アプリ設定が保存されました（localStorage）');
@@ -661,19 +720,47 @@ function saveAppSettings() {
 }
 
 // アプリ設定を読み込む
+// 変更後
 function loadAppSettings() {
     console.log("Loading app settings from storage.");
-    chrome.storage.local.get(['appSettings'], function (result) {
-        if (result.appSettings) {
-            appSettings = result.appSettings; // Note: appSettings はローカル変数
-            console.log("App settings loaded:", appSettings);
+    if (isExtensionEnvironment()) {
+        chrome.storage.sync.get('appSettings', function(syncResult) {
+            if (chrome.runtime.lastError) {
+                console.error('アプリ設定（sync）の読み込み失敗:', chrome.runtime.lastError);
+                return;
+            }
+
+            if (syncResult.appSettings) {
+                window.appSettings = syncResult.appSettings;
+                console.log("App settings loaded from sync storage:", window.appSettings);
+            } else {
+                // 同期ストレージにない場合、ローカルから移行を試みる
+                chrome.storage.local.get('appSettings', function(localResult) {
+                    if (localResult.appSettings) {
+                        console.log("ローカルからアプリ設定を検出し、同期ストレージへ移行します。");
+                        window.appSettings = localResult.appSettings;
+                        // 移行
+                        saveAppSettings();
+                    } else {
+                        // どちらにもない場合はデフォルト設定を保存
+                        console.log(chrome.i18n.getMessage('managerAppSettingsNotFound'));
+                        saveAppSettings();
+                    }
+                });
+            }
+        });
+    } else {
+        // 開発環境のロジック
+        const settings = localStorage.getItem('gmail_filter_app_settings');
+        if (settings) {
+            window.appSettings = JSON.parse(settings);
+            console.log("App settings loaded from localStorage:", window.appSettings);
         } else {
-            // 設定が見つからない場合、デフォルト設定を使用
-            console.log(chrome.i18n.getMessage('managerAppSettingsNotFound'));
-            saveAppSettings(); // Note: saveAppSettings はローカル関数
+            saveAppSettings();
         }
-    });
+    }
 }
+
 //----------------------------------------------------------------------
 // 4. UI表示/描画関連
 //----------------------------------------------------------------------
