@@ -19,13 +19,13 @@ function waitForGmailToLoad() {
 function findInsertPosition(leftNavElement) {
   // Gmailのサイドナビゲーションを取得
   const sideNavItems = leftNavElement.querySelectorAll('div[role="navigation"] > div');
-  
+
   // 通常、最後から2番目の要素が「もっと見る」などの要素であることが多い
   // その上にボタンを配置
   if (sideNavItems.length > 1) {
     return sideNavItems[sideNavItems.length - 2];
   }
-  
+
   // 適切な位置が見つからない場合は左ナビゲーション自体を返す
   return leftNavElement;
 }
@@ -35,9 +35,14 @@ function insertFilterManagerButton(targetElement) {
   // ボタン要素を作成
   const filterButton = document.createElement('div');
   filterButton.id = 'gmail-filter-manager-button';
-  filterButton.className = 'gmail-filter-manager-button';
-  
-  // スタイルを適用
+  filterButton.className = 'gmail-filter-manager-button'; // スタイリング用のクラス
+  filterButton.setAttribute('role', 'button'); // アクセシビリティ考慮
+
+  // ボタンのテキストとツールチップを多言語化
+  filterButton.textContent = chrome.i18n.getMessage('contentButtonOpenManager');
+  filterButton.title = chrome.i18n.getMessage('extensionDefaultTitle');
+
+ // スタイルを適用
   filterButton.style.padding = '10px 16px';
   filterButton.style.margin = '16px 0';
   filterButton.style.borderRadius = '16px';
@@ -57,101 +62,92 @@ function insertFilterManagerButton(targetElement) {
   filterButton.addEventListener('mouseout', () => {
     filterButton.style.backgroundColor = 'transparent';
   });
-  
-  // ボタンの内容をHTMLで直接設定
-  filterButton.innerHTML = `
-    <svg width="20" height="20" viewBox="0 0 24 24" style="margin-right: 8px; fill: #444746;">
-      <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"></path>
-    </svg>
-    <span>フィルタ管理を開く</span>
-  `;
-  
-  // ボタンクリックイベントの設定
+
+  // ボタンがクリックされたときのイベントリスナー
   filterButton.addEventListener('click', () => {
-    console.log("Filter manager button clicked, sending message to background.");
-    
-    try {
-      if (chrome.runtime && chrome.runtime.id) {
-        // Background Service Workerへメッセージを送信
-        chrome.runtime.sendMessage({ action: "open_manager_tab" }, response => {
-          if (chrome.runtime.lastError) {
-            console.error("Error sending message:", chrome.runtime.lastError);
-            return;
-          }
-          console.log("Response from background:", response);
-        });
+    console.log("Filter Manager button clicked in Gmail UI.");
+    // 背景ページにメッセージを送信してmanager.htmlを開いてもらう
+    chrome.runtime.sendMessage({ action: "open_manager_tab" }, function(response) {
+      // レスポンスを処理
+      if (response && response.success) {
+        console.log("Manager tab opened successfully:", response);
       } else {
-        console.error("Extension context is invalid");
-        // ユーザーに通知（ページのリロードを促す）
-        alert("Gmail Filter Managerの接続が切れました。ページを再読み込みしてください。");
+        console.error("Failed to open manager tab:", response);
+        // エラーメッセージを多言語化して表示
+        alert(chrome.i18n.getMessage('contentAlertExtensionInvalid')); // ★ エラーメッセージを多言語化 ★
       }
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    }
+    });
   });
-  
-  // 適切な位置にボタンを挿入
-  if (targetElement.tagName.toLowerCase() === 'div') {
-    targetElement.parentNode.insertBefore(filterButton, targetElement);
+
+  // ボタンをターゲット要素の直前に挿入
+  // findInsertPositionが返した要素に応じて、挿入方法を調整する必要があるかもしれません
+  // 例: findInsertPositionがleftNavElement自体を返した場合、insertBeforeではなくappendChildが良いかも
+  if (targetElement.parentNode) {
+     targetElement.parentNode.insertBefore(filterButton, targetElement);
+     console.log("Filter Manager button inserted.");
   } else {
-    // フォールバックとして単に追加
-    targetElement.appendChild(filterButton);
+     // 親要素がない場合はそのままappendChildを試みる（フォールバック）
+     document.body.appendChild(filterButton); // bodyに直接追加される可能性は低いが安全策
+     console.warn("Target element has no parentNode, appending to body as fallback.");
   }
-  
-  console.log("Filter manager button inserted into Gmail UI");
 }
 
-// Gmail UI変更の監視を設定する関数
+
+// Gmail UIの変更を監視してボタンが消えた場合に再挿入
 function observeGmailChanges(initialNavElement) {
-  // ボタンが既に存在するか確認
-  const buttonExists = document.getElementById('gmail-filter-manager-button');
-  if (!buttonExists) {
-    // ボタンを挿入
-    const insertPosition = findInsertPosition(initialNavElement);
-    insertFilterManagerButton(insertPosition);
-  }
-  
-  // Gmail UIの変更を監視してボタンが消えた場合に再挿入
+  // MutationObserverを作成
   const observer = new MutationObserver((mutations) => {
+    // ボタンが存在するかチェック
     const buttonExists = document.getElementById('gmail-filter-manager-button');
+
+    // ボタンが存在しない場合
     if (!buttonExists) {
+      console.log("Filter Manager button missing, attempting to re-insert.");
       // 再度挿入位置を探して挿入
       const navElement = document.querySelector('div[role="navigation"]');
       if (navElement) {
         const insertPosition = findInsertPosition(navElement);
         insertFilterManagerButton(insertPosition);
+      } else {
+         console.warn("Navigation element not found during re-insertion attempt.");
       }
     }
   });
-  
-  // body全体を監視
+
+  // body全体を監視対象とする (UIの大きな変更に対応するため)
+  // オプション: childListの変更と、subtree内の変更を監視
   observer.observe(document.body, {
     childList: true,
     subtree: true
   });
+   console.log("MutationObserver started on document.body.");
 }
+
 
 // コンテンツスクリプト初期化関数
 function initializeContentScript() {
-  // 既存のボタンが残っている場合は削除
+    console.log("Initializing content script...");
+  // 既存のボタンが残っている場合は削除（ページの再読み込みなどで重複しないように）
   const existingButton = document.getElementById('gmail-filter-manager-button');
   if (existingButton && existingButton.parentNode) {
-    existingButton.parentNode.removeChild(existingButton);
+      existingButton.parentNode.removeChild(existingButton);
+      console.log("Removed existing Filter Manager button.");
   }
-  
+
   // Gmail UIの読み込み完了を待機してから処理を開始
   waitForGmailToLoad().then(navElement => {
+    console.log("Gmail UI loaded, inserting button and starting observer.");
+    // ボタンを挿入
+    insertFilterManagerButton(findInsertPosition(navElement));
+    // UIの変更監視を開始
     observeGmailChanges(navElement);
   }).catch(error => {
-    console.error("Failed to initialize Gmail Filter Manager:", error);
+    console.error("Failed to initialize content script:", error);
+     // ここでのエラーメッセージも必要に応じて多言語化
+     // 例: alert(chrome.i18n.getMessage('contentInitializationError', [error.message]));
   });
+   console.log("Content script initialization started.");
 }
 
-// 拡張機能の再接続イベントを監視（拡張機能が再読み込みされた場合に対応）
-document.addEventListener('extension-reconnect-event', () => {
-  console.log("Extension reconnect event received");
-  initializeContentScript();
-});
-
-// 初期化を実行
+// スクリプトが読み込まれたら即座に初期化処理を開始
 initializeContentScript();

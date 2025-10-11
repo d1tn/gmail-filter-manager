@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gmail Filter Manager</title>
-    <link rel="stylesheet" href="manager.css">
+    <title id="page-title" data-i18n-text="managerTitle"></title> <link rel="stylesheet" href="manager.css">
     <link rel="stylesheet" href="docs/contact.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,127 +15,97 @@
 <body>
 
     <header class="app-header">
-        <h1 class="app-title" >
-            <img src="icons/icon128.png" alt="Gmail Filter Manager" width="24" height="24" style="margin-right: 8px; vertical-align: middle;"> 
-            Gmail Filter Manager</h1>
+        <h1 class="app-title">
+            <img src="icons/icon128.png" alt="Gmail Filter Manager Icon" width="24" height="24"
+                style="margin-right: 8px; vertical-align: middle;">
+            <span id="app-header-title" data-i18n-text="managerHeaderTitle"></span>
+            <span id="version-display" class="version-badge"></span>
+        </h1>
         <div class="header-menu">
-            <ul class="items submenu">
-                <li class="item">
-                    <a href="#" class="about-link" title="このツールについて">
-                        <svg class="icon about" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                            <path
-                                d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm169.8-90.7c7.9-22.3 29.1-37.3 52.8-37.3l58.3 0c34.9 0 63.1 28.3 63.1 63.1c0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24l0-13.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1c0-8.4-6.8-15.1-15.1-15.1l-58.3 0c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z" />
-                        </svg><span class="text">このツールについて</span></a>
-                </li>
-                <li class="item">
-                    <a href="#" class="terms-link" title="利用規約">
-                        <svg class="icon terms" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                            <path
-                                d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z" />
-                        </svg>
-                        </svg><span class="text">利用規約</span></a>
-                </li>
-                <li class="item">
-                    <a href="https://github.com/d1tn/gmail-filter-manager" target="_blank" title="GitHub">
-                        <svg class="icon github" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                        </svg>
-                        <span class="text">GitHub</span>
-                    </a>
-                </li>
-            </ul>
+            <input type="checkbox" id="menu-toggle" class="hidden-checkbox">
+            <label for="menu-toggle" class="menu-icon-label">
+                <svg class="icon menu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path d="M0 88C0 74.7 10.7 64 24 64H424c13.3 0 24 10.7 24 24s-10.7 24-24 24H24C10.7 112 0 101.3 0 88zM0 248c0-13.3 10.7-24 24-24H424c13.3 0 24 10.7 24 24s-10.7 24-24 24H24c-13.3 0-24-10.7-24-24zM424 400c13.3 0 24 10.7 24 24s-10.7 24-24 24H24C10.7 448 0 437.3 0 424s10.7-24 24-24H424z"/>
+                </svg>
+            </label>
+
+            <nav class="hamburger-menu-container">
+                <ul class="items submenu">
+                     <li class="item">
+                        <a href="#" class="about-link" id="submenu-link-about" data-i18n-title="managerMenuAbout"> <svg class="icon about" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 512 512">
+                                <path
+                                    d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm169.8-90.7c7.9-22.3 29.1-37.3 52.8-37.3l58.3 0c34.9 0 63.1 28.3 63.1 63.1c0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24l0-13.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1c0-8.4-6.8-15.1-15.1-15.1l-58.3 0c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z" />
+                            </svg>
+                            <span class="text" data-i18n-text="managerMenuAbout"></span></a>
+                    </li>
+                    <li class="item">
+                        <a href="#" class="settings-link" id="submenu-link-settings" data-i18n-title="managerMenuSettings"> <svg class="icon settings" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                <path
+                                    d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z" />
+                            </svg>
+                            <span class="text" data-i18n-text="managerMenuSettings"></span></a>
+                    </li>
+                    <li class="item">
+                        <a href="#" class="terms-link" id="submenu-link-terms" data-i18n-title="managerMenuTerms"> <svg class="icon terms" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 384 512">
+                                <path
+                                    d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z" />
+                            </svg>
+                            <span class="text" data-i18n-text="managerMenuTerms"></span></a>
+                    </li>
+                    <li class="item">
+                        <a href="#" class="contact-link" id="submenu-link-contact" data-i18n-title="managerMenuContact"> <svg class="icon contact" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 512 512">
+                                <path
+                                    d="M64 112c-8.8 0-16 7.2-16 16l0 22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1l0-22.1c0-8.8-7.2-16-16-16L64 112zM48 212.2L48 384c0 8.8 7.2 16 16 16l384 0c8.8 0 16-7.2 16-16l0-171.8L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64l384 0c35.3 0 64 28.7 64 64l0 256c0 35.3-28.7 64-64 64L64 448c-35.3 0-64-28.7-64-64L0 128z" />
+                            </svg>
+                            <span class="text" data-i18n-text="managerMenuContact"></span></a>
+                    </li>
+                     <li class="item">
+                        <a href="https://github.com/d1tn/gmail-filter-manager" target="_blank" id="submenu-link-github" data-i18n-title="managerMenuGithub"> <svg class="icon github" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
+                            <span class="text" data-i18n-text="managerMenuGithub"></span></a>
+                    </li>
+                </ul>
+                <div class="plz-support-me">
+                    <h2>🥺 <span id="support-title" data-i18n-text="managerSupportTitle"></span> 🥺</h2>
+                    <p id="support-description" data-i18n-text="managerSupportDescription"></p><a href="https://amzn.to/4jC6Msk"
+                        target="_blank" class="support-button" id="support-button" data-i18n-text="managerSupportButton"></a>
+                    <p class="small" id="support-note" data-i18n-text="managerSupportNote"></p>
+                    </div>
+            </nav>
         </div>
     </header>
 
-<!-- モーダルウィンドウ -->
-<div id="docs-modal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 id="modal-title">ドキュメント</h2>
-            <span class="close-button">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div id="docs-content" class="markdown-content">
-                <p>読み込み中...</p>
+    <div id="docs-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title" data-i18n-text="managerModalDocsTitle"></h2> <span class="close-button">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="docs-content" class="markdown-content">
+                    <p id="modal-loading-text" data-i18n-text="managerModalDocsLoading"></p> </div>
             </div>
         </div>
     </div>
-</div>
 
     <div class="two-pane-container">
         <div class="left-pane">
             <section class="menu main">
                 <ul class="items">
                     <li class="item">
-                        <button id="export-filter">フィルタをエクスポート</button>
-                    </li>
+                        <button id="export-filter" data-i18n-text="managerMainExportAll"></button></li>
                     <li class="item">
-                        <button id="import-filter">フィルタをインポート</button>
-                    </li>
+                        <button id="import-filter" data-i18n-text="managerMainImport"></button></li>
                 </ul>
             </section>
             <section class="filter-list">
-                <h2>フィルタ<span><button id="add-new-filter">＋</button></span></h2>
-                <ul id="filter-list" class="items">
+                <h2><span id="filter-list-title" data-i18n-text="managerFilterListTitle"></span><span><button id="add-new-filter">＋</button></span></h2><ul id="filter-list" class="items">
                 </ul>
-            </section>
-            <section class="menu sub">
-                <ul class="items submenu">
-                    <li class="item">
-                        <a href="#" class="about-link" title="このツールについて">
-                            <svg class="icon about" xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                                <path
-                                    d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm169.8-90.7c7.9-22.3 29.1-37.3 52.8-37.3l58.3 0c34.9 0 63.1 28.3 63.1 63.1c0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24l0-13.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1c0-8.4-6.8-15.1-15.1-15.1l-58.3 0c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z" />
-                            </svg>
-                            <span class="text">このツールについて</span></a>
-                    </li>
-                    <li class="item">
-                        <a href="#" class="settings-link" title="高度な設定">
-                            <svg class="icon settings" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                <path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/>
-                            </svg>
-                            <span class="text">高度な設定</span>
-                        </a>
-                    </li>
-                    <li class="item">
-                        <a href="#" class="terms-link" title="利用規約">
-                            <svg class="icon terms" xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                                <path
-                                    d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z" />
-                            </svg>
-                            </svg><span class="text">利用規約</span></a>
-                    </li>
-                    <li class="item">
-                        <a href="#" class="contact-link" title="お問い合わせ">
-                            <svg class="icon contact" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                                <path d="M64 112c-8.8 0-16 7.2-16 16l0 22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1l0-22.1c0-8.8-7.2-16-16-16L64 112zM48 212.2L48 384c0 8.8 7.2 16 16 16l384 0c8.8 0 16-7.2 16-16l0-171.8L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64l384 0c35.3 0 64 28.7 64 64l0 256c0 35.3-28.7 64-64 64L64 448c-35.3 0-64-28.7-64-64L0 128z"/></svg>
-                            <span class="text">お問い合わせ</span>
-                        </a>
-                    </li>
-                    <li class="item">
-                        <a href="https://github.com/d1tn/gmail-filter-manager" target="_blank" title="GitHub">
-                            <svg class="icon github" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                            </svg>
-                            <span class="text">GitHub</span>
-                        </a>
-                    </li>
-
-                </ul>
-                <div class="plz-support-me">
-                    <h2>🥺 開発支援 🥺</h2>
-                    <p>いつものお買い物をこのリンクから行うだけで、開発支援になります！</p>
-                    <a href="https://amzn.to/4jC6Msk" target="_blank" class="support-button">Amazonで買い物をする</a>
-                    <p class="small">開発者はAmazonアソシエイトプログラムに参加しており、本リンクを経由したユーザーの商品購入により収益を得ています</p>
-                </div>
             </section>
         </div>
 
@@ -144,180 +113,149 @@
             <article class="filter-setting-section">
                 <section class="filter-name">
                     <h2>
-                        <input type="text" id="filter-name-input" class="app-form-input filter-name"
-                            placeholder="フィルタ名を入力">
-                    </h2>
+                        <input type="text" id="filter-name-input" class="app-form-input filter-name" data-i18n-placeholder="managerFilterNamePlaceholder"> </h2>
                 </section>
 
                 <section class="filter-process">
-                    <h3>処理</h3>
+                    <div class="frex">
+                        <h3 id="process-title" data-i18n-text="managerProcessTitle"></h3>
+                        <button id="duplicate-this-process" class="action" data-i18n-text="managerProcessDuplicate"></button>
+                    </div>
                     <div class="filter-process-items">
                         <div class="filter-process-item">
                             <label for="process-skip-inbox" class="app-form-checkbox label">
                                 <input type="checkbox" id="process-skip-inbox"
-                                    class="app-form-checkbox input">受信トレイをスキップ（アーカイブ）
-                            </label>
+                                    class="app-form-checkbox input">
+                                <span id="label-process-skip-inbox" data-i18n-text="managerProcessSkipInbox"></span></label>
                         </div>
 
                         <div class="filter-process-item">
                             <label for="process-mark-as-read" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-mark-as-read" class="app-form-checkbox input">既読にする
-                            </label>
+                                <input type="checkbox" id="process-mark-as-read"
+                                    class="app-form-checkbox input">
+                                <span id="label-process-mark-as-read" data-i18n-text="managerProcessMarkAsRead"></span></label>
                         </div>
 
                         <div class="filter-process-item">
                             <label for="process-star" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-star" class="app-form-checkbox input">スターを付ける
-                            </label>
+                                <input type="checkbox" id="process-star"
+                                    class="app-form-checkbox input">
+                                <span id="label-process-star" data-i18n-text="managerProcessStar"></span></label>
                         </div>
 
                         <div class="filter-process-item">
-
                             <label for="process-apply-label" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-apply-label" class="app-form-checkbox input">ラベルを付ける:
-                                <input type="text" id="process-label-name" class="app-form-input" placeholder="ラベル名を入力">
-                            </label>
+                                <input type="checkbox" id="process-apply-label"
+                                    class="app-form-checkbox input">
+                                <span id="label-process-apply-label" data-i18n-text="managerProcessApplyLabel"></span><input type="text" id="process-label-name" class="app-form-input" data-i18n-placeholder="managerProcessLabelNamePlaceholder"> </label>
                         </div>
 
                         <div class="filter-process-item">
                             <label for="process-forward" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-forward" class="app-form-checkbox input">転送する:
-                                <input type="text" id="process-forward-address" class="app-form-input"
-                                    placeholder="転送先アドレスを入力">
-                            </label>
+                                <input type="checkbox" id="process-forward"
+                                    class="app-form-checkbox input">
+                                <span id="label-process-forward" data-i18n-text="managerProcessForward"></span><input type="text" id="process-forward-address" class="app-form-input" data-i18n-placeholder="managerProcessForwardAddressPlaceholder"> </label>
                         </div>
 
                         <div class="filter-process-item">
                             <label for="process-not-spam" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-not-spam" class="app-form-checkbox input">迷惑メールにしない
-                            </label>
+                                <input type="checkbox" id="process-not-spam"
+                                    class="app-form-checkbox input">
+                                <span id="label-process-not-spam" data-i18n-text="managerProcessNotSpam"></span></label>
                         </div>
 
                         <div class="filter-process-item">
                             <label for="process-always-important" class="app-form-checkbox label">
                                 <input type="checkbox" id="process-always-important"
-                                    class="app-form-checkbox input">常に重要マークを付ける
-                            </label>
+                                    class="app-form-checkbox input">
+                                <span id="label-process-always-important" data-i18n-text="managerProcessAlwaysImportant"></span></label>
                         </div>
 
                         <div class="filter-process-item">
                             <label for="process-never-important" class="app-form-checkbox label">
                                 <input type="checkbox" id="process-never-important"
-                                    class="app-form-checkbox input">重要マークを付けない
-                            </label>
+                                    class="app-form-checkbox input">
+                                <span id="label-process-never-important" data-i18n-text="managerProcessNeverImportant"></span></label>
                         </div>
 
                         <div class="filter-process-item">
                             <label for="process-apply-category" class="app-form-checkbox label">
                                 <input type="checkbox" id="process-apply-category"
-                                    class="app-form-checkbox input">適用するカテゴリ:
-                                <select id="process-apply-category-select" class="app-form-select">
-                                    <option value="">カテゴリを選択</option>
-                                    <option value="^smartlabel_personal">メイン</option>
-                                    <option value="^smartlabel_social">ソーシャル</option>
-                                    <option value="^smartlabel_notification">新着</option>
-                                    <option value="^smartlabel_group">フォーラム</option>
-                                    <option value="^smartlabel_promo">プロモーション</option>
-                                </select>
+                                    class="app-form-checkbox input">
+                                <span id="label-process-apply-category" data-i18n-text="managerProcessApplyCategory"></span><select id="process-apply-category-select" class="app-form-select">
+                                    <option value="" id="option-category-default" data-i18n-text="managerProcessCategorySelectDefault"></option> <option value="^smartlabel_personal" id="option-category-personal" data-i18n-text="managerProcessCategoryPersonal"></option><option value="^smartlabel_social" id="option-category-social" data-i18n-text="managerProcessCategorySocial"></option><option value="^smartlabel_notification" id="option-category-notification" data-i18n-text="managerProcessCategoryNotification"></option><option value="^smartlabel_group" id="option-category-group" data-i18n-text="managerProcessCategoryGroup"></option><option value="^smartlabel_promo" id="option-category-promo" data-i18n-text="managerProcessCategoryPromo"></option></select>
                             </label>
                         </div>
-    
+
                         <div class="filter-process-item">
                             <label for="process-delete" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-delete" class="app-form-checkbox input">削除する
-                            </label>
+                                <input type="checkbox" id="process-delete"
+                                    class="app-form-checkbox input">
+                                <span id="label-process-delete" data-i18n-text="managerProcessDelete"></span></label>
                         </div>
                     </div>
                 </section>
 
                 <section class="filter-conditions">
-                    <h3>フィルタ条件</h3>
-                    <div class="filter-condition-items">
+                    <h3 id="conditions-title" data-i18n-text="managerConditionsTitle"></h3><div class="filter-condition-items">
                         <div class="filter-condition-item" data-condition-type="from">
                             <div class="condition-input-area">
-                                <label for="condition-from-input">From</label>
-                                <div class="input-and-button-container">
-                                    <input type="text" id="condition-from-input" class="app-form-input"
-                                        placeholder="アドレスを入力">
-                                    <button class="add-and-button" type="button">+ AND</button>
+                                <label for="condition-from-input" id="label-condition-from" data-i18n-text="managerConditionFromLabel"></label><div class="input-and-button-container">
+                                    <input type="text" id="condition-from-input" class="app-form-input" data-i18n-placeholder="managerConditionFromPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
                                 </div>
                                 <button class="add-or-button" type="button">+ OR</button>
                             </div>
-                            <div class="condition-or-connector">OR</div>
-                            <div class="condition-chips-display"></div>
+                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div> <div class="condition-chips-display"></div>
                         </div>
 
                         <div class="filter-condition-item" data-condition-type="to">
                             <div class="condition-input-area">
-                                <label for="condition-to-input">To</label>
-                                <div class="input-and-button-container">
-                                    <input type="text" id="condition-to-input" class="app-form-input"
-                                        placeholder="アドレスを入力">
-                                    <button class="add-and-button" type="button">+ AND</button>
+                                <label for="condition-to-input" id="label-condition-to" data-i18n-text="managerConditionToLabel"></label><div class="input-and-button-container">
+                                    <input type="text" id="condition-to-input" class="app-form-input" data-i18n-placeholder="managerConditionToPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
                                 </div>
                                 <button class="add-or-button" type="button">+ OR</button>
                             </div>
-                            <div class="condition-or-connector">OR</div>
-                            <div class="condition-chips-display"></div>
+                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
                         </div>
 
                         <div class="filter-condition-item" data-condition-type="subject">
-                            <div class="condition-input-area"> <label for="condition-subject-input">件名</label>
-                                <div class="input-and-button-container">
-                                    <input type="text" id="condition-subject-input" class="app-form-input"
-                                        placeholder="キーワードを入力">
-                                    <button class="add-and-button" type="button">+ AND</button>
+                            <div class="condition-input-area"> <label for="condition-subject-input" id="label-condition-subject" data-i18n-text="managerConditionSubjectLabel"></label><div class="input-and-button-container">
+                                    <input type="text" id="condition-subject-input" class="app-form-input" data-i18n-placeholder="managerConditionSubjectPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
                                 </div>
                                 <button class="add-or-button" type="button">+ OR</button>
                             </div>
-                            <div class="condition-or-connector">OR</div>
-                            <div class="condition-chips-display"></div>
+                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
                         </div>
 
                         <div class="filter-condition-item" data-condition-type="includes">
-                            <div class="condition-input-area"> <label for="condition-includes-input">含む</label>
-                                <div class="input-and-button-container">
-                                    <input type="text" id="condition-includes-input" class="app-form-input"
-                                        placeholder="キーワードを入力">
-                                    <button class="add-and-button" type="button">+ AND</button>
+                            <div class="condition-input-area"> <label for="condition-includes-input" id="label-condition-includes" data-i18n-text="managerConditionIncludesLabel"></label><div class="input-and-button-container">
+                                    <input type="text" id="condition-includes-input" class="app-form-input" data-i18n-placeholder="managerConditionIncludesPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
                                 </div>
                                 <button class="add-or-button" type="button">+ OR</button>
                             </div>
-                            <div class="condition-or-connector">OR</div>
-                            <div class="condition-chips-display"></div>
+                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
                         </div>
 
                         <div class="filter-condition-item" data-condition-type="excludes">
                             <div class="condition-input-area">
-                                <label for="condition-excludes-input">含まない</label>
-                                <div class="input-and-button-container">
-                                    <input type="text" id="condition-excludes-input" class="app-form-input"
-                                        placeholder="キーワードを入力">
-                                    <button class="add-and-button" type="button">+ AND</button>
+                                <label for="condition-excludes-input" id="label-condition-excludes" data-i18n-text="managerConditionExcludesLabel"></label><div class="input-and-button-container">
+                                    <input type="text" id="condition-excludes-input" class="app-form-input" data-i18n-placeholder="managerConditionExcludesPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
                                 </div>
                                 <button class="add-or-button" type="button">+ OR</button>
                             </div>
-                            <div class="condition-or-connector">OR</div>
-                            <div class="condition-chips-display"></div>
+                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
                         </div>
 
                         <div class="horizontal-conditions">
                             <div class="filter-condition-item" data-condition-type="size">
                                 <div class="condition-input-area size-value">
-                                    <label for="condition-size-value-input">サイズ</label>
-                                    <select id="condition-size-operator" class="app-form-select">
-                                        <option value="larger_than">次の値より大きい</option>
-                                        <option value="smaller_than">次の値より小さい</option>
-                                    </select>
+                                    <label for="condition-size-value-input" id="label-condition-size" data-i18n-text="managerConditionSizeLabel"></label><select id="condition-size-operator" class="app-form-select">
+                                        <option value="larger_than" id="option-size-larger" data-i18n-text="managerConditionSizeLargerThan"></option><option value="smaller_than" id="option-size-smaller" data-i18n-text="managerConditionSizeSmallerThan"></option></select>
                                     <div class="input-and-button-container">
                                         <input type="number" id="condition-size-value-input"
-                                            class="app-form-input size-value" placeholder="値" min="0">
-                                    </div>
+                                            class="app-form-input size-value" data-i18n-placeholder="managerConditionSizeValuePlaceholder" min="0"> </div>
                                     <select id="condition-size-unit" class="app-form-select size-unit">
-                                        <option value="s_smb">MB</option>
-                                        <option value="s_skb">KB</option>
-                                        <option value="s_sb">バイト</option>
-                                    </select>
+                                        <option value="s_smb" id="option-size-mb" data-i18n-text="managerConditionSizeUnitMB"></option><option value="s_skb" id="option-size-kb" data-i18n-text="managerConditionSizeUnitKB"></option><option value="s_sb" id="option-size-bytes" data-i18n-text="managerConditionSizeUnitBytes"></option></select>
                                 </div>
                             </div>
 
@@ -325,21 +263,17 @@
                                 <div class="condition-input-area">
                                     <label for="condition-has-attachment" class="app-form-checkbox label">
                                         <input type="checkbox" id="condition-has-attachment"
-                                            class="app-form-checkbox input">添付ファイルあり
-                                    </label>
+                                            class="app-form-checkbox input">
+                                        <span id="label-condition-has-attachment" data-i18n-text="managerConditionHasAttachment"></span></label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
                 <section class="filter-actions-section">
-                    <button id="export-this-filter">このフィルタをエクスポート</button>
-                    <button id="duplicate-this-filter">このフィルタを複製</button>
-                    <button id="delete-this-filter">このフィルタを削除</button>
-                </section>
+                    <button id="export-this-filter" class="action" data-i18n-text="managerActionExportThis"></button><button id="duplicate-this-filter" class="action" data-i18n-text="managerActionDuplicate"></button><button id="delete-this-filter" class="action danger" data-i18n-text="managerActionDelete" data-i18n-title="managerActionDeleteTooltip"></button></section>
             </article>
         </div>
-
     </div>
 
     <script src="manager.js"></script>
