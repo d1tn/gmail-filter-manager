@@ -1,0 +1,615 @@
+
+{
+  "extensionName": {
+    "message": "Gmail Filter Manager：通过简单的GUI进行排序和命名",
+    "sourcefile": "manifest.json"
+  },
+  "extensionDescription": {
+    "message": "一个Chrome扩展程序，通过直观的GUI轻松创建和管理Gmail过滤器。过滤器内容不会发送到外部。",
+    "sourcefile": "manifest.json"
+  },
+  "extensionDefaultTitle": {
+    "message": "Gmail Filter Manager：通过简单的GUI进行排序和命名",
+    "sourcefile": "manifest.json"
+  },
+  "contentButtonOpenManager": {
+    "message": "打开过滤器管理器",
+    "sourcefile": "content.js"
+  },
+  "contentAlertExtensionInvalid": {
+    "message": "Gmail Filter Manager连接丢失。请重新加载页面。",
+    "sourcefile": "content.js"
+  },
+  "managerTitle": {
+    "message": "Gmail 过滤器管理器",
+    "sourcefile": "manager.html"
+  },
+  "managerHeaderTitle": {
+    "message": "Gmail 过滤器管理器",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuAbout": {
+    "message": "关于此工具",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuTerms": {
+    "message": "服务条款",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuGithub": {
+    "message": "GitHub",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuSettings": {
+    "message": "高级设置",
+    "sourcefile": "manager.html"
+  },
+  "managerMenuContact": {
+    "message": "联系我们",
+    "sourcefile": "manager.html"
+  },
+  "managerMainExportAll": {
+    "message": "导出过滤器",
+    "sourcefile": "manager.html"
+  },
+  "managerMainImport": {
+    "message": "导入过滤器",
+    "sourcefile": "manager.html"
+  },
+  "managerFilterListTitle": {
+    "message": "过滤器",
+    "sourcefile": "manager.html"
+  },
+  "managerFilterListUnnamed": {
+    "message": "无标题过滤器",
+    "sourcefile": "manager.js"
+  },
+  "managerSupportTitle": {
+    "message": "支持开发",
+    "sourcefile": "manager.html"
+  },
+  "managerSupportDescription": {
+    "message": "通过此链接购物有助于支持开发，对您没有额外费用！",
+    "sourcefile": "manager.html"
+  },
+  "managerSupportButton": {
+    "message": "在亚马逊购物",
+    "sourcefile": "manager.html"
+  },
+  "managerSupportNote": {
+    "message": "作为亚马逊联盟成员，我通过此链接的合格购买获得收入。",
+    "sourcefile": "manager.html"
+  },
+  "managerFilterNamePlaceholder": {
+    "message": "输入过滤器名称",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessTitle": {
+    "message": "操作",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessSkipInbox": {
+    "message": "跳过收件箱（归档）",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessMarkAsRead": {
+    "message": "标记为已读",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessStar": {
+    "message": "加星标",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessApplyLabel": {
+    "message": "应用标签：",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessLabelNamePlaceholder": {
+    "message": "输入标签名称",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessForward": {
+    "message": "转发到：",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessForwardAddressPlaceholder": {
+    "message": "输入转发地址",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessDelete": {
+    "message": "删除",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessDeleteDisabledInfo": {
+    "message": "（在高级设置中启用）",
+    "sourcefile": "manager.js"
+  },
+  "managerProcessNotSpam": {
+    "message": "永不发送到垃圾邮件",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessAlwaysImportant": {
+    "message": "始终标记为重要",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessNeverImportant": {
+    "message": "永不标记为重要",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessApplyCategory": {
+    "message": "归类为：",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategorySelectDefault": {
+    "message": "选择类别",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryPersonal": {
+    "message": "主要",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategorySocial": {
+    "message": "社交",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryNotification": {
+    "message": "更新",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryGroup": {
+    "message": "论坛",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessCategoryPromo": {
+    "message": "推广",
+    "sourcefile": "manager.html"
+  },
+  "managerProcessDuplicate": {
+    "message": "复制此操作",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionsTitle": {
+    "message": "过滤器条件",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionFromLabel": {
+    "message": "发件人",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionToLabel": {
+    "message": "收件人",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSubjectLabel": {
+    "message": "主题",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionIncludesLabel": {
+    "message": "包含字词",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionExcludesLabel": {
+    "message": "不包含",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeLabel": {
+    "message": "大小",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeLargerThan": {
+    "message": "大于",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeSmallerThan": {
+    "message": "小于",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeValuePlaceholder": {
+    "message": "值",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeUnitMB": {
+    "message": "MB",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeUnitKB": {
+    "message": "KB",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSizeUnitBytes": {
+    "message": "字节",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionFromPlaceholder": {
+    "message": "输入地址",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionToPlaceholder": {
+    "message": "输入地址",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionSubjectPlaceholder": {
+    "message": "输入关键词",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionIncludesPlaceholder": {
+    "message": "输入关键词",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionExcludesPlaceholder": {
+    "message": "输入关键词",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionOrConnectorText": {
+    "message": "或",
+    "sourcefile": "manager.html"
+  },
+  "managerConditionHasAttachment": {
+    "message": "有附件",
+    "sourcefile": "manager.html"
+  },
+  "managerActionExportThis": {
+    "message": "导出此过滤器",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDuplicate": {
+    "message": "复制此过滤器",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDelete": {
+    "message": "删除此过滤器",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDeleteTooltip": {
+    "message": "至少需要一个过滤器",
+    "sourcefile": "manager.html"
+  },
+  "managerActionDeleteConfirm": {
+    "message": "您确定要删除过滤器“$1”吗？\n此操作无法撤销。",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "无标题过滤器"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerModalDocsTitle": {
+    "message": "文档",
+    "sourcefile": "manager.html"
+  },
+  "managerModalDocsLoading": {
+    "message": "正在加载...",
+    "sourcefile": "manager.html"
+  },
+  "managerImportDialogSelectFileError": {
+    "message": "读取文件时发生错误。",
+    "sourcefile": "manager.js"
+  },
+  "managerImportSuccess": {
+    "message": "成功导入 $1 个过滤器。",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "3"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerImportConfirmMerge": {
+    "message": "已导入 $1 个过滤器。您想将它们与现有的 $2 个过滤器合并吗？选择“取消”将替换所有现有过滤器。",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "5"
+      },
+      "2": {
+        "content": "$2",
+        "example": "10"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerImportError": {
+    "message": "导入过滤器时发生错误：$1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "XML解析错误"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerXmlParseError": {
+    "message": "XML解析错误：$1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "无效的XML格式"
+      }
+    },
+    "sourcefile": "manager.js"
+  },
+  "managerFilterNotFound": {
+    "message": "未找到已保存的过滤器或数据无效。正在创建初始过滤器。",
+    "sourcefile": "manager.js"
+  },
+  "managerAppSettingsNotFound": {
+    "message": "未找到已保存的应用程序设置。正在使用默认设置。",
+    "sourcefile": "manager.js"
+  },
+  "termsTitle": {
+    "message": "服务条款",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsLastUpdated": {
+    "message": "上次更新时间：",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionSummary": {
+    "message": "摘要",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionTerms": {
+    "message": "条款和条件",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionPrivacy": {
+    "message": "隐私政策",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionInfoCollected": {
+    "message": "收集的信息",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionInfoPurpose": {
+    "message": "信息使用目的",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionInfoThirdParty": {
+    "message": "提供给第三方",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionDisclaimer": {
+    "message": "免责声明",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionNoWarranty": {
+    "message": "无担保",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionLimitLiability": {
+    "message": "责任限制",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionFilterResponsibility": {
+    "message": "过滤器设置责任",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionIntellectualProperty": {
+    "message": "知识产权",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionChanges": {
+    "message": "这些条款的变更",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionGoverningLaw": {
+    "message": "适用法律和管辖权",
+    "sourcefile": "docs/terms.md"
+  },
+  "termsSectionContact": {
+    "message": "联系信息",
+    "sourcefile": "docs/terms.md"
+  },
+  "readmeWhatIsItTitle": {
+    "message": "这是什么工具？",
+    "sourcefile": "docs/about.md"
+  },
+  "readmeHistoryTitle": {
+    "message": "更新历史（反映源代码提交日期，可能与商店发布日期不同）",
+    "sourcefile": "docs/about.md"
+  },
+  "contactFormDescription": {
+    "message": "请就Gmail Filter Manager向我们发送您的问题、反馈、错误报告或其他咨询。",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeLabel": {
+    "message": "咨询类型",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypePlaceholder": {
+    "message": "选择咨询类型",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeQuestion": {
+    "message": "问题/用法",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeFeatureRequest": {
+    "message": "功能请求",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeBugReport": {
+    "message": "错误报告",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeFeedback": {
+    "message": "反馈/评论",
+    "sourcefile": "contact.js"
+  },
+  "contactFormTypeOther": {
+    "message": "其他",
+    "sourcefile": "contact.js"
+  },
+  "contactFormEmailLabel": {
+    "message": "电子邮件地址（可选）",
+    "sourcefile": "contact.js"
+  },
+  "contactFormEmailPlaceholder": {
+    "message": "如果需要回复，请填写",
+    "sourcefile": "contact.js"
+  },
+  "contactFormEmailHelp": {
+    "message": "*请注意，我们可能无法回复。",
+    "sourcefile": "contact.js"
+  },
+  "contactFormMessageLabel": {
+    "message": "咨询详情",
+    "sourcefile": "contact.js"
+  },
+  "contactFormMessagePlaceholder": {
+    "message": "请填写具体细节。对于错误报告，请包含情况和重现步骤。",
+    "sourcefile": "contact.js"
+  },
+  "contactFormVersionLabel": {
+    "message": "扩展版本信息",
+    "sourcefile": "contact.js"
+  },
+  "contactFormVersionInfo": {
+    "message": "版本 $1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "1.1.1"
+      }
+    },
+    "sourcefile": "contact.js"
+  },
+  "contactFormVersionError": {
+    "message": "无法检索",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSubmitButton": {
+    "message": "发送",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSubmittingButton": {
+    "message": "正在发送...",
+    "sourcefile": "contact.js"
+  },
+  "contactFormCancelButton": {
+    "message": "取消",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSuccessTitle": {
+    "message": "发送成功",
+    "sourcefile": "contact.js"
+  },
+  "contactFormSuccessMessage": {
+    "message": "您的咨询已发送。",
+    "sourcefile": "contact.js"
+  },
+  "contactFormErrorTitle": {
+    "message": "发送错误",
+    "sourcefile": "contact.js"
+  },
+  "contactFormErrorMessage": {
+    "message": "发送您的咨询时发生错误。",
+    "sourcefile": "contact.js"
+  },
+  "contactFormErrorHelp": {
+    "message": "请检查您的互联网连接并重试。",
+    "sourcefile": "contact.js"
+  },
+  "contactFormRetryButton": {
+    "message": "重试",
+    "sourcefile": "contact.js"
+  },
+  "contactFormCloseButton": {
+    "message": "关闭",
+    "sourcefile": "contact.js"
+  },
+  "contactFormValidationRequired": {
+    "message": "咨询类型和咨询详情是必填项。",
+    "sourcefile": "contact.js"
+  },
+  "contactFormCancelConfirm": {
+    "message": "取消咨询？您的输入将丢失。",
+    "sourcefile": "contact.js"
+  },
+  "commonModalLoadingErrorTitle": {
+    "message": "加载错误",
+    "sourcefile": "common.js"
+  },
+  "commonModalLoadingErrorMessage": {
+    "message": "加载文档失败。",
+    "sourcefile": "common.js"
+  },
+  "commonModalLoadingErrorDetails": {
+    "message": "错误详情：$1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "未找到"
+      }
+    },
+    "sourcefile": "common.js"
+  },
+  "commonModalReloadLink": {
+    "message": "重新加载",
+    "sourcefile": "common.js"
+  },
+  "commonMarkdownRenderError": {
+    "message": "渲染markdown时出错：$1",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "解析错误"
+      }
+    },
+    "sourcefile": "common.js"
+  },
+  "settingsTitle": {
+    "message": "高级设置",
+    "sourcefile": "settings.js"
+  },
+  "settingsDescription": {
+    "message": "这些设置控制此扩展的特殊功能。",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteSectionTitle": {
+    "message": "电子邮件删除（危险操作）",
+    "sourcefile": "settings.js"
+  },
+  "settingsEnableDeleteLabel": {
+    "message": "启用电子邮件删除功能",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteWarning": {
+    "message": "⚠️ 启用此功能可能会永久删除与过滤器条件匹配的电子邮件。<br>请谨慎使用，因为重要的电子邮件可能会被删除。<br>您对使用此扩展删除的电子邮件负全部责任，开发人员对此不承担任何责任。",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoTitle": {
+    "message": "关于电子邮件删除功能",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledText": {
+    "message": "当电子邮件删除被禁用时：",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledBullet1": {
+    "message": "“删除”过滤器选项将变灰。",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledBullet2": {
+    "message": "如果现有过滤器中选择了“删除”，则在导出时将被忽略。",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoDisabledBullet3": {
+    "message": "在这种情况下，删除操作将不会在Gmail中应用。",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteInfoPersistence": {
+    "message": "此设置保存在您的浏览器中，即使重启扩展程序也保持不变。",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteEnabledAlert": {
+    "message": "删除功能已启用。此功能可能会永久删除重要邮件。请谨慎使用。",
+    "sourcefile": "settings.js"
+  },
+  "settingsDeleteDisabledAlert": {
+    "message": "删除功能已禁用。如果现有过滤器中选中了“删除”，则它们将暂时停用。",
+    "sourcefile": "settings.js"
+  }
+}
