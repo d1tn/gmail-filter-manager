@@ -111,8 +111,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" id="submit-form" class="submit-button" data-i18n-text="contactFormSubmitButton"></button>
-                    <button type="button" id="cancel-form" class="cancel-button" data-i18n-text="contactFormCancelButton"></button>
+                    <button type="submit" id="submit-form" class="action" data-i18n-text="contactFormSubmitButton"></button>
+                    <button type="button" id="cancel-form" class="action danger" data-i18n-text="contactFormCancelButton"></button>
                 </div>
                     <p class="error-message" id="form-validation-error" style="display: none;"></p>
             </form>

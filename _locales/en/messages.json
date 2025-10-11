@@ -163,6 +163,10 @@
     "message": "Promotions",
     "sourcefile": "manager.html"
   },
+  "managerProcessDuplicate": {
+    "message": "Duplicate This Process",
+    "sourcefile": "manager.html"
+  },
   "managerConditionsTitle": {
     "message": "Filter Conditions",
     "sourcefile": "manager.html"

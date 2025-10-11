@@ -59,7 +59,6 @@
     margin-top: 2rem;
 }
 
-.submit-button,
 .complete-button {
     background-color: #2980b9;
     color: white;
@@ -72,12 +71,10 @@
     transition: background-color 0.2s;
 }
 
-.submit-button:hover,
 .complete-button:hover {
     background-color: #3498db;
 }
 
-.submit-button:disabled,
 .complete-button:disabled {
     background-color: #95a5a6;
     cursor: not-allowed;

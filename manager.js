@@ -89,6 +89,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // 既存のフィルタデータをストレージから読み込む
     loadFiltersFromStorage();
 
+    // 「この処理を複製」ボタンにイベントリスナーを設定
+    const duplicateProcessButton = document.getElementById('duplicate-this-process');
+    if (duplicateProcessButton) {
+        console.log("'この処理を複製' button found, adding event listener.");
+        duplicateProcessButton.addEventListener('click', duplicateCurrentProcess);
+    } else {
+        console.error("'この処理を複製' button not found!");
+    }
+
     // 「このフィルタを保存する」ボタンにイベントリスナーを設定
     const exportCurrentFilterButton = document.getElementById('export-this-filter');
     if (exportCurrentFilterButton) {
@@ -1334,6 +1343,60 @@ function selectFilter(index) {
 
     // 削除ボタンの状態を更新
     updateDeleteButtonState();
+}
+
+// フィルタの処理を複製する関数
+function duplicateCurrentProcess() {
+    console.log("Attempting to duplicate current filter.");
+    if (currentFilterIndex === -1) {
+        console.warn("No filter selected to duplicate.");
+        return; // 選択されているフィルタがない場合は何もしない
+    }
+
+    const originalFilter = filters[currentFilterIndex];
+
+    // 新しいフィルタ作成時の conditions の初期値を定義
+    // これを複製したフィルタの conditions に適用する
+    const initialConditionsForNewFilter = {
+        from: [],
+        to: [],
+        subject: [],
+        includes: [],
+        excludes: [],
+        size: {
+            operator: 'larger_than', // デフォルト値
+            value: null,
+            unit: 's_smb' // デフォルト値
+        },
+        hasAttachment: false
+    };
+
+    // フィルタデータのディープコピーを作成
+    const duplicatedFilter = {
+        id: Date.now().toString(),  // 新しい一意なIDを生成
+        name: `${originalFilter.name} (Copied)`, // 名前に "(コピー)" を追加
+        conditions: JSON.parse(JSON.stringify(initialConditionsForNewFilter)), // conditionsをディープコピーして初期状態にリセット
+        actions: JSON.parse(JSON.stringify(originalFilter.actions || {})), // originalFilterからactionsをディープコピー
+    }
+
+    console.log("Original filter:", originalFilter);
+    console.log("Duplicated filter:", duplicatedFilter);
+
+    // 複製したフィルタを filters 配列に追加
+    filters.push(duplicatedFilter);
+
+    console.log("Duplicated filter added. Current filters:", filters);
+
+    // フィルタ一覧を再描画
+    renderFilterList();
+
+    // 複製されたフィルタを選択状態にする
+    selectFilterById(duplicatedFilter.id);
+
+    console.log("Filter duplicated and new filter selected.");
+
+    // 変更を保存
+    saveFiltersToStorage();
 }
 
 // フィルタを複製する関数
