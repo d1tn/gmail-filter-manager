@@ -4,7 +4,7 @@
     "sourcefile": "manifest.json"
   },
   "extensionDescription": {
-    "message": "Gmailのフィルタを直感的なGUIで簡単に作成・管理できる拡張機能。フィルタは外部サーバーに送信されず、ブラウザの同期機能を通じてお使いのGoogleアカウントに紐づき保存・同期されます。",
+    "message": "Gmailのフィルタを、GUIで直感的に作成・管理できます。フィルタはXMLで簡単インポート&エクスポート。",
     "sourcefile": "manifest.json"
   },
   "extensionDefaultTitle": {

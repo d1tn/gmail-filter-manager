@@ -4,7 +4,7 @@
     "sourcefile": "manifest.json"
   },
   "extensionDescription": {
-    "message": "A Chrome extension to easily create and manage Gmail filters with an intuitive GUI. Filters are not sent to external servers and are stored and synchronized via your Google account through the browser’s sync feature.",
+    "message": "Create and manage Gmail filters intuitively with a GUI. Easily import and export filters using XML.",
     "sourcefile": "manifest.json"
   },
   "extensionDefaultTitle": {

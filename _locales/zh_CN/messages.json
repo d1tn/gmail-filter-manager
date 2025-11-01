@@ -5,7 +5,7 @@
     "sourcefile": "manifest.json"
   },
   "extensionDescription": {
-    "message": "一个Chrome扩展程序，通过直观的GUI轻松创建和管理Gmail过滤器。过滤器不会发送到外部服务器，而是通过浏览器的同步功能与您的Google帐户关联并进行存储与同步。",
+    "message": "通过直观的GUI创建和管理 Gmail 过滤器。可使用 XML 轻松导入和导出过滤器。",
     "sourcefile": "manifest.json"
   },
   "extensionDefaultTitle": {
