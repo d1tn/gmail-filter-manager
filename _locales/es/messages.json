@@ -610,5 +610,23 @@
   "settingsDeleteDisabledAlert": {
     "message": "Función de eliminación deshabilitada. Si 'Eliminarlo' estaba marcado en filtros existentes, se desactiva temporalmente.",
     "sourcefile": "settings.js"
+  },
+  "reviewModalTitle": {
+    "message": "Exportación completada"
+  },
+  "reviewModalBody": {
+    "message": "Tus filtros de Gmail se han exportado correctamente."
+  },
+  "reviewModalCtaReviewMassage": {
+    "message": "¿Qué te parece Gmail Filter Manager?\nSi esta extensión te ha resultado útil, ¡nos encantaría que dejaras una reseña en Chrome Web Store! Tu opinión es de gran ayuda para seguir mejorando."
+  },
+  "reviewModalCtaReview": {
+    "message": "Dejar reseña"
+  },
+  "reviewModalCtaSnooze": {
+    "message": "Recordármelo más tarde"
+  },
+  "reviewModalCtaClose": {
+    "message": "Cerrar"
   }
 }

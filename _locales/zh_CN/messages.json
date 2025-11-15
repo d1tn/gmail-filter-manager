@@ -611,5 +611,23 @@
   "settingsDeleteDisabledAlert": {
     "message": "删除功能已禁用。如果现有过滤器中选中了“删除”，则它们将暂时停用。",
     "sourcefile": "settings.js"
+  },
+  "reviewModalTitle": {
+    "message": "导出已完成"
+  },
+  "reviewModalBody": {
+    "message": "您的 Gmail 过滤器已成功导出。"
+  },
+  "reviewModalCtaReviewMassage": {
+    "message": "您觉得 Gmail Filter Manager 怎么样？\n如果这个扩展对您有帮助，非常欢迎您在 Chrome 网上应用店留下评价！您的反馈对开发工作有很大的支持。"
+  },
+  "reviewModalCtaReview": {
+    "message": "写评价"
+  },
+  "reviewModalCtaSnooze": {
+    "message": "稍后提醒"
+  },
+  "reviewModalCtaClose": {
+    "message": "关闭"
   }
 }

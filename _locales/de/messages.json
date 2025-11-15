@@ -610,5 +610,23 @@
   "settingsDeleteDisabledAlert": {
     "message": "Löschfunktion deaktiviert. Wenn 'Löschen' in bestehenden Filtern aktiviert war, wird es vorübergehend deaktiviert.",
     "sourcefile": "settings.js"
+  },
+  "reviewModalTitle": {
+    "message": "Export abgeschlossen"
+  },
+  "reviewModalBody": {
+    "message": "Ihre Gmail-Filter wurden erfolgreich exportiert."
+  },
+  "reviewModalCtaReviewMassage": {
+    "message": "Wie gefällt Ihnen der Gmail Filter Manager?\nWenn Ihnen diese Erweiterung geholfen hat, würden wir uns sehr über eine Bewertung im Chrome Web Store freuen! Ihr Feedback unterstützt die Weiterentwicklung enorm."
+  },
+  "reviewModalCtaReview": {
+    "message": "Bewertung abgeben"
+  },
+  "reviewModalCtaSnooze": {
+    "message": "Später erinnern"
+  },
+  "reviewModalCtaClose": {
+    "message": "Schließen"
   }
 }

@@ -131,8 +131,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // エクスポート・インポートボタンのイベントリスナー設定
-    document.getElementById('export-filter').addEventListener('click', function () { exportFilters('all'); });
-    document.getElementById('import-filter').addEventListener('click', showImportDialog);
+    const exportAllButton = document.getElementById('export-filter');
+    if (exportAllButton) {
+        exportAllButton.addEventListener('click', function () {
+            exportFilters('all');
+        });
+    } else {
+        console.error("'すべてのフィルタをエクスポート' ボタンが見つかりません");
+    }
+
+    const importButton = document.getElementById('import-filter');
+    if (importButton) {
+        importButton.addEventListener('click', showImportDialog);
+    } else {
+        console.error("'フィルタをインポート' ボタンが見つかりません");
+    }
+
 
     console.log("manager.js setup complete.");
 });
@@ -343,7 +357,7 @@ function scheduleSaveFilters() {
         clearTimeout(saveTimerId);
     }
 
-    // 最後の変更から 1500ms 後に1回だけ保存
+    // 最後の変更から 3000ms 後に1回だけ保存
     saveTimerId = setTimeout(() => {
         saveTimerId = null;
         // ここで既存の保存関数を呼ぶ
@@ -354,17 +368,15 @@ function scheduleSaveFilters() {
 // フィルタデータを保存する関数
 function saveFiltersToStorage() {
     if (isExtensionEnvironment()) {
-        // Chrome拡張環境では同期ストレージに保存
-        chrome.storage.sync.set({ 'filters': filters }, function () {
+        // ここを sync → local 専用に変更
+        chrome.storage.local.set({ 'filters': filters }, function () {
             if (chrome.runtime.lastError) {
-                console.error('フィルタ設定の同期ストレージへの保存に失敗しました:', chrome.runtime.lastError);
-                // 必要であれば、ここでローカルストレージへのフォールバック保存を検討することもできます。
+                console.error('フィルタ設定のローカルストレージへの保存に失敗しました:', chrome.runtime.lastError);
             } else {
-                console.log('フィルタ設定が保存されました（chrome.storage.sync）');
+                console.log('フィルタ設定が保存されました（chrome.storage.local）');
             }
         });
     } else {
-        // 通常のWeb環境（開発時）はlocalStorageを使用
         try {
             localStorage.setItem('gmail_filters', JSON.stringify(filters));
             console.log('フィルタ設定が保存されました（localStorage）');
@@ -411,50 +423,24 @@ function loadFiltersFromStorage() {
     console.log("ストレージからフィルタデータの読み込みを開始します");
 
     if (isExtensionEnvironment()) {
-        // 1. 同期ストレージから読み込みを試行
-        chrome.storage.sync.get('filters', function(syncResult) {
+        // 1. まず local から読む（新方針ではここが主）
+        chrome.storage.local.get('filters', function(localResult) {
             if (chrome.runtime.lastError) {
-                console.error('同期ストレージの読み込みに失敗:', chrome.runtime.lastError);
-                // エラーが発生した場合、ローカルストレージからの読み込みを試みる
-                loadFiltersFromLocalAsFallback();
+                console.error('ローカルストレージの読み込みに失敗:', chrome.runtime.lastError);
                 return;
             }
 
-            if (syncResult.filters && syncResult.filters.length > 0) {
-                // 1-1. 同期ストレージにデータがあればそれを使用
-                console.log('同期ストレージからフィルタを読み込みました。');
-                handleLoadedData(syncResult.filters);
+            if (localResult.filters && Array.isArray(localResult.filters) && localResult.filters.length > 0) {
+                console.log('ローカルストレージからフィルタを読み込みました。');
+                handleLoadedData(localResult.filters);
             } else {
-                // 1-2. 同期ストレージにデータがない場合、ローカルストレージを確認
-                console.log('同期ストレージにデータが見つかりません。ローカルストレージを確認します。');
-                chrome.storage.local.get('filters', function(localResult) {
-                    if (localResult.filters && localResult.filters.length > 0) {
-                        // 2. ローカルストレージにデータがあれば、それを同期ストレージに移行
-                        console.log('ローカルストレージからデータを検出し、同期ストレージへ移行します。');
-                        
-                        // データを同期ストレージに保存
-                        chrome.storage.sync.set({ 'filters': localResult.filters }, function() {
-                            if (chrome.runtime.lastError) {
-                                console.error('ローカルから同期ストレージへのデータ移行に失敗:', chrome.runtime.lastError);
-                            } else {
-                                console.log('データ移行が成功しました。');
-                                // 移行後、ローカルのデータを削除することも検討できますが、
-                                // 安全のため、まずは残しておくことを推奨します。
-                                // chrome.storage.local.remove('filters');
-                            }
-                        });
-                        // 読み込んだローカルデータでUIを初期化
-                        handleLoadedData(localResult.filters);
-                    } else {
-                        // 3. どちらにもデータがない場合、初期データを作成
-                        console.log('ローカルストレージにもデータが見つかりません。初期フィルタを作成します。');
-                        handleLoadedData(null); // handleLoadedData内で初期フィルタが作成される
-                    }
-                });
+                console.log('ローカルストレージにフィルタが見つかりません。同期ストレージを確認します。');
+                // 2. 旧バージョンユーザーのために sync からも探し、見つかったら local へ移行
+                loadFiltersFromSyncAndMigrate();
             }
         });
     } else {
-        // 通常のWeb環境（開発時）のロジックは変更なし
+        // 開発用（普通のWeb環境）は今まで通り
         try {
             const savedData = localStorage.getItem('gmail_filters');
             const parsedData = savedData ? JSON.parse(savedData) : null;
@@ -465,6 +451,42 @@ function loadFiltersFromStorage() {
         }
     }
 }
+
+function loadFiltersFromSyncAndMigrate() {
+    chrome.storage.sync.get('filters', function(syncResult) {
+        if (chrome.runtime.lastError) {
+            console.error('同期ストレージの読み込みに失敗:', chrome.runtime.lastError);
+            // 何もないなら初期フィルタ作成
+            handleLoadedData(null);
+            return;
+        }
+
+        if (syncResult.filters && Array.isArray(syncResult.filters) && syncResult.filters.length > 0) {
+            console.log('同期ストレージからフィルタを読み込みました。ローカルへ移行します。');
+
+            const migrated = syncResult.filters;
+
+            // 1. ローカルへ保存（新しい正規の保存先）
+            chrome.storage.local.set({ 'filters': migrated }, function() {
+                if (chrome.runtime.lastError) {
+                    console.error('同期→ローカル移行時の保存に失敗:', chrome.runtime.lastError);
+                } else {
+                    console.log('フィルタをローカルストレージに移行しました。');
+                }
+            });
+
+            // 2. UIへ反映
+            handleLoadedData(migrated);
+
+            // 3. （任意）sync 側の filters を削除して容量を空けてもいい
+            // chrome.storage.sync.remove('filters');
+        } else {
+            console.log('同期ストレージにもフィルタが見つかりません。初期フィルタを作成します。');
+            handleLoadedData(null);
+        }
+    });
+}
+
 
 // 同期ストレージの読み込みに失敗した場合のフォールバック関数
 function loadFiltersFromLocalAsFallback() {
@@ -510,19 +532,24 @@ function updateFilterName(currentFilter) {
     const filterNameInput = document.getElementById('filter-name-input');
     if (filterNameInput) {
         const newFilterName = filterNameInput.value.trim();
-        currentFilter.name = newFilterName; // フィルタデータ自体は入力された通りに更新
+        currentFilter.name = newFilterName;
 
-        // フィルタ名の変更を左ペインのフィルタ一覧に直接反映
         const filterListUl = document.getElementById('filter-list');
-        // data-filter-id を使って該当要素を特定
-        const selectedItemButton = filterListUl.querySelector(`.item[data-filter-id="${currentFilter.id}"] button`);
+        if (!filterListUl) {
+            console.warn('#filter-list not found when updating filter name.');
+            return;
+        }
+
+        const selectedItemButton =
+            filterListUl.querySelector(`.item[data-filter-id="${currentFilter.id}"] button`);
         if (selectedItemButton) {
-            // フィルタ名が空の場合はデフォルト名を表示
-            selectedItemButton.textContent = currentFilter.name || chrome.i18n.getMessage('managerFilterListUnnamed');
+            selectedItemButton.textContent =
+                currentFilter.name || chrome.i18n.getMessage('managerFilterListUnnamed');
             console.log(`Left pane filter name updated to: "${selectedItemButton.textContent}"`);
         }
     }
 }
+
 
 // 条件項目のDOM要素からフィルタデータを更新する関数
 function updateFilterConditions(currentFilter) {
@@ -1322,46 +1349,58 @@ function selectFilterById(filterId) {
 function selectFilter(index) {
     console.log(`Selecting filter by index: ${index}`);
 
-    // インデックスが範囲外の場合は調整
-    if (index < 0 || index >= filters.length) {
-        if (filters.length > 0) {
-            // 有効な範囲内の最大値に調整
-            index = Math.min(Math.max(0, index), filters.length - 1);
-        } else {
-            currentFilterIndex = -1;
-            displayFilterDetails(null);
-            return;
-        }
+    // フィルタが1件もない場合
+    if (!filters || filters.length === 0) {
+        currentFilterIndex = -1;
+        displayFilterDetails(null);
+        updateDeleteButtonState();
+        console.log("No filters available. Cleared right pane.");
+        return;
     }
 
-    // 既存の選択状態を解除
+    // インデックスが範囲外の場合は補正
+    if (index < 0) {
+        index = 0;
+    }
+    if (index >= filters.length) {
+        index = filters.length - 1;
+    }
+
+    // 選択中インデックスを更新
+    currentFilterIndex = index;
+
+    // 左ペインの active を更新
     const filterListUl = document.getElementById('filter-list');
     if (filterListUl) {
-        filterListUl.querySelectorAll('.item').forEach(item => item.classList.remove('active'));
+        // いったん全部 active を外す
+        filterListUl.querySelectorAll('.item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // data-filter-index で該当要素に active を付与
+        const selectedItem = filterListUl.querySelector(`.item[data-filter-index="${index}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('active');
+        } else {
+            console.warn(`List item for index ${index} not found.`);
+        }
+    } else {
+        console.warn("filter-list UL element not found.");
     }
 
-    // 選択状態を設定
-    currentFilterIndex = index;
-    const selectedItem = filterListUl.querySelector(`.item[data-filter-index="${index}"]`);
-    if (selectedItem) {
-        selectedItem.classList.add('active');
-    }
-
-    // 選択されたフィルタのデータを右ペインに表示する前にチェック
+    // 右ペインに詳細を表示
     if (currentFilterIndex >= 0 && currentFilterIndex < filters.length) {
         displayFilterDetails(filters[currentFilterIndex]);
     } else {
         displayFilterDetails(null);
     }
 
-    // 選択されたフィルタのデータを右ペインに表示する
-    displayFilterDetails(filters[currentFilterIndex]);
+    // 削除ボタンなどの状態更新
+    updateDeleteButtonState();
 
     console.log(`Selected filter index: ${currentFilterIndex}`);
-
-    // 削除ボタンの状態を更新
-    updateDeleteButtonState();
 }
+
 
 // フィルタの処理を複製する関数
 function duplicateCurrentProcess() {
@@ -1953,6 +1992,18 @@ function exportFilters(mode = 'all') {
 
     const filterCount = filtersToExport.length;
     console.log(`Exported ${filterCount} filter(s) successfully.`);
+
+    // エクスポート完了後にレビュー訴求モーダルを開く
+    if (typeof window.showReviewRequestModal === 'function') {
+        try {
+            window.showReviewRequestModal();
+        } catch (e) {
+            console.error('showReviewRequestModal 実行中にエラー:', e);
+        }
+    } else {
+        console.warn('showReviewRequestModal が定義されていません（review.js が読み込まれていない可能性）');
+    }
+
 }
 // インポートダイアログを表示する関数
 function showImportDialog() {
@@ -2110,43 +2161,36 @@ function generateConditionXML(conditions, propertyName) {
 
     let xml = '';
 
-    // 複数のORグループがある場合は複合条件として処理
     if (conditions.length > 1) {
-        // OR条件グループをフォーマット
         const conditionParts = conditions.map(orGroup => {
-            // ANDキーワードを除去して実際の値だけを取得
             const values = orGroup.filter(item => item !== 'AND');
             if (values.length === 1) {
-                // 単一値の場合はそのまま
-                return escapeXml(values[0]);
+                // ここではエスケープしない
+                return values[0];
             } else {
-                // 複数値（AND条件）の場合は括弧でグループ化
-                const andCondition = values.map(v => escapeXml(v)).join(' AND ');
+                // ここでもエスケープしない
+                const andCondition = values.join(' AND ');
                 return `(${andCondition})`;
             }
         });
 
-        // すべてのOR条件を組み合わせる
         const combinedQuery = conditionParts.join(' OR ');
         xml += `    <apps:property name="${propertyName}" value="${escapeXml(combinedQuery)}"/>\n`;
     } else if (conditions.length === 1) {
-        // 単一のORグループの場合
         const orGroup = conditions[0];
-        // ANDキーワードを除去して実際の値だけを取得
         const values = orGroup.filter(item => item !== 'AND');
 
         if (values.length === 1) {
-            // 単一のキーワードの場合
             xml += `    <apps:property name="${propertyName}" value="${escapeXml(values[0])}"/>\n`;
         } else {
-            // 複数キーワード（AND条件）の場合
-            const andCondition = values.map(v => escapeXml(v)).join(' AND ');
+            const andCondition = values.join(' AND ');
             xml += `    <apps:property name="${propertyName}" value="${escapeXml(andCondition)}"/>\n`;
         }
     }
 
     return xml;
 }
+
 
 // FROM条件をXML形式に変換する関数
 function generateFromConditionXML(fromConditions) {

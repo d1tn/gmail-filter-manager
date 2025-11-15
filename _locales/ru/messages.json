@@ -610,5 +610,23 @@
   "settingsDeleteDisabledAlert": {
     "message": "Функция удаления отключена. Если в существующих фильтрах было выбрано 'Удалить', они временно деактивированы.",
     "sourcefile": "settings.js"
+  },
+  "reviewModalTitle": {
+    "message": "Экспорт завершён"
+  },
+  "reviewModalBody": {
+    "message": "Ваши фильтры Gmail успешно экспортированы."
+  },
+  "reviewModalCtaReviewMassage": {
+    "message": "Как вам Gmail Filter Manager?\nЕсли это расширение оказалось полезным, нам будет очень приятно, если вы оставите отзыв в Chrome Web Store! Ваше мнение значительно помогает развитию проекта."
+  },
+  "reviewModalCtaReview": {
+    "message": "Оставить отзыв"
+  },
+  "reviewModalCtaSnooze": {
+    "message": "Напомнить позже"
+  },
+  "reviewModalCtaClose": {
+    "message": "Закрыть"
   }
 }

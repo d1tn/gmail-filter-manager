@@ -607,5 +607,23 @@
   "settingsDeleteDisabledAlert": {
     "message": "Deletion feature disabled. If 'Delete it' was checked in existing filters, it is temporarily deactivated.",
     "sourcefile": "settings.js"
+  },
+    "reviewModalTitle": {
+    "message": "Export completed"
+  },
+  "reviewModalBody": {
+    "message": "Your Gmail filters have been exported successfully."
+  },
+  "reviewModalCtaReviewMassage": {
+    "message": "How are you liking Gmail Filter Manager?\nIf this extension has been helpful to you, we would greatly appreciate a review on the Chrome Web Store! Your feedback really helps support the development."
+  },
+  "reviewModalCtaReview": {
+    "message": "Leave a review"
+  },
+  "reviewModalCtaSnooze": {
+    "message": "Remind me later"
+  },
+  "reviewModalCtaClose": {
+    "message": "Close"
   }
 }

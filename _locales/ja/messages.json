@@ -611,5 +611,23 @@
   "settingsDeleteDisabledAlert": {
     "message": "削除機能が無効になりました。既存のフィルタで「削除する」がチェックされている場合、それらは一時的に無効化されます。",
     "sourcefile": "settings.js"
+  },
+  "reviewModalTitle": {
+    "message": "エクスポートが完了しました"
+  },
+  "reviewModalBody": {
+    "message": "Gmail フィルターのエクスポートが正常に完了しました。"
+  },
+  "reviewModalCtaReviewMassage": {
+    "message": "Gmail Filter Managerはいかがですか？\nもしこの拡張機能が役に立っていれば、ぜひChromeウェブストアでレビューをお願いできると嬉しいです!（開発者の大きな助けになります！）"
+  },
+  "reviewModalCtaReview": {
+    "message": "レビューする"
+  },
+  "reviewModalCtaSnooze": {
+    "message": "しばらく表示しない"
+  },
+  "reviewModalCtaClose": {
+    "message": "閉じる"
   }
 }
