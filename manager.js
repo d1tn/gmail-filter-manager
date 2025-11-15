@@ -1992,6 +1992,18 @@ function exportFilters(mode = 'all') {
 
     const filterCount = filtersToExport.length;
     console.log(`Exported ${filterCount} filter(s) successfully.`);
+
+    // エクスポート完了後にレビュー訴求モーダルを開く
+    if (typeof window.showReviewRequestModal === 'function') {
+        try {
+            window.showReviewRequestModal();
+        } catch (e) {
+            console.error('showReviewRequestModal 実行中にエラー:', e);
+        }
+    } else {
+        console.warn('showReviewRequestModal が定義されていません（review.js が読み込まれていない可能性）');
+    }
+
 }
 // インポートダイアログを表示する関数
 function showImportDialog() {

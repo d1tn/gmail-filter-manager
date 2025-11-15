@@ -52,6 +52,16 @@ button {
     border: none;
     cursor: pointer;
 
+    &.test {
+        background-color: #202124;
+        color:  #ffebeb;
+    }
+    &.nobutton {
+        background-color: transparent;
+        color:   #202124;
+    }
+
+
     &.action {
         border-radius: 0.5rem;
         line-height: 2.5rem;
