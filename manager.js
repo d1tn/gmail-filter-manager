@@ -17,6 +17,9 @@ let filters = [];
 // 現在選択されているフィルタのインデックスを保持
 let currentFilterIndex = -1;
 
+// 保存処理のデバウンス用タイマーID
+let saveTimerId = null;
+
 // ページの読み込みが完了したら実行される処理
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOMContentLoaded event fired.");
@@ -333,6 +336,21 @@ function createNewFilterData() {
     return newFilter;
 }
 
+// デバウンス付きで保存をスケジュールする関数
+function scheduleSaveFilters() {
+    // すでにタイマーがあればクリア（連続入力をまとめる）
+    if (saveTimerId !== null) {
+        clearTimeout(saveTimerId);
+    }
+
+    // 最後の変更から 1500ms 後に1回だけ保存
+    saveTimerId = setTimeout(() => {
+        saveTimerId = null;
+        // ここで既存の保存関数を呼ぶ
+        saveFiltersToStorage();
+    }, 3000); // 好みで 1000〜3000ms くらいに調整
+}
+
 // フィルタデータを保存する関数
 function saveFiltersToStorage() {
     if (isExtensionEnvironment()) {
@@ -482,7 +500,7 @@ function updateCurrentFilterData() {
     updateFilterActions(currentFilter);
 
     // 変更を保存
-    saveFiltersToStorage();
+    scheduleSaveFilters();
 
     console.log("Updated filter data:", currentFilter);
 }
