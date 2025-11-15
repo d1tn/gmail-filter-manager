@@ -4,7 +4,7 @@
     "sourcefile": "manifest.json"
   },
   "extensionDescription": {
-    "message": "Расширение Chrome для удобного создания и управления фильтрами Gmail с интуитивно понятным графическим интерфейсом. Содержимое фильтров не отправляется вовне.",
+    "message": "Создавайте и управляйте фильтрами Gmail через удобный GUI. Легкий импорт и экспорт фильтров в XML.",
     "sourcefile": "manifest.json"
   },
   "extensionDefaultTitle": {
@@ -28,7 +28,7 @@
     "sourcefile": "manager.html"
   },
   "managerMenuAbout": {
-    "message": "Об этом инструменте",
+    "message": "О данном инструменте и как им пользоваться",
     "sourcefile": "manager.html"
   },
   "managerMenuTerms": {
