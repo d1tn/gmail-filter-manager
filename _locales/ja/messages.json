@@ -4,7 +4,7 @@
     "sourcefile": "manifest.json"
   },
   "extensionDescription": {
-    "message": "Gmailのフィルタを直感的なGUIで簡単に作成・管理できる拡張機能。フィルタは外部に送信されません。",
+    "message": "Gmailのフィルタを、GUIで直感的に作成・管理できます。フィルタはXMLで簡単インポート&エクスポート。",
     "sourcefile": "manifest.json"
   },
   "extensionDefaultTitle": {

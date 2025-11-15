@@ -5,7 +5,7 @@
     "sourcefile": "manifest.json"
   },
   "extensionDescription": {
-    "message": "一个Chrome扩展程序，通过直观的GUI轻松创建和管理Gmail过滤器。过滤器内容不会发送到外部。",
+    "message": "通过直观的GUI创建和管理 Gmail 过滤器。可使用 XML 轻松导入和导出过滤器。",
     "sourcefile": "manifest.json"
   },
   "extensionDefaultTitle": {
@@ -29,7 +29,7 @@
     "sourcefile": "manager.html"
   },
   "managerMenuAbout": {
-    "message": "关于此工具",
+    "message": "关于此工具及其使用方法",
     "sourcefile": "manager.html"
   },
   "managerMenuTerms": {

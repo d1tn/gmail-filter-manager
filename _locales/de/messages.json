@@ -4,7 +4,7 @@
     "sourcefile": "manifest.json"
   },
   "extensionDescription": {
-    "message": "Eine Chrome-Erweiterung zur einfachen Erstellung und Verwaltung von Gmail-Filtern mit einer intuitiven Benutzeroberfläche. Filterinhalte werden nicht extern gesendet.",
+    "message": "Erstellen und verwalten Sie Gmail-Filter intuitiv per GUI. Filter lassen sich einfach per XML importieren/exportieren.",
     "sourcefile": "manifest.json"
   },
   "extensionDefaultTitle": {
@@ -28,7 +28,7 @@
     "sourcefile": "manager.html"
   },
   "managerMenuAbout": {
-    "message": "Über dieses Tool",
+    "message": "Über dieses Tool & Anleitung zur Verwendung",
     "sourcefile": "manager.html"
   },
   "managerMenuTerms": {
