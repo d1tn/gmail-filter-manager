@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFilterListSorting();
 
     // バージョン表示機能
-    const displayVersionNumber = function() {
+    const displayVersionNumber = function () {
         const versionElement = document.getElementById('version-display');
         if (versionElement && chrome.runtime && chrome.runtime.getManifest) {
             const version = chrome.runtime.getManifest().version || '不明';
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("'+ フィルタを追加' button clicked!");
             const newFilter = createNewFilterData(); // 無題のフィルタデータを作成
             filters.push(newFilter); // filters 配列に追加
-    
+
             // nodes を再構築
             syncNodesFromFilters();
 
@@ -537,7 +537,7 @@ function loadFiltersFromStorage() {
 
     if (isExtensionEnvironment()) {
         // 1. まず local から読む（新方針ではここが主）
-        chrome.storage.local.get('filters', function(localResult) {
+        chrome.storage.local.get('filters', function (localResult) {
             if (chrome.runtime.lastError) {
                 console.error('ローカルストレージの読み込みに失敗:', chrome.runtime.lastError);
                 return;
@@ -566,7 +566,7 @@ function loadFiltersFromStorage() {
 }
 
 function loadFiltersFromSyncAndMigrate() {
-    chrome.storage.sync.get('filters', function(syncResult) {
+    chrome.storage.sync.get('filters', function (syncResult) {
         if (chrome.runtime.lastError) {
             console.error('同期ストレージの読み込みに失敗:', chrome.runtime.lastError);
             // 何もないなら初期フィルタ作成
@@ -580,7 +580,7 @@ function loadFiltersFromSyncAndMigrate() {
             const migrated = syncResult.filters;
 
             // 1. ローカルへ保存（新しい正規の保存先）
-            chrome.storage.local.set({ 'filters': migrated }, function() {
+            chrome.storage.local.set({ 'filters': migrated }, function () {
                 if (chrome.runtime.lastError) {
                     console.error('同期→ローカル移行時の保存に失敗:', chrome.runtime.lastError);
                 } else {
@@ -891,7 +891,7 @@ function saveAppSettings() {
 function loadAppSettings() {
     console.log("Loading app settings from storage.");
     if (isExtensionEnvironment()) {
-        chrome.storage.sync.get('appSettings', function(syncResult) {
+        chrome.storage.sync.get('appSettings', function (syncResult) {
             if (chrome.runtime.lastError) {
                 console.error('アプリ設定（sync）の読み込み失敗:', chrome.runtime.lastError);
                 return;
@@ -902,7 +902,7 @@ function loadAppSettings() {
                 console.log("App settings loaded from sync storage:", window.appSettings);
             } else {
                 // 同期ストレージにない場合、ローカルから移行を試みる
-                chrome.storage.local.get('appSettings', function(localResult) {
+                chrome.storage.local.get('appSettings', function (localResult) {
                     if (localResult.appSettings) {
                         console.log("ローカルからアプリ設定を検出し、同期ストレージへ移行します。");
                         window.appSettings = localResult.appSettings;
@@ -974,18 +974,27 @@ function renderFilterList() {
             listItem.dataset.folderId = folder.id;
 
             const button = document.createElement('button');
-            button.textContent =
-                folder.name ||
-                chrome.i18n.getMessage('managerFolderDefaultName') ||
-                'Folder';
             button.classList.add('filter-list-button', 'folder-button');
             button.type = 'button';
 
-            // 後続コミットでアコーディオンや右ペイン表示をここに追加
+            // Google の Material Symbol フォルダアイコン
+            const icon = document.createElement('span');
+            icon.classList.add('material-symbols-outlined');
+            icon.textContent = 'folder';
+            const text = document.createElement('span');
+            text.textContent =
+                folder.name ||
+                chrome.i18n.getMessage('managerFolderListUnnamed') ||
+                'Folder';
+            button.appendChild(icon);
+            button.appendChild(text);
+
+            // クリック処理（後続コミットでアコーディオン等追加）
             button.addEventListener('click', () => {
                 console.log('Folder clicked:', folder.id);
             });
 
+            // ドラッグハンドル
             const dragHandle = document.createElement('span');
             dragHandle.classList.add('drag-handle');
             dragHandle.innerHTML = '&#8942;&#8942;';
@@ -2705,7 +2714,7 @@ function handleImportedFilters(importedFilters) {
 
     // フィルタ一覧を更新
     renderFilterList();
-    
+
     // 変更を保存
     saveFiltersToStorage();
 

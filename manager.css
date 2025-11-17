@@ -487,6 +487,14 @@ input {
                 &.active button {
                     background: #D3E3FD;
                 }
+                    .material-symbols-outlined {
+                    background-color: transparent;
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    border-radius: 50%;
+                    vertical-align: middle;
+                    padding: 0.2rem;
+                }
 
                 /* ドラッグハンドルのスタイル */
                 .drag-handle {
