@@ -63,6 +63,10 @@
     "message": "Фильтр без названия",
     "sourcefile": "manager.js"
   },
+  "managerFolderDefaultName": {
+    "message": "Папка без имени",
+    "sourcefile": "manager.js"
+  },
   "managerSupportTitle": {
     "message": "Поддержать разработку",
     "sourcefile": "manager.html"

@@ -63,6 +63,10 @@
     "message": "Unbenannter Filter",
     "sourcefile": "manager.js"
   },
+  "managerFolderDefaultName": {
+    "message": "Unbenannter Ordner",
+    "sourcefile": "manager.js"
+  },
   "managerSupportTitle": {
     "message": "Entwicklung unterstützen",
     "sourcefile": "manager.html"

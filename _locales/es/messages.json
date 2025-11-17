@@ -63,6 +63,10 @@
     "message": "Filtro sin título",
     "sourcefile": "manager.js"
   },
+  "managerFolderDefaultName": {
+    "message": "Carpeta sin nombre",
+    "sourcefile": "manager.js"
+  },
   "managerSupportTitle": {
     "message": "Apoyar el desarrollo",
     "sourcefile": "manager.html"

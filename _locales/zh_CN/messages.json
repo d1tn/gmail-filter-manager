@@ -1,4 +1,3 @@
-
 {
   "extensionName": {
     "message": "Gmail Filter Manager：通过简单的GUI进行排序和命名",
@@ -62,6 +61,10 @@
   },
   "managerFilterListUnnamed": {
     "message": "无标题过滤器",
+    "sourcefile": "manager.js"
+  },
+  "managerFolderDefaultName": {
+    "message": "未命名文件夹",
     "sourcefile": "manager.js"
   },
   "managerSupportTitle": {

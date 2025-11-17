@@ -63,6 +63,10 @@
     "message": "Untitled Filter",
     "sourcefile": "manager.js"
   },
+  "managerFolderDefaultName": {
+    "message": "Untitled folder",
+    "sourcefile": "manager.js"
+  },
   "managerSupportTitle": {
     "message": "Support Development",
     "sourcefile": "manager.html"
@@ -119,7 +123,7 @@
     "message": "Delete it",
     "sourcefile": "manager.html"
   },
-   "managerProcessDeleteDisabledInfo": {
+  "managerProcessDeleteDisabledInfo": {
     "message": "(Enable in Advanced Settings)",
     "sourcefile": "manager.js"
   },
@@ -191,7 +195,7 @@
     "message": "Doesn't have",
     "sourcefile": "manager.html"
   },
-   "managerConditionSizeLabel": {
+  "managerConditionSizeLabel": {
     "message": "Size",
     "sourcefile": "manager.html"
   },
@@ -219,23 +223,23 @@
     "message": "bytes",
     "sourcefile": "manager.html"
   },
-   "managerConditionFromPlaceholder": {
+  "managerConditionFromPlaceholder": {
     "message": "Enter address",
     "sourcefile": "manager.html"
   },
-   "managerConditionToPlaceholder": {
+  "managerConditionToPlaceholder": {
     "message": "Enter address",
     "sourcefile": "manager.html"
   },
-   "managerConditionSubjectPlaceholder": {
+  "managerConditionSubjectPlaceholder": {
     "message": "Enter keywords",
     "sourcefile": "manager.html"
   },
-   "managerConditionIncludesPlaceholder": {
+  "managerConditionIncludesPlaceholder": {
     "message": "Enter keywords",
     "sourcefile": "manager.html"
   },
-   "managerConditionExcludesPlaceholder": {
+  "managerConditionExcludesPlaceholder": {
     "message": "Enter keywords",
     "sourcefile": "manager.html"
   },
@@ -277,7 +281,7 @@
     "message": "Documentation",
     "sourcefile": "manager.html"
   },
-   "managerModalDocsLoading": {
+  "managerModalDocsLoading": {
     "message": "Loading...",
     "sourcefile": "manager.html"
   },
@@ -406,7 +410,7 @@
     "message": "Update History (Reflects source code commit dates, may differ from store release dates)",
     "sourcefile": "docs/about.md"
   },
-   "contactFormDescription": {
+  "contactFormDescription": {
     "message": "Please send us your questions, feedback, bug reports, or other inquiries regarding Gmail Filter Manager.",
     "sourcefile": "contact.js"
   },
@@ -464,7 +468,7 @@
   },
   "contactFormVersionInfo": {
     "message": "Version $1",
-     "placeholders": {
+    "placeholders": {
       "1": {
         "content": "$1",
         "example": "1.1.1"
@@ -524,7 +528,7 @@
     "message": "Cancel inquiry? Your input will be lost.",
     "sourcefile": "contact.js"
   },
-   "commonModalLoadingErrorTitle": {
+  "commonModalLoadingErrorTitle": {
     "message": "Loading Error",
     "sourcefile": "common.js"
   },
@@ -532,9 +536,9 @@
     "message": "Failed to load document.",
     "sourcefile": "common.js"
   },
-   "commonModalLoadingErrorDetails": {
+  "commonModalLoadingErrorDetails": {
     "message": "Error Details: $1",
-     "placeholders": {
+    "placeholders": {
       "1": {
         "content": "$1",
         "example": "Not Found"
@@ -548,7 +552,7 @@
   },
   "commonMarkdownRenderError": {
     "message": "Error rendering markdown: $1",
-     "placeholders": {
+    "placeholders": {
       "1": {
         "content": "$1",
         "example": "Parsing error"
@@ -608,7 +612,7 @@
     "message": "Deletion feature disabled. If 'Delete it' was checked in existing filters, it is temporarily deactivated.",
     "sourcefile": "settings.js"
   },
-    "reviewModalTitle": {
+  "reviewModalTitle": {
     "message": "Export completed"
   },
   "reviewModalBody": {

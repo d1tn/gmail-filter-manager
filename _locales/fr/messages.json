@@ -63,6 +63,10 @@
     "message": "Filtre sans titre",
     "sourcefile": "manager.js"
   },
+  "managerFolderDefaultName": {
+    "message": "Dossier sans nom",
+    "sourcefile": "manager.js"
+  },
   "managerSupportTitle": {
     "message": "Soutenir le développement",
     "sourcefile": "manager.html"

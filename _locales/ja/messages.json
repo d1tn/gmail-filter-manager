@@ -63,6 +63,10 @@
     "message": "無題のフィルタ",
     "sourcefile": "manager.js"
   },
+  "managerFolderDefaultName": {
+    "message": "無題のフォルダ",
+    "sourcefile": "manager.js"
+  },
   "managerSupportTitle": {
     "message": "開発支援",
     "sourcefile": "manager.html"
@@ -119,7 +123,7 @@
     "message": "削除する",
     "sourcefile": "manager.html"
   },
-   "managerProcessDeleteDisabledInfo": {
+  "managerProcessDeleteDisabledInfo": {
     "message": "（「高度な設定」から有効化してください）",
     "sourcefile": "manager.js"
   },
@@ -167,7 +171,7 @@
     "message": "この処理を複製",
     "sourcefile": "manager.html"
   },
-   "managerConditionsTitle": {
+  "managerConditionsTitle": {
     "message": "フィルタ条件",
     "sourcefile": "manager.html"
   },
@@ -191,7 +195,7 @@
     "message": "含まない",
     "sourcefile": "manager.html"
   },
-   "managerConditionSizeLabel": {
+  "managerConditionSizeLabel": {
     "message": "サイズ",
     "sourcefile": "manager.html"
   },
@@ -223,23 +227,23 @@
     "message": "添付ファイルあり",
     "sourcefile": "manager.html"
   },
-   "managerConditionFromPlaceholder": {
+  "managerConditionFromPlaceholder": {
     "message": "アドレスを入力",
     "sourcefile": "manager.html"
   },
-   "managerConditionToPlaceholder": {
+  "managerConditionToPlaceholder": {
     "message": "アドレスを入力",
     "sourcefile": "manager.html"
   },
-   "managerConditionSubjectPlaceholder": {
+  "managerConditionSubjectPlaceholder": {
     "message": "キーワードを入力",
     "sourcefile": "manager.html"
   },
-   "managerConditionIncludesPlaceholder": {
+  "managerConditionIncludesPlaceholder": {
     "message": "キーワードを入力",
     "sourcefile": "manager.html"
   },
-   "managerConditionExcludesPlaceholder": {
+  "managerConditionExcludesPlaceholder": {
     "message": "キーワードを入力",
     "sourcefile": "manager.html"
   },
@@ -247,7 +251,6 @@
     "message": "OR",
     "sourcefile": "manager.html"
   },
-
   "managerActionExportThis": {
     "message": "このフィルタをエクスポート",
     "sourcefile": "manager.html"
@@ -278,7 +281,7 @@
     "message": "ドキュメント",
     "sourcefile": "manager.html"
   },
-   "managerModalDocsLoading": {
+  "managerModalDocsLoading": {
     "message": "読み込み中...",
     "sourcefile": "manager.html"
   },
@@ -410,7 +413,7 @@
     "message": "更新履歴（ソースコード上の反映日で、ストア上のリリース日と異なる場合があります）",
     "sourcefile": "docs/about.md"
   },
-   "contactFormDescription": {
+  "contactFormDescription": {
     "message": "Gmail Filter Managerに関するご質問、ご意見、不具合報告などをお寄せください。",
     "sourcefile": "contact.js"
   },
@@ -468,7 +471,7 @@
   },
   "contactFormVersionInfo": {
     "message": "バージョン $1",
-     "placeholders": {
+    "placeholders": {
       "1": {
         "content": "$1",
         "example": "1.1.1"
@@ -528,7 +531,7 @@
     "message": "入力内容が失われますが、お問い合わせをキャンセルしますか？",
     "sourcefile": "contact.js"
   },
-   "commonModalLoadingErrorTitle": {
+  "commonModalLoadingErrorTitle": {
     "message": "読み込みエラー",
     "sourcefile": "common.js"
   },
@@ -536,9 +539,9 @@
     "message": "ドキュメントの読み込みに失敗しました。",
     "sourcefile": "common.js"
   },
-   "commonModalLoadingErrorDetails": {
+  "commonModalLoadingErrorDetails": {
     "message": "エラー詳細: $1",
-     "placeholders": {
+    "placeholders": {
       "1": {
         "content": "$1",
         "example": "Not Found"
@@ -552,7 +555,7 @@
   },
   "commonMarkdownRenderError": {
     "message": "マークダウンの表示中にエラーが発生しました: $1",
-     "placeholders": {
+    "placeholders": {
       "1": {
         "content": "$1",
         "example": "Parsing error"

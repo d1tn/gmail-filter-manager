@@ -160,6 +160,33 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("'+ フィルタを追加' button not found!");
     }
 
+    // フォルダ作成ボタン
+    const addNewFolderButton = document.getElementById('add-new-folder');
+    if (addNewFolderButton) {
+        console.log("'+ フォルダを追加' button found, adding event listener.");
+        addNewFolderButton.addEventListener('click', () => {
+            console.log("'+ フォルダを追加' button clicked!");
+
+            if (!Array.isArray(nodes)) {
+                nodes = [];
+            }
+
+            const newFolder = createNewFolderNode();
+            nodes.push(newFolder);
+
+            console.log('New folder added:', newFolder);
+            console.log('Current nodes:', nodes);
+
+            // 現時点では filters は変えない（＝Gmailフィルタは増えない）
+            // 一覧だけ更新
+            renderFilterList();
+
+            // TODO: 後続コミットで「フォルダ選択で右ペインに情報表示」を追加
+        });
+    } else {
+        console.error("'+ フォルダを追加' button not found!");
+    }
+
     // フィルタ名入力欄のイベントリスナー設定
     const filterNameInput = document.getElementById('filter-name-input');
     if (filterNameInput) {
@@ -921,24 +948,68 @@ function renderFilterList() {
     const usedIds = new Set();
     let hasFixedIds = false;
 
-    // 描画ソースを決定
-    /** @type {FilterNode[]} */
-    let renderFilters;
+    /** @type {Node[]} */
+    let renderNodes;
 
     if (Array.isArray(nodes) && nodes.length > 0) {
-        // nodes があれば、type: 'filter' のものだけを描画対象にする
-        renderFilters = nodes.filter(n => n && n.type === 'filter');
+        // nodes が存在するなら、それをそのまま描画ソースとする
+        renderNodes = nodes;
     } else {
-        // まだ移行途中などで nodes が空の場合は、従来どおり filters を使う
-        renderFilters = filters;
+        // 保険として filters から FilterNode を作る（フォルダ未導入環境など）
+        renderNodes = buildNodesFromFilters(filters);
+        nodes = renderNodes;
     }
 
-    // filters 配列の各フィルタに対してリスト項目を作成
-    renderFilters.forEach((filter, index) => {
-        // ID値のログと存在チェック
+    renderNodes.forEach((node, index) => {
+        if (!node) return;
+
+        // =====================
+        // フォルダ行の描画
+        // =====================
+        if (node.type === 'folder') {
+            const folder = /** @type {FolderNode} */ (node);
+
+            const listItem = document.createElement('li');
+            listItem.classList.add('item', 'folder-item');
+            listItem.dataset.folderId = folder.id;
+
+            const button = document.createElement('button');
+            button.textContent =
+                folder.name ||
+                chrome.i18n.getMessage('managerFolderDefaultName') ||
+                'Folder';
+            button.classList.add('filter-list-button', 'folder-button');
+            button.type = 'button';
+
+            // 後続コミットでアコーディオンや右ペイン表示をここに追加
+            button.addEventListener('click', () => {
+                console.log('Folder clicked:', folder.id);
+            });
+
+            const dragHandle = document.createElement('span');
+            dragHandle.classList.add('drag-handle');
+            dragHandle.innerHTML = '&#8942;&#8942;';
+
+            listItem.appendChild(button);
+            listItem.appendChild(dragHandle);
+
+            const addNewFilterItem = filterListUl.querySelector('#add-new-filter-item');
+            if (addNewFilterItem) {
+                addNewFilterItem.before(listItem);
+            } else {
+                filterListUl.appendChild(listItem);
+            }
+
+            return; // フォルダ処理はここで終了
+        }
+
+        // =====================
+        // 通常フィルタ行の描画
+        // =====================
+        const filter = /** @type {FilterNode} */ (node);
+
         console.log(`フィルタ #${index} ID: ${filter.id}, 名前: ${filter.name || "無題"}`);
 
-        // IDがない、または既に使用されているIDの場合は新しいIDを生成
         if (!filter.id || usedIds.has(filter.id)) {
             const oldId = filter.id || '(未設定)';
             filter.id = Date.now().toString() + "_" + index + "_" +
@@ -947,43 +1018,36 @@ function renderFilterList() {
             hasFixedIds = true;
         }
 
-        // 使用済みIDとして記録
         usedIds.add(filter.id);
 
         const listItem = document.createElement('li');
         listItem.classList.add('item');
-
-        // データ属性としてフィルタのIDとインデックスを保持
         listItem.dataset.filterId = filter.id;
         listItem.dataset.filterIndex = String(index);
 
         const button = document.createElement('button');
-        button.textContent = filter.name || chrome.i18n.getMessage('managerFilterListUnnamed');
+        button.textContent =
+            filter.name || chrome.i18n.getMessage('managerFilterListUnnamed');
         button.classList.add('filter-list-button');
         button.type = 'button';
 
-        // クリックイベントでフィルタを選択状態にする
         button.addEventListener('click', () => {
             selectFilterById(filter.id);
         });
 
-        // ドラッグハンドルを追加（右側に配置）
         const dragHandle = document.createElement('span');
         dragHandle.classList.add('drag-handle');
-        dragHandle.innerHTML = '&#8942;&#8942;'; // 縦に並んだ6点（2つの縦3点リーダー）
+        dragHandle.innerHTML = '&#8942;&#8942;';
 
-        // 現在選択されているフィルタであれば、アクティブなスタイルを適用
         if (currentFilterIndex !== -1 &&
             currentFilterIndex < filters.length &&
             filter.id === filters[currentFilterIndex].id) {
             listItem.classList.add('active');
         }
 
-        // 子要素を追加（ボタンが先、ドラッグハンドルが後）
         listItem.appendChild(button);
         listItem.appendChild(dragHandle);
 
-        // 「＋ フィルタを追加」ボタンの li 要素の前に挿入
         const addNewFilterItem = filterListUl.querySelector('#add-new-filter-item');
         if (addNewFilterItem) {
             addNewFilterItem.before(listItem);
@@ -992,7 +1056,6 @@ function renderFilterList() {
         }
     });
 
-    // IDを修正した場合はストレージに保存
     if (hasFixedIds) {
         console.log("フィルタIDを修正したため、変更を保存します");
         saveFiltersToStorage();
