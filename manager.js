@@ -40,6 +40,28 @@ let currentFilterIndex = -1;
 // 現時点では未使用で、filters が唯一のソース。
 let nodes = null;
 
+/**
+ * filters 配列から nodes 配列を初期化するヘルパー
+ * 現時点では「すべてルート直下の単体フィルタ」としてのみ扱う
+ * @param {Array<Object>} filterArray
+ * @returns {Node[]}
+ */
+function buildNodesFromFilters(filterArray) {
+    if (!Array.isArray(filterArray)) return [];
+
+    // FilterNode に変換する。既存のフィルタオブジェクトをそのまま展開し、
+    // type: 'filter' を付与するだけ。
+    return filterArray.map((f) => {
+        return Object.assign(
+            {
+                /** @type {'filter'} */
+                type: 'filter',
+            },
+            f
+        );
+    });
+}
+
 // 保存処理のデバウンス用タイマーID
 let saveTimerId = null;
 
@@ -416,6 +438,9 @@ function handleLoadedData(loadedFilters) {
         filters = loadedFilters;
         console.log('保存されたフィルタを読み込みました:', filters.length, '件');
 
+        // filters から nodes を初期化
+        nodes = buildNodesFromFilters(filters);
+
         // フィルタ一覧を描画
         renderFilterList();
 
@@ -426,6 +451,9 @@ function handleLoadedData(loadedFilters) {
         console.log("ストレージからフィルタが見つからないか、データが無効です。初期フィルタを作成します。");
         const initialFilter = createNewFilterData();
         filters = [initialFilter]; // 空の配列に初期フィルタを追加
+
+        // 初期フィルタから nodes を初期化
+        nodes = buildNodesFromFilters(filters);
 
         // フィルタ一覧を描画
         renderFilterList();
