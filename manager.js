@@ -1,6 +1,24 @@
 // manager.js
 // フィルタ管理画面のロジックを記述
 
+/**
+ * @typedef {'filter' | 'folder'} NodeType
+ *
+ * @typedef {Object} FilterNode
+ * @property {'filter'} type
+ * @property {string} id
+ * // 既存のフィルタが持っている各種プロパティを引き継ぐ（from, to, subject など）
+ *
+ * @typedef {Object} FolderNode
+ * @property {'folder'} type
+ * @property {string} id
+ * @property {string} name
+ * @property {boolean} collapsed
+ * @property {FilterNode[]} children
+ *
+ * @typedef {FilterNode | FolderNode} Node
+ */
+
 //----------------------------------------------------------------------
 // 1. 初期化と基本設定
 //----------------------------------------------------------------------
@@ -16,6 +34,11 @@ let filters = [];
 
 // 現在選択されているフィルタのインデックスを保持
 let currentFilterIndex = -1;
+
+// フォルダ機能を含む将来の構造:
+// ルート直下に「フィルタ」または「フォルダ」を並べるための配列。
+// 現時点では未使用で、filters が唯一のソース。
+let nodes = null;
 
 // 保存処理のデバウンス用タイマーID
 let saveTimerId = null;
