@@ -124,169 +124,187 @@
         </div>
 
         <div class="right-pane">
-            <article class="filter-setting-section">
-                <section class="filter-name">
-                    <h2>
-                        <input type="text" id="filter-name-input" class="app-form-input filter-name" data-i18n-placeholder="managerFilterNamePlaceholder"> </h2>
-                </section>
+        <article id="filter-editor" class="filter-setting-section">
+            <section class="filter-name">
+                <h2>
+                    <input type="text" id="filter-name-input" class="app-form-input filter-name" data-i18n-placeholder="managerFilterNamePlaceholder"> </h2>
+            </section>
 
-                <section class="filter-process">
-                    <div class="frex">
-                        <h3 id="process-title" data-i18n-text="managerProcessTitle"></h3>
-                        <button id="duplicate-this-process" class="action" data-i18n-text="managerProcessDuplicate"></button>
+            <section class="filter-process">
+                <div class="frex">
+                    <h3 id="process-title" data-i18n-text="managerProcessTitle"></h3>
+                    <button id="duplicate-this-process" class="action" data-i18n-text="managerProcessDuplicate"></button>
+                </div>
+                <div class="filter-process-items">
+                    <div class="filter-process-item">
+                        <label for="process-skip-inbox" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-skip-inbox"
+                                class="app-form-checkbox input">
+                            <span id="label-process-skip-inbox" data-i18n-text="managerProcessSkipInbox"></span></label>
                     </div>
-                    <div class="filter-process-items">
-                        <div class="filter-process-item">
-                            <label for="process-skip-inbox" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-skip-inbox"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-skip-inbox" data-i18n-text="managerProcessSkipInbox"></span></label>
-                        </div>
 
-                        <div class="filter-process-item">
-                            <label for="process-mark-as-read" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-mark-as-read"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-mark-as-read" data-i18n-text="managerProcessMarkAsRead"></span></label>
-                        </div>
-
-                        <div class="filter-process-item">
-                            <label for="process-star" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-star"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-star" data-i18n-text="managerProcessStar"></span></label>
-                        </div>
-
-                        <div class="filter-process-item">
-                            <label for="process-apply-label" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-apply-label"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-apply-label" data-i18n-text="managerProcessApplyLabel"></span><input type="text" id="process-label-name" class="app-form-input" data-i18n-placeholder="managerProcessLabelNamePlaceholder"> </label>
-                        </div>
-
-                        <div class="filter-process-item">
-                            <label for="process-forward" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-forward"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-forward" data-i18n-text="managerProcessForward"></span><input type="text" id="process-forward-address" class="app-form-input" data-i18n-placeholder="managerProcessForwardAddressPlaceholder"> </label>
-                        </div>
-
-                        <div class="filter-process-item">
-                            <label for="process-not-spam" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-not-spam"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-not-spam" data-i18n-text="managerProcessNotSpam"></span></label>
-                        </div>
-
-                        <div class="filter-process-item">
-                            <label for="process-always-important" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-always-important"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-always-important" data-i18n-text="managerProcessAlwaysImportant"></span></label>
-                        </div>
-
-                        <div class="filter-process-item">
-                            <label for="process-never-important" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-never-important"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-never-important" data-i18n-text="managerProcessNeverImportant"></span></label>
-                        </div>
-
-                        <div class="filter-process-item">
-                            <label for="process-apply-category" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-apply-category"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-apply-category" data-i18n-text="managerProcessApplyCategory"></span><select id="process-apply-category-select" class="app-form-select">
-                                    <option value="" id="option-category-default" data-i18n-text="managerProcessCategorySelectDefault"></option> <option value="^smartlabel_personal" id="option-category-personal" data-i18n-text="managerProcessCategoryPersonal"></option><option value="^smartlabel_social" id="option-category-social" data-i18n-text="managerProcessCategorySocial"></option><option value="^smartlabel_notification" id="option-category-notification" data-i18n-text="managerProcessCategoryNotification"></option><option value="^smartlabel_group" id="option-category-group" data-i18n-text="managerProcessCategoryGroup"></option><option value="^smartlabel_promo" id="option-category-promo" data-i18n-text="managerProcessCategoryPromo"></option></select>
-                            </label>
-                        </div>
-
-                        <div class="filter-process-item">
-                            <label for="process-delete" class="app-form-checkbox label">
-                                <input type="checkbox" id="process-delete"
-                                    class="app-form-checkbox input">
-                                <span id="label-process-delete" data-i18n-text="managerProcessDelete"></span></label>
-                        </div>
+                    <div class="filter-process-item">
+                        <label for="process-mark-as-read" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-mark-as-read"
+                                class="app-form-checkbox input">
+                            <span id="label-process-mark-as-read" data-i18n-text="managerProcessMarkAsRead"></span></label>
                     </div>
-                </section>
 
-                <section class="filter-conditions">
-                    <h3 id="conditions-title" data-i18n-text="managerConditionsTitle"></h3><div class="filter-condition-items">
-                        <div class="filter-condition-item" data-condition-type="from">
+                    <div class="filter-process-item">
+                        <label for="process-star" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-star"
+                                class="app-form-checkbox input">
+                            <span id="label-process-star" data-i18n-text="managerProcessStar"></span></label>
+                    </div>
+
+                    <div class="filter-process-item">
+                        <label for="process-apply-label" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-apply-label"
+                                class="app-form-checkbox input">
+                            <span id="label-process-apply-label" data-i18n-text="managerProcessApplyLabel"></span><input type="text" id="process-label-name" class="app-form-input" data-i18n-placeholder="managerProcessLabelNamePlaceholder"> </label>
+                    </div>
+
+                    <div class="filter-process-item">
+                        <label for="process-forward" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-forward"
+                                class="app-form-checkbox input">
+                            <span id="label-process-forward" data-i18n-text="managerProcessForward"></span><input type="text" id="process-forward-address" class="app-form-input" data-i18n-placeholder="managerProcessForwardAddressPlaceholder"> </label>
+                    </div>
+
+                    <div class="filter-process-item">
+                        <label for="process-not-spam" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-not-spam"
+                                class="app-form-checkbox input">
+                            <span id="label-process-not-spam" data-i18n-text="managerProcessNotSpam"></span></label>
+                    </div>
+
+                    <div class="filter-process-item">
+                        <label for="process-always-important" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-always-important"
+                                class="app-form-checkbox input">
+                            <span id="label-process-always-important" data-i18n-text="managerProcessAlwaysImportant"></span></label>
+                    </div>
+
+                    <div class="filter-process-item">
+                        <label for="process-never-important" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-never-important"
+                                class="app-form-checkbox input">
+                            <span id="label-process-never-important" data-i18n-text="managerProcessNeverImportant"></span></label>
+                    </div>
+
+                    <div class="filter-process-item">
+                        <label for="process-apply-category" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-apply-category"
+                                class="app-form-checkbox input">
+                            <span id="label-process-apply-category" data-i18n-text="managerProcessApplyCategory"></span><select id="process-apply-category-select" class="app-form-select">
+                                <option value="" id="option-category-default" data-i18n-text="managerProcessCategorySelectDefault"></option> <option value="^smartlabel_personal" id="option-category-personal" data-i18n-text="managerProcessCategoryPersonal"></option><option value="^smartlabel_social" id="option-category-social" data-i18n-text="managerProcessCategorySocial"></option><option value="^smartlabel_notification" id="option-category-notification" data-i18n-text="managerProcessCategoryNotification"></option><option value="^smartlabel_group" id="option-category-group" data-i18n-text="managerProcessCategoryGroup"></option><option value="^smartlabel_promo" id="option-category-promo" data-i18n-text="managerProcessCategoryPromo"></option></select>
+                        </label>
+                    </div>
+
+                    <div class="filter-process-item">
+                        <label for="process-delete" class="app-form-checkbox label">
+                            <input type="checkbox" id="process-delete"
+                                class="app-form-checkbox input">
+                            <span id="label-process-delete" data-i18n-text="managerProcessDelete"></span></label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="filter-conditions">
+                <h3 id="conditions-title" data-i18n-text="managerConditionsTitle"></h3><div class="filter-condition-items">
+                    <div class="filter-condition-item" data-condition-type="from">
+                        <div class="condition-input-area">
+                            <label for="condition-from-input" id="label-condition-from" data-i18n-text="managerConditionFromLabel"></label><div class="input-and-button-container">
+                                <input type="text" id="condition-from-input" class="app-form-input" data-i18n-placeholder="managerConditionFromPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
+                            </div>
+                            <button class="add-or-button" type="button">+ OR</button>
+                        </div>
+                        <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div> <div class="condition-chips-display"></div>
+                    </div>
+
+                    <div class="filter-condition-item" data-condition-type="to">
+                        <div class="condition-input-area">
+                            <label for="condition-to-input" id="label-condition-to" data-i18n-text="managerConditionToLabel"></label><div class="input-and-button-container">
+                                <input type="text" id="condition-to-input" class="app-form-input" data-i18n-placeholder="managerConditionToPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
+                            </div>
+                            <button class="add-or-button" type="button">+ OR</button>
+                        </div>
+                        <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
+                    </div>
+
+                    <div class="filter-condition-item" data-condition-type="subject">
+                        <div class="condition-input-area"> <label for="condition-subject-input" id="label-condition-subject" data-i18n-text="managerConditionSubjectLabel"></label><div class="input-and-button-container">
+                                <input type="text" id="condition-subject-input" class="app-form-input" data-i18n-placeholder="managerConditionSubjectPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
+                            </div>
+                            <button class="add-or-button" type="button">+ OR</button>
+                        </div>
+                        <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
+                    </div>
+
+                    <div class="filter-condition-item" data-condition-type="includes">
+                        <div class="condition-input-area"> <label for="condition-includes-input" id="label-condition-includes" data-i18n-text="managerConditionIncludesLabel"></label><div class="input-and-button-container">
+                                <input type="text" id="condition-includes-input" class="app-form-input" data-i18n-placeholder="managerConditionIncludesPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
+                            </div>
+                            <button class="add-or-button" type="button">+ OR</button>
+                        </div>
+                        <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
+                    </div>
+
+                    <div class="filter-condition-item" data-condition-type="excludes">
+                        <div class="condition-input-area">
+                            <label for="condition-excludes-input" id="label-condition-excludes" data-i18n-text="managerConditionExcludesLabel"></label><div class="input-and-button-container">
+                                <input type="text" id="condition-excludes-input" class="app-form-input" data-i18n-placeholder="managerConditionExcludesPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
+                            </div>
+                            <button class="add-or-button" type="button">+ OR</button>
+                        </div>
+                        <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
+                    </div>
+
+                    <div class="horizontal-conditions">
+                        <div class="filter-condition-item" data-condition-type="size">
+                            <div class="condition-input-area size-value">
+                                <label for="condition-size-value-input" id="label-condition-size" data-i18n-text="managerConditionSizeLabel"></label><select id="condition-size-operator" class="app-form-select">
+                                    <option value="larger_than" id="option-size-larger" data-i18n-text="managerConditionSizeLargerThan"></option><option value="smaller_than" id="option-size-smaller" data-i18n-text="managerConditionSizeSmallerThan"></option></select>
+                                <div class="input-and-button-container">
+                                    <input type="number" id="condition-size-value-input"
+                                        class="app-form-input size-value" data-i18n-placeholder="managerConditionSizeValuePlaceholder" min="0"> </div>
+                                <select id="condition-size-unit" class="app-form-select size-unit">
+                                    <option value="s_smb" id="option-size-mb" data-i18n-text="managerConditionSizeUnitMB"></option><option value="s_skb" id="option-size-kb" data-i18n-text="managerConditionSizeUnitKB"></option><option value="s_sb" id="option-size-bytes" data-i18n-text="managerConditionSizeUnitBytes"></option></select>
+                            </div>
+                        </div>
+
+                        <div class="filter-condition-item" data-condition-type="has-attachment">
                             <div class="condition-input-area">
-                                <label for="condition-from-input" id="label-condition-from" data-i18n-text="managerConditionFromLabel"></label><div class="input-and-button-container">
-                                    <input type="text" id="condition-from-input" class="app-form-input" data-i18n-placeholder="managerConditionFromPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
-                                </div>
-                                <button class="add-or-button" type="button">+ OR</button>
-                            </div>
-                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div> <div class="condition-chips-display"></div>
-                        </div>
-
-                        <div class="filter-condition-item" data-condition-type="to">
-                            <div class="condition-input-area">
-                                <label for="condition-to-input" id="label-condition-to" data-i18n-text="managerConditionToLabel"></label><div class="input-and-button-container">
-                                    <input type="text" id="condition-to-input" class="app-form-input" data-i18n-placeholder="managerConditionToPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
-                                </div>
-                                <button class="add-or-button" type="button">+ OR</button>
-                            </div>
-                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
-                        </div>
-
-                        <div class="filter-condition-item" data-condition-type="subject">
-                            <div class="condition-input-area"> <label for="condition-subject-input" id="label-condition-subject" data-i18n-text="managerConditionSubjectLabel"></label><div class="input-and-button-container">
-                                    <input type="text" id="condition-subject-input" class="app-form-input" data-i18n-placeholder="managerConditionSubjectPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
-                                </div>
-                                <button class="add-or-button" type="button">+ OR</button>
-                            </div>
-                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
-                        </div>
-
-                        <div class="filter-condition-item" data-condition-type="includes">
-                            <div class="condition-input-area"> <label for="condition-includes-input" id="label-condition-includes" data-i18n-text="managerConditionIncludesLabel"></label><div class="input-and-button-container">
-                                    <input type="text" id="condition-includes-input" class="app-form-input" data-i18n-placeholder="managerConditionIncludesPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
-                                </div>
-                                <button class="add-or-button" type="button">+ OR</button>
-                            </div>
-                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
-                        </div>
-
-                        <div class="filter-condition-item" data-condition-type="excludes">
-                            <div class="condition-input-area">
-                                <label for="condition-excludes-input" id="label-condition-excludes" data-i18n-text="managerConditionExcludesLabel"></label><div class="input-and-button-container">
-                                    <input type="text" id="condition-excludes-input" class="app-form-input" data-i18n-placeholder="managerConditionExcludesPlaceholder"> <button class="add-and-button" type="button">+ AND</button>
-                                </div>
-                                <button class="add-or-button" type="button">+ OR</button>
-                            </div>
-                            <div class="condition-or-connector" data-i18n-text="managerConditionOrConnectorText">OR</div><div class="condition-chips-display"></div>
-                        </div>
-
-                        <div class="horizontal-conditions">
-                            <div class="filter-condition-item" data-condition-type="size">
-                                <div class="condition-input-area size-value">
-                                    <label for="condition-size-value-input" id="label-condition-size" data-i18n-text="managerConditionSizeLabel"></label><select id="condition-size-operator" class="app-form-select">
-                                        <option value="larger_than" id="option-size-larger" data-i18n-text="managerConditionSizeLargerThan"></option><option value="smaller_than" id="option-size-smaller" data-i18n-text="managerConditionSizeSmallerThan"></option></select>
-                                    <div class="input-and-button-container">
-                                        <input type="number" id="condition-size-value-input"
-                                            class="app-form-input size-value" data-i18n-placeholder="managerConditionSizeValuePlaceholder" min="0"> </div>
-                                    <select id="condition-size-unit" class="app-form-select size-unit">
-                                        <option value="s_smb" id="option-size-mb" data-i18n-text="managerConditionSizeUnitMB"></option><option value="s_skb" id="option-size-kb" data-i18n-text="managerConditionSizeUnitKB"></option><option value="s_sb" id="option-size-bytes" data-i18n-text="managerConditionSizeUnitBytes"></option></select>
-                                </div>
-                            </div>
-
-                            <div class="filter-condition-item" data-condition-type="has-attachment">
-                                <div class="condition-input-area">
-                                    <label for="condition-has-attachment" class="app-form-checkbox label">
-                                        <input type="checkbox" id="condition-has-attachment"
-                                            class="app-form-checkbox input">
-                                        <span id="label-condition-has-attachment" data-i18n-text="managerConditionHasAttachment"></span></label>
-                                </div>
+                                <label for="condition-has-attachment" class="app-form-checkbox label">
+                                    <input type="checkbox" id="condition-has-attachment"
+                                        class="app-form-checkbox input">
+                                    <span id="label-condition-has-attachment" data-i18n-text="managerConditionHasAttachment"></span></label>
                             </div>
                         </div>
                     </div>
-                </section>
-                <section class="filter-actions-section">
-                    <button id="export-this-filter" class="action" data-i18n-text="managerActionExportThis"></button><button id="duplicate-this-filter" class="action" data-i18n-text="managerActionDuplicate"></button><button id="delete-this-filter" class="action danger" data-i18n-text="managerActionDelete" data-i18n-title="managerActionDeleteTooltip"></button></section>
-            </article>
+                </div>
+            </section>
+            <section class="filter-actions-section">
+                <button id="export-this-filter" class="action" data-i18n-text="managerActionExportThis"></button><button id="duplicate-this-filter" class="action" data-i18n-text="managerActionDuplicate"></button><button id="delete-this-filter" class="action danger" data-i18n-text="managerActionDelete" data-i18n-title="managerActionDeleteTooltip"></button></section>
+        </article>
+        <!-- ★フォルダ用エディタ：最初は非表示 -->
+        <article id="folder-editor" class="filter-setting-section" style="display: none;">
+            <section class="folder-name">
+                <h2 data-i18n-text="managerFolderEditorTitle">フォルダ設定</h2>
+                <input
+                    type="text"
+                    id="folder-name-input"
+                    class="app-form-input folder-name"
+                    data-i18n-placeholder="managerFolderNamePlaceholder"
+                    placeholder="フォルダ名を入力">
+            </section>
+
+            <section class="folder-description">
+                <p class="info-text" data-i18n-text="managerFolderEditorHint">
+                    フォルダはGmailのフィルタ構造には影響せず、この拡張機能内だけでフィルタを整理するために使われます。
+                </p>
+            </section>
+        </article>
         </div>
     </div>
 

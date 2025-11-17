@@ -34,6 +34,8 @@ let filters = [];
 
 // 現在選択されているフィルタのインデックスを保持
 let currentFilterIndex = -1;
+// 現在選択中のフォルダのID（フォルダ未選択時は null）
+let currentFolderId = null;
 
 // フォルダ機能を含む将来の構造:
 // ルート直下に「フィルタ」または「フォルダ」を並べるための配列。
@@ -65,10 +67,103 @@ function syncNodesFromFilters() {
         return;
     }
 
-    // 現状は「filterノード」だけを持つフラットな構造
-    nodes = buildNodesFromFilters(filters);
-    console.log('syncNodesFromFilters: nodes を filters から再構築しました。', nodes);
+    // nodes がまだ無い or 空なら、素直に filters から作るだけ
+    if (!Array.isArray(nodes) || nodes.length === 0) {
+        nodes = buildNodesFromFilters(filters);
+        console.log('syncNodesFromFilters: nodes を filters から新規構築しました。', nodes);
+        return;
+    }
+
+    // 既に nodes が存在する場合は、
+    // 1. フォルダはそのまま温存
+    // 2. filter ノードだけ、filters の最新状態に差し替え
+    const filterMap = new Map();
+    filters.forEach(f => {
+        if (!f || !f.id) return;
+        f.type = 'filter';
+        filterMap.set(f.id, f);
+    });
+
+    const newNodes = [];
+    const seenFilterIds = new Set();
+
+    nodes.forEach(node => {
+        if (!node) return;
+
+        if (node.type === 'folder') {
+            // フォルダはそのまま残す
+            newNodes.push(node);
+        } else if (node.type === 'filter') {
+            const f = node.id && filterMap.get(node.id);
+            if (f) {
+                // 同じIDのフィルタがまだ存在するなら差し替え
+                f.type = 'filter';
+                newNodes.push(f);
+                seenFilterIds.add(f.id);
+            }
+            // filters 側に無くなったフィルタのノードは破棄
+        }
+    });
+
+    // nodesにまだ存在しない「新規フィルタ」を末尾に追加
+    filters.forEach(f => {
+        if (!f || !f.id) return;
+        if (!seenFilterIds.has(f.id)) {
+            f.type = 'filter';
+            newNodes.push(f);
+        }
+    });
+
+    nodes = newNodes;
+    console.log('syncNodesFromFilters: 既存nodesをマージして更新しました。', nodes);
 }
+
+/**
+ * nodes配列からfilters配列の順序を再構築する
+ * フォルダは飛ばし、filterノードだけを直列に flatten する
+ */
+function syncFiltersFromNodes() {
+    if (!Array.isArray(nodes)) {
+        console.warn('syncFiltersFromNodes: nodes が配列ではありません。処理をスキップします。');
+        return;
+    }
+
+    // 変更前に、選択中フィルタのIDを控える
+    const currentId =
+        (currentFilterIndex >= 0 && currentFilterIndex < filters.length)
+            ? filters[currentFilterIndex].id
+            : null;
+
+    const newFilters = [];
+
+    nodes.forEach(node => {
+        if (!node) return;
+
+        if (node.type === 'filter') {
+            newFilters.push(node);
+        } else if (node.type === 'folder' && Array.isArray(node.children)) {
+            // 将来: フォルダ内に子フィルタを持つようになったらここで flatten
+            node.children.forEach(child => {
+                if (child && child.type === 'filter') {
+                    newFilters.push(child);
+                }
+            });
+        }
+    });
+
+    filters = newFilters;
+
+    // currentFilterIndex を再計算
+    if (currentId) {
+        const idx = filters.findIndex(f => f.id === currentId);
+        currentFilterIndex = idx;
+    } else {
+        currentFilterIndex = -1;
+    }
+
+    console.log('syncFiltersFromNodes: filters を nodes から再構築しました。', filters);
+}
+
 
 /**
  * 新しいフォルダノードを作成するヘルパー
@@ -973,28 +1068,33 @@ function renderFilterList() {
             listItem.classList.add('item', 'folder-item');
             listItem.dataset.folderId = folder.id;
 
+            // ★ 選択中フォルダならアクティブクラス付与
+            if (currentFolderId && currentFolderId === folder.id) {
+                listItem.classList.add('active');
+            }
+
             const button = document.createElement('button');
             button.classList.add('filter-list-button', 'folder-button');
             button.type = 'button';
 
-            // Google の Material Symbol フォルダアイコン
             const icon = document.createElement('span');
             icon.classList.add('material-symbols-outlined');
             icon.textContent = 'folder';
+
             const text = document.createElement('span');
             text.textContent =
                 folder.name ||
                 chrome.i18n.getMessage('managerFolderListUnnamed') ||
                 'Folder';
+
             button.appendChild(icon);
             button.appendChild(text);
 
-            // クリック処理（後続コミットでアコーディオン等追加）
+            // ★ ここでフォルダ選択
             button.addEventListener('click', () => {
-                console.log('Folder clicked:', folder.id);
+                selectFolderById(folder.id);
             });
 
-            // ドラッグハンドル
             const dragHandle = document.createElement('span');
             dragHandle.classList.add('drag-handle');
             dragHandle.innerHTML = '&#8942;&#8942;';
@@ -1009,8 +1109,9 @@ function renderFilterList() {
                 filterListUl.appendChild(listItem);
             }
 
-            return; // フォルダ処理はここで終了
+            return;
         }
+
 
         // =====================
         // 通常フィルタ行の描画
@@ -1504,17 +1605,38 @@ function updateUIBasedOnSettings() {
 function selectFilterById(filterId) {
     console.log(`Attempting to select filter with ID: ${filterId}`);
     const index = filters.findIndex(filter => filter.id === filterId);
+
+    // 該当フィルタが見つかった場合は index ベースの関数に委譲
     if (index !== -1) {
         selectFilter(index);
-    } else {
-        console.error(`Filter with ID ${filterId} not found.`);
-        // 見つからなかった場合は、選択状態を解除する
-        currentFilterIndex = -1;
-        syncNodesFromFilters();
-        renderFilterList(); // 選択状態解除を反映
-        displayFilterDetails(null); // 右ペインをクリアする
+        return;
     }
+
+    // 見つからなかった場合
+    console.warn('selectFilterById: フィルタが見つかりません:', filterId);
+
+    // 選択状態を解除
+    currentFilterIndex = -1;
+    currentFolderId = null;  // ★ フォルダ選択も解除
+
+    // 左ペインの表示を更新（active解除など）
+    renderFilterList();
+
+    // 右ペイン：フィルタエディタを表示、フォルダエディタを非表示
+    const filterEditor = document.getElementById('filter-editor');
+    const folderEditor = document.getElementById('folder-editor');
+    if (filterEditor && folderEditor) {
+        filterEditor.style.display = '';
+        folderEditor.style.display = 'none';
+    }
+
+    // 右ペイン内容をクリア
+    displayFilterDetails(null);
+
+    // 削除ボタン等の状態更新
+    updateDeleteButtonState();
 }
+
 
 // フィルタを選択し、右ペインに表示する関数 (インデックスで選択)
 function selectFilter(index) {
@@ -1523,6 +1645,8 @@ function selectFilter(index) {
     // フィルタが1件もない場合
     if (!filters || filters.length === 0) {
         currentFilterIndex = -1;
+        currentFolderId = null; // 念のためフォルダ選択も解除
+
         displayFilterDetails(null);
         updateDeleteButtonState();
         console.log("No filters available. Cleared right pane.");
@@ -1539,24 +1663,17 @@ function selectFilter(index) {
 
     // 選択中インデックスを更新
     currentFilterIndex = index;
+    currentFolderId = null;  // ★ フォルダ選択を必ず解除する
 
-    // 左ペインの active を更新
-    const filterListUl = document.getElementById('filter-list');
-    if (filterListUl) {
-        // いったん全部 active を外す
-        filterListUl.querySelectorAll('.item').forEach(item => {
-            item.classList.remove('active');
-        });
+    // 左ペイン全体を nodes ベースで再描画（active クラス付与もここに委譲）
+    renderFilterList();
 
-        // data-filter-index で該当要素に active を付与
-        const selectedItem = filterListUl.querySelector(`.item[data-filter-index="${index}"]`);
-        if (selectedItem) {
-            selectedItem.classList.add('active');
-        } else {
-            console.warn(`List item for index ${index} not found.`);
-        }
-    } else {
-        console.warn("filter-list UL element not found.");
+    // 右ペイン：フィルタエディタを表示、フォルダエディタを非表示
+    const filterEditor = document.getElementById('filter-editor');
+    const folderEditor = document.getElementById('folder-editor');
+    if (filterEditor && folderEditor) {
+        filterEditor.style.display = '';
+        folderEditor.style.display = 'none';
     }
 
     // 右ペインに詳細を表示
@@ -1570,6 +1687,71 @@ function selectFilter(index) {
     updateDeleteButtonState();
 
     console.log(`Selected filter index: ${currentFilterIndex}`);
+}
+
+/**
+ * フォルダIDを指定して選択状態にする
+ * @param {string} folderId
+ */
+function selectFolderById(folderId) {
+    if (!Array.isArray(nodes)) return;
+
+    const folder = nodes.find(
+        (n) => n && n.type === 'folder' && n.id === folderId
+    );
+    if (!folder) {
+        console.warn('selectFolderById: フォルダが見つかりません:', folderId);
+        return;
+    }
+
+    // フォルダ選択時はフィルタ選択を解除
+    currentFilterIndex = -1;
+    currentFolderId = folderId;
+
+    // 左ペインのアクティブ状態を更新
+    renderFilterList();
+
+    // 右ペインをフォルダ編集モードに切り替え
+    displayFolderDetails(folder);
+}
+
+/**
+ * フォルダの詳細を右ペインに表示する
+ * @param {FolderNode} folder
+ */
+function displayFolderDetails(folder) {
+    const filterEditor = document.getElementById('filter-editor');
+    const folderEditor = document.getElementById('folder-editor');
+    const folderNameInput = /** @type {HTMLInputElement|null} */(
+        document.getElementById('folder-name-input')
+    );
+
+    if (!folderEditor || !folderNameInput || !filterEditor) {
+        console.error('Folder editor elements not found!');
+        return;
+    }
+
+    // フォルダ編集モードに切り替え
+    filterEditor.style.display = 'none';
+    folderEditor.style.display = '';
+
+    // 入力値を現在のフォルダ名に反映
+    folderNameInput.value =
+        folder.name ||
+        chrome.i18n.getMessage('managerFolderListUnnamed') ||
+        'Untitled folder';
+
+    // 既存のイベントを一旦クリアしてから再設定（重複バインド防止）
+    folderNameInput.oninput = null;
+    folderNameInput.onchange = null;
+
+    // 入力が変わったら folder.name を更新し、一覧も更新
+    folderNameInput.addEventListener('input', () => {
+        folder.name = folderNameInput.value;
+        // 名前変更は nodes 内だけなので filters には触らない
+        renderFilterList();
+        // 保存は「フォルダ永続化」をやるコミットでまとめて入れる
+    });
 }
 
 
@@ -1762,45 +1944,44 @@ function setupFilterListSorting() {
     }
 }
 
-// filters配列の順序を更新する関数
+// 並べ替え処理: nodes を直接並べ替え、結果を filters に反映する
 function reorderFilters(oldIndex, newIndex) {
-    console.log(`Reordering filters: ${oldIndex} -> ${newIndex}`);
+    console.log(`Reordering (nodes): ${oldIndex} -> ${newIndex}`);
 
-    // 範囲チェック
-    if (oldIndex >= filters.length || newIndex >= filters.length || oldIndex < 0 || newIndex < 0) {
-        console.error(`Invalid indices for reordering: oldIndex=${oldIndex}, newIndex=${newIndex}, filters.length=${filters.length}`);
+    if (!Array.isArray(nodes) || nodes.length === 0) {
+        console.warn('reorderFilters: nodes が空のため、処理をスキップします。');
         return;
     }
 
-    // 現在選択中のフィルタのIDを保存
-    const currentFilterId = filters[currentFilterIndex]?.id;
-    console.log(`Current active filter ID before reordering: ${currentFilterId}`);
-
-    // 配列の要素を移動
-    const movedFilter = filters.splice(oldIndex, 1)[0];
-    filters.splice(newIndex, 0, movedFilter);
-
-    console.log("Filters after reordering:", filters.map(f => `${f.id}:${f.name || "無題"}`));
-
-    // currentFilterIndexを更新（IDで一致するフィルタを検索）
-    if (currentFilterId) {
-        const newIndex = filters.findIndex(filter => filter.id === currentFilterId);
-        if (newIndex !== -1) {
-            currentFilterIndex = newIndex;
-            console.log(`Updated currentFilterIndex to ${currentFilterIndex} for filter ID ${currentFilterId}`);
-        }
+    // ★ 範囲チェックは filters ではなく nodes に対して行う
+    if (oldIndex < 0 || newIndex < 0 || oldIndex >= nodes.length || newIndex >= nodes.length) {
+        console.error(`Invalid indices for reordering: oldIndex=${oldIndex}, newIndex=${newIndex}, nodes.length=${nodes.length}`);
+        return;
     }
 
-    syncNodesFromFilters();
+    // 実際に nodes の要素を移動
+    const moved = nodes.splice(oldIndex, 1)[0];
+    nodes.splice(newIndex, 0, moved);
 
-    // 新しい順序でフィルタ一覧を再描画
+    console.log('nodes after reordering:',
+        nodes.map(n => {
+            if (n.type === 'folder') return `[FOLDER] ${n.name} (${n.id})`;
+            return `[FILTER] ${n.name || '無題'} (${n.id})`;
+        })
+    );
+
+    // nodes の変更を filters に反映（見た目の順序＝適用順）
+    syncFiltersFromNodes();
+
+    // 一覧を再描画
     renderFilterList();
 
-    console.log("Filters reordered successfully");
-
-    // 変更を保存
+    // 保存
     saveFiltersToStorage();
+
+    console.log('Reordering finished.');
 }
+
 
 // 各条件項目にロジックを設定する関数
 function setupConditionItem(conditionItemElement) {
