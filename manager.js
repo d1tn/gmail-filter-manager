@@ -46,20 +46,23 @@ let nodes = null;
  * @param {Array<Object>} filterArray
  * @returns {Node[]}
  */
+
 function buildNodesFromFilters(filterArray) {
     if (!Array.isArray(filterArray)) return [];
-
-    // FilterNode に変換する。既存のフィルタオブジェクトをそのまま展開し、
-    // type: 'filter' を付与するだけ。
     return filterArray.map((f) => {
-        return Object.assign(
-            {
-                /** @type {'filter'} */
-                type: 'filter',
-            },
-            f
-        );
+        // 既存のフィルタオブジェクトそのものを編集し、新しいキー type を追加
+        f.type = 'filter';
+        return f;
     });
+}
+
+
+/**
+ * 現在の filters から nodes を再構築するヘルパー
+ * （将来 folder 構造に移行するまでは「単純なミラー」として使う）
+ */
+function syncNodesFromFilters() {
+    nodes = buildNodesFromFilters(filters);
 }
 
 // 保存処理のデバウンス用タイマーID
@@ -108,6 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("'+ フィルタを追加' button clicked!");
             const newFilter = createNewFilterData(); // 無題のフィルタデータを作成
             filters.push(newFilter); // filters 配列に追加
+    
+            // nodes を再構築
+            syncNodesFromFilters();
+
             console.log("New filter added:", newFilter);
             console.log("Current filters:", filters);
             renderFilterList(); // フィルタ一覧を更新
@@ -438,8 +445,8 @@ function handleLoadedData(loadedFilters) {
         filters = loadedFilters;
         console.log('保存されたフィルタを読み込みました:', filters.length, '件');
 
-        // filters から nodes を初期化
-        nodes = buildNodesFromFilters(filters);
+        // nodes を filters から同期
+        syncNodesFromFilters();
 
         // フィルタ一覧を描画
         renderFilterList();
@@ -452,8 +459,8 @@ function handleLoadedData(loadedFilters) {
         const initialFilter = createNewFilterData();
         filters = [initialFilter]; // 空の配列に初期フィルタを追加
 
-        // 初期フィルタから nodes を初期化
-        nodes = buildNodesFromFilters(filters);
+        // nodes を filters から同期
+        syncNodesFromFilters();
 
         // フィルタ一覧を描画
         renderFilterList();
@@ -886,8 +893,20 @@ function renderFilterList() {
     const usedIds = new Set();
     let hasFixedIds = false;
 
+    // 描画ソースを決定
+    /** @type {FilterNode[]} */
+    let renderFilters;
+
+    if (Array.isArray(nodes) && nodes.length > 0) {
+        // nodes があれば、type: 'filter' のものだけを描画対象にする
+        renderFilters = nodes.filter(n => n && n.type === 'filter');
+    } else {
+        // まだ移行途中などで nodes が空の場合は、従来どおり filters を使う
+        renderFilters = filters;
+    }
+
     // filters 配列の各フィルタに対してリスト項目を作成
-    filters.forEach((filter, index) => {
+    renderFilters.forEach((filter, index) => {
         // ID値のログと存在チェック
         console.log(`フィルタ #${index} ID: ${filter.id}, 名前: ${filter.name || "無題"}`);
 
@@ -908,7 +927,7 @@ function renderFilterList() {
 
         // データ属性としてフィルタのIDとインデックスを保持
         listItem.dataset.filterId = filter.id;
-        listItem.dataset.filterIndex = index;
+        listItem.dataset.filterIndex = String(index);
 
         const button = document.createElement('button');
         button.textContent = filter.name || chrome.i18n.getMessage('managerFilterListUnnamed');
@@ -1391,6 +1410,7 @@ function selectFilterById(filterId) {
         console.error(`Filter with ID ${filterId} not found.`);
         // 見つからなかった場合は、選択状態を解除する
         currentFilterIndex = -1;
+        syncNodesFromFilters();
         renderFilterList(); // 選択状態解除を反映
         displayFilterDetails(null); // 右ペインをクリアする
     }
@@ -1495,6 +1515,8 @@ function duplicateCurrentProcess() {
 
     console.log("Duplicated filter added. Current filters:", filters);
 
+    syncNodesFromFilters();
+
     // フィルタ一覧を再描画
     renderFilterList();
 
@@ -1531,6 +1553,8 @@ function duplicateCurrentFilter() {
     filters.push(duplicatedFilter);
 
     console.log("Duplicated filter added. Current filters:", filters);
+
+    syncNodesFromFilters();
 
     // フィルタ一覧を再描画
     renderFilterList();
@@ -1577,6 +1601,8 @@ function deleteCurrentFilter() {
     console.log(`Deleting filter at index: ${deleteIndex}`);
     filters.splice(deleteIndex, 1);
     console.log("Filter deleted. Remaining filters:", filters);
+
+    syncNodesFromFilters();
 
     // レンダリング（この時点でcurrentFilterIndex = -1なのでエラーは起きない）
     renderFilterList();
@@ -1664,6 +1690,8 @@ function reorderFilters(oldIndex, newIndex) {
             console.log(`Updated currentFilterIndex to ${currentFilterIndex} for filter ID ${currentFilterId}`);
         }
     }
+
+    syncNodesFromFilters();
 
     // 新しい順序でフィルタ一覧を再描画
     renderFilterList();
@@ -2582,11 +2610,13 @@ function handleImportedFilters(importedFilters) {
         filters = importedFilters;
     }
 
-    // 変更を保存
-    saveFiltersToStorage();
+    syncNodesFromFilters();
 
     // フィルタ一覧を更新
     renderFilterList();
+    
+    // 変更を保存
+    saveFiltersToStorage();
 
     // 最初のフィルタを選択
     if (filters.length > 0) {
