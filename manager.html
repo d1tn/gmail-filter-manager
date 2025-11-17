@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
     <script src="lib/Sortable.min.js"></script>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
 </head>
 
 <body>
@@ -104,7 +107,18 @@
                 </ul>
             </section>
             <section class="filter-list">
-                <h2><span id="filter-list-title" data-i18n-text="managerFilterListTitle"></span><span><button id="add-new-filter">＋</button></span></h2><ul id="filter-list" class="items">
+                <h2>
+                <span id="filter-list-title" data-i18n-text="managerFilterListTitle"></span>
+                <span>
+                    <button id="add-new-filter" class="icon-button">
+                        <span class="material-symbols-outlined">add_2</span>
+                    </button>
+                    <button id="add-new-folder" class="icon-button">
+                        <span class="material-symbols-outlined">create_new_folder</span>
+                    </button>
+                </span>
+                </h2>
+                <ul id="filter-list" class="items">
                 </ul>
             </section>
         </div>

@@ -461,6 +461,13 @@ input {
                         background-color: #ebf3ff;
                     }
                 }
+                button.icon-button {
+                    .material-symbols-outlined {
+                        vertical-align: middle;
+                        font-size: 1.2rem;
+                        padding-bottom: 0.3rem;
+                    }
+                }
             }
 
             .items {
