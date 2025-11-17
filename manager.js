@@ -57,13 +57,41 @@ function buildNodesFromFilters(filterArray) {
 }
 
 
-/**
- * 現在の filters から nodes を再構築するヘルパー
- * （将来 folder 構造に移行するまでは「単純なミラー」として使う）
- */
+// filters配列からnodes配列を再構築する関数
 function syncNodesFromFilters() {
+    if (!Array.isArray(filters)) {
+        console.warn('filters が配列ではありません。nodes を空にします。');
+        nodes = [];
+        return;
+    }
+
+    // 現状は「filterノード」だけを持つフラットな構造
     nodes = buildNodesFromFilters(filters);
+    console.log('syncNodesFromFilters: nodes を filters から再構築しました。', nodes);
 }
+
+/**
+ * 新しいフォルダノードを作成するヘルパー
+ * 現時点では空フォルダ（children: []）のみ
+ * @returns {FolderNode}
+ */
+function createNewFolderNode() {
+    const id = 'folder_' + Date.now().toString() + '_' +
+        Math.random().toString(36).substring(2, 8);
+
+    /** @type {FolderNode} */
+    const folderNode = {
+        type: 'folder',
+        id,
+        name: chrome.i18n.getMessage('managerFolderDefaultName') || 'New folder',
+        collapsed: false,
+        children: [],
+    };
+
+    return folderNode;
+}
+
+
 
 // 保存処理のデバウンス用タイマーID
 let saveTimerId = null;
