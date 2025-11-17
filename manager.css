@@ -494,6 +494,7 @@ input {
                     border-radius: 50%;
                     vertical-align: middle;
                     padding: 0.2rem;
+                    padding-right: 0.5rem;
                 }
 
                 /* ドラッグハンドルのスタイル */
