@@ -389,7 +389,8 @@ input {
         }
 
         section {
-            width: 19rem;
+            /* width: 19rem; */
+            width: 100%;
 
             h2 {
                 font-size: 1.2rem;
@@ -443,7 +444,8 @@ input {
 
         /* フィルタ一覧のitemのみ、ドラッグハンドルの調整 */
         .filter-list {
-            width: 19rem;
+            /* width: 19rem; */
+            width: 100%;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -581,7 +583,7 @@ input {
 
                 /* 「ここにドロップされるフォルダ」の強調（赤枠） */
                 .folder-item.folder-drop-target {
-                    border: 2px solid #ff0000;
+                    border: 2px solid #2980b9;
                     border-radius: 0 1.5rem 1.5rem 0;
                 }
             }
