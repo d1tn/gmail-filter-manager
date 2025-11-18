@@ -378,7 +378,7 @@ input {
     .left-pane {
         position: relative;
         flex-shrink: 0;
-        width: 19rem;
+        width: 20rem;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -389,7 +389,7 @@ input {
         }
 
         section {
-            width: 18rem;
+            width: 19rem;
 
             h2 {
                 font-size: 1.2rem;
@@ -443,7 +443,7 @@ input {
 
         /* フィルタ一覧のitemのみ、ドラッグハンドルの調整 */
         .filter-list {
-            width: 18rem;
+            width: 19rem;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -563,7 +563,7 @@ input {
 
                 /* フォルダの子リスト（ul） */
                 .folder-children {
-                    width: 90%;
+                    width: 95%;
                     list-style: none;
                     .material-symbols-outlined{
                         padding-left: 1.0rem;
