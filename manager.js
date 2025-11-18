@@ -763,43 +763,48 @@ function saveFiltersToStorage() {
 }
 
 
-// 読み込んだデータを処理する関数
-function handleLoadedData(loadedFilters) {
+// 保存されたフィルタデータを反映する関数
+/**
+ * @param {any[] | null} loadedFilters
+ * @param {StoredNode[] | null} loadedNodesStructure
+ */
+function handleLoadedData(loadedFilters, loadedNodesStructure) {
     if (loadedFilters && Array.isArray(loadedFilters) && loadedFilters.length > 0) {
-        // データがあればそれを使用
         filters = loadedFilters;
         console.log('保存されたフィルタを読み込みました:', filters.length, '件');
 
-        // nodes を filters から同期
-        syncNodesFromFilters();
+        // nodesStructure があればそれを元に nodes を復元、なければ filters から構築
+        if (loadedNodesStructure && Array.isArray(loadedNodesStructure) && loadedNodesStructure.length > 0) {
+            nodes = buildRuntimeNodesFromStored(loadedNodesStructure, filters);
+            console.log('保存された nodesStructure から nodes を復元しました。', nodes);
+        } else {
+            nodes = buildNodesFromFilters(filters);
+            console.log('nodesStructure が無いため、filters から nodes を新規構築しました。', nodes);
+        }
 
         // フィルタ一覧を描画
         renderFilterList();
 
         // 最初のフィルタを選択
-        selectFilter(0);
+        if (filters.length > 0) {
+            selectFilter(0);
+        }
     } else {
-        // 保存データがない場合は初期フィルタを作成
         console.log("ストレージからフィルタが見つからないか、データが無効です。初期フィルタを作成します。");
         const initialFilter = createNewFilterData();
-        filters = [initialFilter]; // 空の配列に初期フィルタを追加
+        filters = [initialFilter];
 
-        // nodes を filters から同期
-        syncNodesFromFilters();
+        // nodes もフィルタ1件から構築
+        nodes = buildNodesFromFilters(filters);
 
-        // フィルタ一覧を描画
         renderFilterList();
-
-        // 作成したフィルタを選択
         selectFilterById(initialFilter.id);
-
-        // 初期フィルタをストレージに保存
         saveFiltersToStorage();
     }
 
-    // 削除ボタンの状態を更新
     updateDeleteButtonState();
 }
+
 
 // 保存されたフィルタデータを読み込む関数
 function loadFiltersFromStorage() {
@@ -1250,7 +1255,7 @@ function renderFilterList() {
             listItem.classList.add('item', 'folder-item');
             listItem.dataset.folderId = folder.id;
 
-            // ★ 選択中フォルダならアクティブクラス付与
+            // 選択中フォルダの場合は active クラス
             if (currentFolderId && currentFolderId === folder.id) {
                 listItem.classList.add('active');
             }
@@ -1259,30 +1264,82 @@ function renderFilterList() {
             button.classList.add('filter-list-button', 'folder-button');
             button.type = 'button';
 
-            const icon = document.createElement('span');
-            icon.classList.add('material-symbols-outlined');
-            icon.textContent = 'folder';
+            // ▼ 開閉用アイコン（folder / folder_open
+            const toggleIcon = document.createElement('span');
+            toggleIcon.classList.add('material-symbols-outlined', 'folder-toggle-icon');
+            toggleIcon.textContent = folder.collapsed ? 'folder' : 'folder_open';
 
+            // ▼ テキスト
             const text = document.createElement('span');
+            text.classList.add('folder-title-text');
             text.textContent =
                 folder.name ||
                 chrome.i18n.getMessage('managerFolderListUnnamed') ||
                 'Folder';
 
-            button.appendChild(icon);
+            // ボタンに各要素を追加
+            button.appendChild(toggleIcon);
             button.appendChild(text);
 
-            // ★ ここでフォルダ選択
+            // クリックで「開閉＋選択」
             button.addEventListener('click', () => {
-                selectFolderById(folder.id);
+                folder.collapsed = !folder.collapsed;   // 開閉状態をトグル
+                currentFolderId = folder.id;            // 選択状態も更新
+
+                saveFiltersToStorage();                 // nodesStructureごと保存
+                renderFilterList();                     // 左ペイン再描画
+                displayFolderDetails(folder);           // 右ペイン更新
             });
 
+            // D&D用のドラッグハンドル
             const dragHandle = document.createElement('span');
             dragHandle.classList.add('drag-handle');
             dragHandle.innerHTML = '&#8942;&#8942;';
 
             listItem.appendChild(button);
             listItem.appendChild(dragHandle);
+
+            // ▼ フォルダ配下のフィルタを描画（collapsed === false のときだけ）
+            if (!folder.collapsed && Array.isArray(folder.children) && folder.children.length > 0) {
+                const childrenUl = document.createElement('ul');
+                childrenUl.classList.add('folder-children');
+
+                folder.children.forEach(childFilter => {
+                    if (!childFilter || childFilter.type !== 'filter') return;
+
+                    const childLi = document.createElement('li');
+                    childLi.classList.add('item', 'folder-child-item');
+                    childLi.dataset.filterId = childFilter.id;
+
+                    const childButton = document.createElement('button');
+                    childButton.classList.add('filter-list-button', 'filter-child-button');
+                    childButton.type = 'button';
+                    childButton.textContent =
+                        childFilter.name ||
+                        chrome.i18n.getMessage('managerFilterListUnnamed') ||
+                        'Unnamed';
+
+                    childButton.addEventListener('click', () => {
+                        selectFilterById(childFilter.id);
+                    });
+
+                    const childDrag = document.createElement('span');
+                    childDrag.classList.add('drag-handle');
+                    childDrag.innerHTML = '&#8942;&#8942;';
+
+                    if (currentFilterIndex !== -1 &&
+                        currentFilterIndex < filters.length &&
+                        childFilter.id === filters[currentFilterIndex].id) {
+                        childLi.classList.add('active');
+                    }
+
+                    childLi.appendChild(childButton);
+                    childLi.appendChild(childDrag);
+                    childrenUl.appendChild(childLi);
+                });
+
+                listItem.appendChild(childrenUl);
+            }
 
             const addNewFilterItem = filterListUl.querySelector('#add-new-filter-item');
             if (addNewFilterItem) {
@@ -1293,6 +1350,7 @@ function renderFilterList() {
 
             return;
         }
+
 
 
         // =====================
