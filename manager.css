@@ -9,7 +9,7 @@
 
 }
 
-*{
+* {
     font-family: "Noto Sans JP", sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
@@ -54,11 +54,12 @@ button {
 
     &.test {
         background-color: #202124;
-        color:  #ffebeb;
+        color: #ffebeb;
     }
+
     &.nobutton {
         background-color: transparent;
-        color:   #202124;
+        color: #202124;
     }
 
 
@@ -160,7 +161,7 @@ input {
 /* ヘッダー */
 
 .app-header {
-    position: fixed; 
+    position: fixed;
     background-color: #F8FAFD;
     box-sizing: border-box;
     width: 100%;
@@ -176,6 +177,7 @@ input {
     .app-title {
         color: #444746;
         font-size: 1.1rem;
+
         .version-badge {
             margin-left: 0.5rem;
             font-weight: normal;
@@ -188,7 +190,7 @@ input {
 
 /* ハンバーガーメニューの開閉用チェックボックス */
 .hidden-checkbox {
-    display: none; 
+    display: none;
 }
 
 /* ハンバーガーアイコンのラベル */
@@ -200,12 +202,15 @@ input {
     text-decoration: none;
     border-radius: 50rem;
     padding: 0.5rem;
-    cursor: pointer; /* クリック可能であることを示す */
-    margin: 0 0.5rem; /* 既存の .item スタイルに合わせる */
+    cursor: pointer;
+    /* クリック可能であることを示す */
+    margin: 0 0.5rem;
+    /* 既存の .item スタイルに合わせる */
 }
 
 .menu-icon-label:hover {
-    background-color: #ddd; /* ホバー時の背景色 */
+    background-color: #ddd;
+    /* ホバー時の背景色 */
 }
 
 .menu-icon-label .icon {
@@ -222,14 +227,18 @@ input {
     box-sizing: border-box;
     padding: 1.5rem 1.0rem;
     top: calc(100% + 1.0rem);
-    background-color: #F8FAFD; /* 背景色 */
+    background-color: #F8FAFD;
+    /* 背景色 */
     border: 1px solid #e0e0e0;
     border-radius: 0.5rem;
     box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
-    width: 23rem; /* メニューの幅 */
+    width: 23rem;
+    /* メニューの幅 */
     right: -23rem;
-    transition: max-height 0.3s ease-out, border 0.3s ease-out, box-shadow 0.3s ease-out; /* スムーズなアニメーション */
-    z-index: 999; /* 他の要素より手前に表示 */
+    transition: max-height 0.3s ease-out, border 0.3s ease-out, box-shadow 0.3s ease-out;
+    /* スムーズなアニメーション */
+    z-index: 999;
+    /* 他の要素より手前に表示 */
 }
 
 .hamburger-menu-container .items {
@@ -258,19 +267,23 @@ input {
 }
 
 .hamburger-menu-container .item a .icon {
-    height: 1.2rem; /* アイコンのサイズを調整 */
+    height: 1.2rem;
+    /* アイコンのサイズを調整 */
     margin-right: 0.8rem;
 }
 
 .hamburger-menu-container .item:hover {
-    background: #eee; /* ホバー時の背景色 */
+    background: #eee;
+    /* ホバー時の背景色 */
 }
 
 /* ハンバーガーメニューのコンテナの表示/非表示 */
-.hidden-checkbox:checked + .menu-icon-label + .hamburger-menu-container {
+.hidden-checkbox:checked+.menu-icon-label+.hamburger-menu-container {
     right: 0.5rem;
-    border: 1px solid #e0e0e0; /* 表示時にボーダーを適用 */
-    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1); /* 表示時にシャドウを適用 */
+    border: 1px solid #e0e0e0;
+    /* 表示時にボーダーを適用 */
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+    /* 表示時にシャドウを適用 */
     transition: all 0.3s ease;
 }
 
@@ -292,7 +305,7 @@ input {
 
     p {
         font-size: 1.0rem;
-            margin: 0 auto;
+        margin: 0 auto;
 
         &.small {
             font-size: 0.7rem;
@@ -400,9 +413,7 @@ input {
         }
 
         li.item {
-            border-radius: 0 5.0rem 5.0rem 0;
             width: 100%;
-
             button,
             a {
                 box-sizing: border-box;
@@ -410,7 +421,7 @@ input {
                 line-height: 2.5rem;
                 height: 100%;
                 width: 100%;
-                border-radius: 0 5.0rem 5.0rem 0;
+                border-radius: 0 2.5rem 2.5rem 0;
                 background: transparent;
                 color: #202124;
                 font-weight: bold;
@@ -425,12 +436,8 @@ input {
                 text-overflow: ellipsis;
             }
 
-            &:hover {
+            button:hover {
                 background: #eee;
-            }
-
-            .active {
-                background: #D3E3FD;
             }
         }
 
@@ -442,6 +449,7 @@ input {
             flex-direction: column;
             overflow: hidden;
 
+            /* タイトル行 */
             h2 {
                 flex-shrink: 0;
                 display: flex;
@@ -460,72 +468,121 @@ input {
                     &:hover {
                         background-color: #ebf3ff;
                     }
-                }
-                button.icon-button {
-                    .material-symbols-outlined {
-                        vertical-align: middle;
-                        font-size: 1.2rem;
-                        padding-bottom: 0.3rem;
+
+                    &.icon-button {
+                        .material-symbols-outlined {
+                            vertical-align: middle;
+                            font-size: 1.2rem;
+                            padding-bottom: 0.3rem;
+                        }
                     }
                 }
             }
 
+            /* スクロール領域 */
             .items {
                 flex: 1;
                 display: flex;
                 flex-direction: column;
                 overflow-y: auto;
-                /* scrollbar-width: none; */
-            }
+                scrollbar-width: none;
 
-            .items .item {
-                display: flex;
-                align-items: center;
-                transition: background-color 0.2s ease;
-                position: relative;
+                /* 共通の1行（フォルダもフィルタもまずはこれがベース） */
+                .item {
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+                    width: 100%;
+                    box-sizing: border-box;
+                    transition: background-color 0.2s ease;
+                    border-radius: 0 1.4rem 1.4rem 0;
 
-                &.active button {
-                    background: #D3E3FD;
-                }
+                    button.active {
+                        background: #D3E3FD;
+                    }
+
                     .material-symbols-outlined {
-                    background-color: transparent;
-                    font-size: 1.2rem;
-                    font-weight: bold;
-                    border-radius: 50%;
-                    vertical-align: middle;
-                    padding: 0.2rem;
-                    padding-right: 0.5rem;
-                }
+                        background-color: transparent;
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                        vertical-align: middle;
+                        padding: 0.2rem;
+                        padding-right: 0.5rem;
+                    }
 
-                /* ドラッグハンドルのスタイル */
-                .drag-handle {
-                    position: absolute;
-                    right: 1.2rem;
-                    font-size: 1.1rem;
-                    top: 1.1rem;
-                    /* 上下中央に配置するための基準点 */
-                    transform: translateY(-50%);
-                    /* 上下中央に配置 */
-                    cursor: grab;
-                    color: #666;
-                    z-index: 10;
-                    /* ボタンの上に表示されるようにする */
-                    user-select: none;
+                    /* ドラッグハンドル */
+                    .drag-handle {
+                        position: absolute;
+                        right: 1.2rem;
+                        font-size: 1.1rem;
+                        top: 1.1rem;
+                        transform: translateY(-50%);
+                        cursor: grab;
+                        color: #666;
+                        z-index: 10;
+                        user-select: none;
 
-                    &:active {
-                        cursor: grabbing;
+                        &:active {
+                            cursor: grabbing;
+                        }
+                    }
+
+                    /* SortableJS ゴースト */
+                    &.sortable-ghost {
+                        opacity: 0.5;
+                        background-color: #e0e0e0;
+                    }
+
+                    /* SortableJS 選択中 */
+                    &.sortable-chosen {
+                        background-color: #f0f0f0;
+                        box-shadow: 0 1.1rem 0.5rem rgba(0, 0, 0, 0.2);
                     }
                 }
 
-                /* ドラッグ中のスタイル */
-                &.sortable-ghost {
-                    opacity: 0.5;
-                    background-color: #e0e0e0;
+                /* ============================= */
+                /* フォルダ専用レイアウト */
+                /* ============================= */
+
+                /* 親フォルダ行の <li> */
+                .folder-item {
+                    /* .item の display:flex を上書きして「縦の箱」にする */
+                    display: block;
+                    width: 100%;
+                    position: relative;
+                    /* 子リストとの間に余白 */
+
+                    /* 中の .folder-header（もし使っていれば）を横並びにしたい場合はここで指定 */
+                    .folder-header {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    }
+
                 }
 
-                &.sortable-chosen {
-                    background-color: #f0f0f0;
-                    box-shadow: 0 1.1rem 0.5rem rgba(0, 0, 0, 0.2);
+                /* フォルダの子リスト（ul） */
+                .folder-children {
+                    width: 90%;
+                    list-style: none;
+                    .material-symbols-outlined{
+                        padding-left: 1.0rem;
+                    }
+                }
+
+                /* 子フィルタ行（フォルダ配下の li） */
+                .folder-child-item {
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+                    width: 100%;
+                    box-sizing: border-box;
+                }
+
+                /* 「ここにドロップされるフォルダ」の強調（赤枠） */
+                .folder-item.folder-drop-target {
+                    border: 2px solid #ff0000;
+                    border-radius: 0 1.5rem 1.5rem 0;
                 }
             }
         }
@@ -809,7 +866,7 @@ button.remove-or-group-button:hover {
     margin-top: 2.5rem;
     margin-bottom: 1.0rem;
     margin-left: 1.5rem;
- }
+}
 
 .filter-actions-section {
     display: flex;
@@ -1018,11 +1075,11 @@ button.remove-or-group-button:hover {
     border-radius: 50%;
 }
 
-input:checked + .slider {
+input:checked+.slider {
     background-color: #e74c3c;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
     transform: translateX(24px);
 }
 

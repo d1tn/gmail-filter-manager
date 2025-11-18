@@ -57,8 +57,12 @@ let currentFolderId = null;
 
 // フォルダ機能を含む将来の構造:
 // ルート直下に「フィルタ」または「フォルダ」を並べるための配列。
-// 現時点では未使用で、filters が唯一のソース。
 let nodes = null;
+
+// ▼ D&D 用の Sortable インスタンス管理
+let rootSortable = null;
+/** @type {any[]} */
+let folderChildrenSortables = [];
 
 /**
  * filters 配列から nodes 配列を初期化するヘルパー
@@ -225,13 +229,24 @@ function buildRuntimeNodesFromStored(storedNodes, filterArray) {
 }
 
 
-// filters配列からnodes配列を再構築する関数
+/**
+ * filters配列からnodes配列を再構築する
+ * フォルダは温存しつつ、filterノードだけをfiltersの最新状態で差し替える
+ */
 function syncNodesFromFilters() {
     if (!Array.isArray(filters)) {
         console.warn('filters が配列ではありません。nodes を空にします。');
         nodes = [];
         return;
     }
+
+    // filters を id -> filter のマップにする
+    const filterMap = new Map();
+    filters.forEach(f => {
+        if (!f || !f.id) return;
+        f.type = 'filter';
+        filterMap.set(f.id, f);
+    });
 
     // nodes がまだ無い or 空なら、素直に filters から作るだけ
     if (!Array.isArray(nodes) || nodes.length === 0) {
@@ -240,38 +255,42 @@ function syncNodesFromFilters() {
         return;
     }
 
-    // 既に nodes が存在する場合は、
-    // 1. フォルダはそのまま温存
-    // 2. filter ノードだけ、filters の最新状態に差し替え
-    const filterMap = new Map();
-    filters.forEach(f => {
-        if (!f || !f.id) return;
-        f.type = 'filter';
-        filterMap.set(f.id, f);
-    });
-
     const newNodes = [];
     const seenFilterIds = new Set();
 
+    // 既存 nodes を走査して、フォルダは温存しつつ filter を差し替え
     nodes.forEach(node => {
         if (!node) return;
 
         if (node.type === 'folder') {
-            // フォルダはそのまま残す
+            // フォルダ配下の children も最新の filter に差し替えつつ ID を記録
+            if (Array.isArray(node.children) && node.children.length > 0) {
+                const newChildren = [];
+                node.children.forEach(child => {
+                    if (!child || child.type !== 'filter') return;
+                    const f = child.id && filterMap.get(child.id);
+                    if (f) {
+                        f.type = 'filter';
+                        newChildren.push(f);
+                        seenFilterIds.add(f.id);  // ★ 子フィルタのIDも「すでに使われている」として記録
+                    }
+                });
+                node.children = newChildren;
+            }
             newNodes.push(node);
         } else if (node.type === 'filter') {
+            // ルート直下のフィルタも filters 側の最新に差し替え
             const f = node.id && filterMap.get(node.id);
             if (f) {
-                // 同じIDのフィルタがまだ存在するなら差し替え
                 f.type = 'filter';
                 newNodes.push(f);
-                seenFilterIds.add(f.id);
+                seenFilterIds.add(f.id);      // ★ ルートフィルタも記録
             }
             // filters 側に無くなったフィルタのノードは破棄
         }
     });
 
-    // nodesにまだ存在しない「新規フィルタ」を末尾に追加
+    // nodes にまだ存在しない「完全新規フィルタ」を末尾に追加
     filters.forEach(f => {
         if (!f || !f.id) return;
         if (!seenFilterIds.has(f.id)) {
@@ -283,6 +302,7 @@ function syncNodesFromFilters() {
     nodes = newNodes;
     console.log('syncNodesFromFilters: 既存nodesをマージして更新しました。', nodes);
 }
+
 
 /**
  * nodes配列からfilters配列の順序を再構築する
@@ -1250,26 +1270,27 @@ function renderFilterList() {
         // =====================
         if (node.type === 'folder') {
             const folder = /** @type {FolderNode} */ (node);
-
             const listItem = document.createElement('li');
             listItem.classList.add('item', 'folder-item');
             listItem.dataset.folderId = folder.id;
 
-            // 選択中フォルダの場合は active クラス
-            if (currentFolderId && currentFolderId === folder.id) {
-                listItem.classList.add('active');
+            // ここで「開いているフォルダ」ならクラス追加
+            if (!folder.collapsed) {
+                listItem.classList.add('is-open-folder');
             }
+
+            // ▼ フォルダヘッダー（1行目）コンテナ
+            const header = document.createElement('div');
+            header.classList.add('folder-header');
 
             const button = document.createElement('button');
             button.classList.add('filter-list-button', 'folder-button');
             button.type = 'button';
 
-            // ▼ 開閉用アイコン（folder / folder_open
             const toggleIcon = document.createElement('span');
             toggleIcon.classList.add('material-symbols-outlined', 'folder-toggle-icon');
             toggleIcon.textContent = folder.collapsed ? 'folder' : 'folder_open';
 
-            // ▼ テキスト
             const text = document.createElement('span');
             text.classList.add('folder-title-text');
             text.textContent =
@@ -1277,33 +1298,41 @@ function renderFilterList() {
                 chrome.i18n.getMessage('managerFolderListUnnamed') ||
                 'Folder';
 
-            // ボタンに各要素を追加
             button.appendChild(toggleIcon);
             button.appendChild(text);
+            
+            if (currentFolderId && currentFolderId === folder.id) {
+                button.classList.add('active');
+            }
 
-            // クリックで「開閉＋選択」
             button.addEventListener('click', () => {
-                folder.collapsed = !folder.collapsed;   // 開閉状態をトグル
-                currentFolderId = folder.id;            // 選択状態も更新
-
-                saveFiltersToStorage();                 // nodesStructureごと保存
-                renderFilterList();                     // 左ペイン再描画
-                displayFolderDetails(folder);           // 右ペイン更新
+                folder.collapsed = !folder.collapsed;
+                currentFolderId = folder.id;
+                saveFiltersToStorage();
+                renderFilterList();
+                displayFolderDetails(folder);
             });
 
-            // D&D用のドラッグハンドル
             const dragHandle = document.createElement('span');
             dragHandle.classList.add('drag-handle');
             dragHandle.innerHTML = '&#8942;&#8942;';
 
-            listItem.appendChild(button);
-            listItem.appendChild(dragHandle);
+            // ▼ ヘッダーにまとめる（1行目）
+            header.appendChild(button);
+            header.appendChild(dragHandle);
 
-            // ▼ フォルダ配下のフィルタを描画（collapsed === false のときだけ）
-            if (!folder.collapsed && Array.isArray(folder.children) && folder.children.length > 0) {
-                const childrenUl = document.createElement('ul');
-                childrenUl.classList.add('folder-children');
+            // li にはまずヘッダーを乗せる
+            listItem.appendChild(header);
 
+            // ▼ 子リスト（2行目以降）
+            const childrenUl = document.createElement('ul');
+            childrenUl.classList.add('folder-children');
+
+            if (folder.collapsed) {
+                childrenUl.style.display = 'none';
+            }
+
+            if (Array.isArray(folder.children) && folder.children.length > 0) {
                 folder.children.forEach(childFilter => {
                     if (!childFilter || childFilter.type !== 'filter') return;
 
@@ -1311,6 +1340,7 @@ function renderFilterList() {
                     childLi.classList.add('item', 'folder-child-item');
                     childLi.dataset.filterId = childFilter.id;
 
+                    // ▼ ボタン生成
                     const childButton = document.createElement('button');
                     childButton.classList.add('filter-list-button', 'filter-child-button');
                     childButton.type = 'button';
@@ -1319,6 +1349,19 @@ function renderFilterList() {
                         chrome.i18n.getMessage('managerFilterListUnnamed') ||
                         'Unnamed';
 
+                    // ▼ 子要素であることを示すアイコンをボタン先頭に追加
+                    const childIcon = document.createElement('span');
+                    childIcon.classList.add(
+                        'material-symbols-outlined',
+                        'child-filter-icon'
+                    );
+                    // 好きなアイコン名に変えてOK（例: 'subdirectory_arrow_right', 'chevron_right' など）
+                    childIcon.textContent = 'subdirectory_arrow_right';
+
+                    // アイコンをボタンの先頭に挿入
+                    childButton.prepend(childIcon);
+
+                    // クリックでフィルタ選択
                     childButton.addEventListener('click', () => {
                         selectFilterById(childFilter.id);
                     });
@@ -1329,17 +1372,19 @@ function renderFilterList() {
 
                     if (currentFilterIndex !== -1 &&
                         currentFilterIndex < filters.length &&
+                        filters[currentFilterIndex] &&
                         childFilter.id === filters[currentFilterIndex].id) {
-                        childLi.classList.add('active');
+                        childButton.classList.add('active');
                     }
 
                     childLi.appendChild(childButton);
                     childLi.appendChild(childDrag);
                     childrenUl.appendChild(childLi);
                 });
-
-                listItem.appendChild(childrenUl);
             }
+
+            // ヘッダーの「下」に子リストをぶら下げる
+            listItem.appendChild(childrenUl);
 
             const addNewFilterItem = filterListUl.querySelector('#add-new-filter-item');
             if (addNewFilterItem) {
@@ -1350,7 +1395,6 @@ function renderFilterList() {
 
             return;
         }
-
 
 
         // =====================
@@ -1392,7 +1436,7 @@ function renderFilterList() {
         if (currentFilterIndex !== -1 &&
             currentFilterIndex < filters.length &&
             filter.id === filters[currentFilterIndex].id) {
-            listItem.classList.add('active');
+            button.classList.add('active');
         }
 
         listItem.appendChild(button);
@@ -1405,6 +1449,9 @@ function renderFilterList() {
             filterListUl.appendChild(listItem);
         }
     });
+
+    // ここで D&D を再初期化（フォルダ内 children を含める）
+    setupFilterListSorting();
 
     if (hasFixedIds) {
         console.log("フィルタIDを修正したため、変更を保存します");
@@ -2153,36 +2200,110 @@ function setupFilterListSorting() {
         return;
     }
 
-    // Sortable.jsライブラリが読み込まれているか確認
-    if (typeof Sortable !== 'undefined') {
-        console.log("Initializing Sortable.js for filter list");
+    if (typeof Sortable === 'undefined') {
+        console.warn('Sortable.js not loaded - drag & drop is disabled.');
+        return;
+    }
 
-        new Sortable(filterListUl, {
-            animation: 150,
-            handle: '.drag-handle', // ドラッグハンドルのみドラッグ可能に
-            draggable: '.item:not(#add-new-filter-item)', // 「＋ フィルタを追加」ボタン以外をドラッグ可能に
-            filter: '.filter-list-button', // ボタン自体はドラッグの開始エリアとしない
-            onStart: function (evt) {
-                console.log("Drag started", evt);
-            },
-            onEnd: function (evt) {
-                console.log("Drag ended", evt);
-                // ドラッグ終了時に配列の順序を更新
-                const oldIndex = evt.oldIndex;
-                const newIndex = evt.newIndex;
-
-                console.log(`Moving filter from index ${oldIndex} to ${newIndex}`);
-
-                // 配列の順序を更新
-                reorderFilters(oldIndex, newIndex);
+    // 既存インスタンスがあれば一旦破棄
+    if (rootSortable) {
+        try {
+            rootSortable.destroy();
+        } catch (e) {
+            console.warn('Failed to destroy rootSortable:', e);
+        }
+        rootSortable = null;
+    }
+    if (Array.isArray(folderChildrenSortables) && folderChildrenSortables.length > 0) {
+        folderChildrenSortables.forEach(s => {
+            try {
+                s.destroy();
+            } catch (e) {
+                console.warn('Failed to destroy children Sortable:', e);
             }
         });
-
-        console.log("Sortable.js initialized for filter list");
-    } else {
-        console.warn('Sortable.js not loaded - drag & drop ordering unavailable');
+        folderChildrenSortables = [];
     }
+
+    console.log("Initializing Sortable.js for filter list (root + folders)");
+
+    // ▼ 共通: フォルダ強調をクリアするヘルパー
+    const clearFolderDropHighlight = () => {
+        filterListUl
+            .querySelectorAll('.folder-item.folder-drop-target')
+            .forEach(li => li.classList.remove('folder-drop-target'));
+    };
+
+    // ▼ 共通の onEnd ハンドラ
+    const handleSortEnd = function (evt) {
+        console.log("Drag ended", evt);
+        // ハイライト解除
+        clearFolderDropHighlight();
+        // DOM から nodes を再構築して保存・再描画
+        rebuildNodesFromFilterListDOM();
+    };
+
+    // ▼ ルート用 Sortable
+    rootSortable = new Sortable(filterListUl, {
+        animation: 150,
+        handle: '.drag-handle',
+        draggable: '.item:not(#add-new-filter-item)',
+        filter: '.filter-list-button',
+        group: {
+            name: 'filter-nodes',
+            pull: true,
+            put: true,
+        },
+        onStart(evt) {
+            console.log('Root drag start', evt);
+        },
+        onMove(evt, originalEvent) {
+            // 毎フレームいったんハイライトをリセット
+            clearFolderDropHighlight();
+
+            // 「ここにドロップするとフォルダの子になる」状態のときだけ
+            const related = evt.related;
+            if (!related) return;
+
+            const folderLi = related.closest('.folder-item');
+            if (!folderLi) return;
+
+            // 枠だけ光らせる（開閉はしない）
+            folderLi.classList.add('folder-drop-target');
+        },
+        onEnd: handleSortEnd,
+    });
+
+
+    // ▼ 各フォルダの children 用 Sortable
+    const childrenLists = filterListUl.querySelectorAll('ul.folder-children');
+    childrenLists.forEach(childrenUl => {
+        const s = new Sortable(childrenUl, {
+            animation: 150,
+            handle: '.drag-handle',
+            draggable: '.item',          // フォルダ配下の並び替え用（フィルタ行）
+            filter: '.filter-list-button',
+            group: {
+                name: 'filter-nodes',
+                pull: true,
+                // ★ フィルタ行（data-filter-idあり）だけ受け入れる
+                put: (to, from, draggedEl) => {
+                    if (!draggedEl || !draggedEl.dataset) return false;
+                    return !!draggedEl.dataset.filterId;   // フォルダには data-filter-id が無いので弾かれる
+                },
+            },
+            onStart(evt) {
+                console.log('Folder children drag start', evt);
+            },
+            onEnd: handleSortEnd,
+        });
+        folderChildrenSortables.push(s);
+    });
+
+
+    console.log("Sortable.js initialized for root and folder children");
 }
+
 
 // 並べ替え処理: nodes を直接並べ替え、結果を filters に反映する
 function reorderFilters(oldIndex, newIndex) {
@@ -2220,6 +2341,133 @@ function reorderFilters(oldIndex, newIndex) {
     saveFiltersToStorage();
 
     console.log('Reordering finished.');
+}
+
+/**
+ * filter-list の DOM 構造から nodes を再構築し、
+ * filters の順序に反映して保存・再描画する。
+ *
+ * - ルート直下の .item は root ノード
+ * - data-folder-id を持つ .item はフォルダ
+ * - 各フォルダ内の ul.folder-children > .item が children
+ */
+function rebuildNodesFromFilterListDOM() {
+    const filterListUl = document.getElementById('filter-list');
+    if (!filterListUl) {
+        console.error('rebuildNodesFromFilterListDOM: #filter-list が見つかりません');
+        return;
+    }
+
+    /** @type {Node[]} */
+    const prevNodes = Array.isArray(nodes) ? nodes : [];
+
+    // フォルダIDごとに「もともとの子数」を記録しておく（Cの自動削除用）
+    const prevFolderChildCount = new Map();
+    (function collectPrevFolders(list) {
+        if (!Array.isArray(list)) return;
+        list.forEach(n => {
+            if (!n || n.type !== 'folder') return;
+            const count = Array.isArray(n.children) ? n.children.length : 0;
+            prevFolderChildCount.set(n.id, count);
+            // 将来ネスト対応するときのための再帰
+            if (Array.isArray(n.children)) {
+                collectPrevFolders(n.children);
+            }
+        });
+    })(prevNodes);
+
+    // フィルタID → FilterNode
+    const filterMap = new Map();
+    if (Array.isArray(filters)) {
+        filters.forEach(f => {
+            if (!f || !f.id) return;
+            f.type = 'filter';
+            filterMap.set(f.id, f);
+        });
+    }
+
+    /** @type {Node[]} */
+    const newNodes = [];
+
+    // ルート直下の .item (add-new-filter-item を除く)
+    const rootItems = filterListUl.querySelectorAll(':scope > .item:not(#add-new-filter-item)');
+    rootItems.forEach(li => {
+        const folderId = li.dataset.folderId;
+        const filterId = li.dataset.filterId;
+
+        // ▼ フォルダノード
+        if (folderId) {
+            // 以前の nodes から既存のフォルダ情報を探す（名前やcollapsedを維持）
+            let prevFolder = prevNodes.find(
+                n => n && n.type === 'folder' && n.id === folderId
+            );
+
+            /** @type {FolderNode} */
+            let folderNode;
+            if (prevFolder && prevFolder.type === 'folder') {
+                folderNode = {
+                    type: 'folder',
+                    id: prevFolder.id,
+                    name: prevFolder.name,
+                    collapsed: !!prevFolder.collapsed,
+                    children: [],
+                };
+            } else {
+                folderNode = {
+                    type: 'folder',
+                    id: folderId,
+                    name: '',
+                    collapsed: false,
+                    children: [],
+                };
+            }
+
+            const childrenUl = li.querySelector('ul.folder-children');
+            const children = [];
+            if (childrenUl) {
+                const childLis = childrenUl.querySelectorAll(':scope > .item');
+                childLis.forEach(childLi => {
+                    const childFilterId = childLi.dataset.filterId;
+                    if (!childFilterId) return;
+                    const filterNode = filterMap.get(childFilterId);
+                    if (filterNode) {
+                        filterNode.type = 'filter';
+                        children.push(filterNode);
+                    }
+                });
+            }
+            folderNode.children = children;
+
+            // ▼ コミットC: 「以前は子あり」かつ「今は子0」のフォルダは自動削除
+            const prevCount = prevFolderChildCount.get(folderNode.id) || 0;
+            if (prevCount > 0 && children.length === 0) {
+                console.log('Folder became empty; auto-removing folder:', folderNode.id);
+                return; // newNodes に追加しない
+            }
+
+            newNodes.push(folderNode);
+            return;
+        }
+
+        // ▼ ルート直下フィルタノード
+        if (filterId) {
+            const filterNode = filterMap.get(filterId);
+            if (filterNode) {
+                filterNode.type = 'filter';
+                newNodes.push(filterNode);
+            }
+        }
+    });
+
+    nodes = newNodes;
+    console.log('rebuildNodesFromFilterListDOM: nodes updated from DOM:', nodes);
+
+    // nodes → filters に順序を反映
+    syncFiltersFromNodes();
+
+    // 保存 ＆ 再描画
+    saveFiltersToStorage();
+    renderFilterList();
 }
 
 
