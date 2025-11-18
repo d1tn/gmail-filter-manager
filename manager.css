@@ -52,9 +52,9 @@ button {
     border: none;
     cursor: pointer;
 
-    &.test {
+    &.accent {
         background-color: #202124;
-        color: #ffebeb;
+        color: #ffffff;
     }
 
     &.nobutton {

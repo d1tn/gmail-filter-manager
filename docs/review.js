@@ -183,7 +183,7 @@
         <p>${body}</p>
         <p class="review-modal-message">${ctaMessage}</p>
         <div class="review-modal-buttons">
-          <button id="review-modal-open-store" type="button" class="action test">
+          <button id="review-modal-open-store" type="button" class="action accent">
             ${t('reviewModalCtaReview')}
           </button>
           <button id="review-modal-close" type="button" class="action">
