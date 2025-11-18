@@ -19,6 +19,24 @@
  * @typedef {FilterNode | FolderNode} Node
  */
 
+/**
+ * ストレージに保存するための Node 構造（軽量版）
+ *
+ * @typedef {Object} StoredFilterRef
+ * @property {'filter'} type
+ * @property {string} id
+ *
+ * @typedef {Object} StoredFolderNode
+ * @property {'folder'} type
+ * @property {string} id
+ * @property {string} name
+ * @property {boolean} collapsed
+ * @property {(StoredFilterRef | StoredFolderNode)[]} children
+ *
+ * @typedef {(StoredFilterRef | StoredFolderNode)} StoredNode
+ */
+
+
 //----------------------------------------------------------------------
 // 1. 初期化と基本設定
 //----------------------------------------------------------------------
@@ -56,6 +74,154 @@ function buildNodesFromFilters(filterArray) {
         f.type = 'filter';
         return f;
     });
+}
+
+/**
+ * 現在の nodes 配列から、ストレージ保存用の nodesStructure を作成する
+ * @returns {StoredNode[]}
+ */
+function buildStoredNodesFromRuntimeNodes() {
+    if (!Array.isArray(nodes) || nodes.length === 0) {
+        return [];
+    }
+
+    /**
+     * 再帰的に Node -> StoredNode に変換
+     * @param {Node} node
+     * @returns {StoredNode | null}
+     */
+    function toStored(node) {
+        if (!node) return null;
+
+        if (node.type === 'filter') {
+            return {
+                type: 'filter',
+                id: node.id
+            };
+        }
+
+        if (node.type === 'folder') {
+            /** @type {StoredFolderNode} */
+            const storedFolder = {
+                type: 'folder',
+                id: node.id,
+                name: node.name || '',
+                collapsed: !!node.collapsed,
+                children: []
+            };
+
+            if (Array.isArray(node.children)) {
+                node.children.forEach(child => {
+                    const s = toStored(child);
+                    if (s) storedFolder.children.push(s);
+                });
+            }
+
+            return storedFolder;
+        }
+
+        return null;
+    }
+
+    /** @type {StoredNode[]} */
+    const storedNodes = [];
+    nodes.forEach(node => {
+        const s = toStored(node);
+        if (s) storedNodes.push(s);
+    });
+
+    return storedNodes;
+}
+
+/**
+ * 保存された filters 配列と nodesStructure から、実行時の nodes を復元する
+ * @param {StoredNode[]} storedNodes
+ * @param {any[]} filterArray
+ * @returns {Node[]}
+ */
+function buildRuntimeNodesFromStored(storedNodes, filterArray) {
+    if (!Array.isArray(filterArray)) return [];
+    if (!Array.isArray(storedNodes) || storedNodes.length === 0) {
+        // フォルダ構造がなければ、filters からシンプルな nodes を作る
+        return buildNodesFromFilters(filterArray);
+    }
+
+    // id -> filter 本体 のマップ
+    const filterMap = new Map();
+    filterArray.forEach(f => {
+        if (!f || !f.id) return;
+        f.type = 'filter';
+        filterMap.set(f.id, f);
+    });
+
+    /**
+     * 再帰的に StoredNode -> Node に変換
+     * @param {StoredNode} stored
+     * @returns {Node | null}
+     */
+    function toRuntime(stored) {
+        if (!stored) return null;
+
+        if (stored.type === 'filter') {
+            const filter = filterMap.get(stored.id);
+            if (!filter) return null;
+            filter.type = 'filter';
+            return /** @type {FilterNode} */ (filter);
+        }
+
+        if (stored.type === 'folder') {
+            /** @type {FolderNode} */
+            const folderNode = {
+                type: 'folder',
+                id: stored.id,
+                name: stored.name || '',
+                collapsed: !!stored.collapsed,
+                children: []
+            };
+
+            if (Array.isArray(stored.children)) {
+                stored.children.forEach(childStored => {
+                    const childRuntime = toRuntime(childStored);
+                    if (childRuntime) {
+                        folderNode.children.push(childRuntime);
+                    }
+                });
+            }
+
+            return folderNode;
+        }
+
+        return null;
+    }
+
+    /** @type {Node[]} */
+    const runtimeNodes = [];
+    storedNodes.forEach(st => {
+        const n = toRuntime(st);
+        if (n) runtimeNodes.push(n);
+    });
+
+    // filters に存在するが、nodesStructure に含まれていなかったフィルタを末尾に追加
+    const knownIds = new Set();
+    runtimeNodes.forEach(n => {
+        if (n.type === 'filter') {
+            knownIds.add(n.id);
+        } else if (n.type === 'folder' && Array.isArray(n.children)) {
+            n.children.forEach(c => {
+                if (c.type === 'filter') knownIds.add(c.id);
+            });
+        }
+    });
+
+    filterArray.forEach(f => {
+        if (!f || !f.id) return;
+        if (!knownIds.has(f.id)) {
+            f.type = 'filter';
+            runtimeNodes.push(f);
+        }
+    });
+
+    return runtimeNodes;
 }
 
 
@@ -569,24 +735,33 @@ function scheduleSaveFilters() {
 
 // フィルタデータを保存する関数
 function saveFiltersToStorage() {
+    // 現在の nodes から保存用構造を作成
+    const storedNodes = buildStoredNodesFromRuntimeNodes();
+
     if (isExtensionEnvironment()) {
-        // ここを sync → local 専用に変更
-        chrome.storage.local.set({ 'filters': filters }, function () {
+        const payload = {
+            filters: filters,
+            nodesStructure: storedNodes
+        };
+
+        chrome.storage.local.set(payload, function () {
             if (chrome.runtime.lastError) {
                 console.error('フィルタ設定のローカルストレージへの保存に失敗しました:', chrome.runtime.lastError);
             } else {
-                console.log('フィルタ設定が保存されました（chrome.storage.local）');
+                console.log('フィルタ設定（filters + nodesStructure）が保存されました（chrome.storage.local）');
             }
         });
     } else {
         try {
             localStorage.setItem('gmail_filters', JSON.stringify(filters));
-            console.log('フィルタ設定が保存されました（localStorage）');
+            localStorage.setItem('gmail_filter_nodes_structure', JSON.stringify(storedNodes));
+            console.log('フィルタ設定（filters + nodesStructure）が保存されました（localStorage）');
         } catch (e) {
-            console.error('フィルタ設定のlocalStorageへの保存に失敗しました：', e);
+            console.error('ローカルストレージへの保存中にエラーが発生しました:', e);
         }
     }
 }
+
 
 // 読み込んだデータを処理する関数
 function handleLoadedData(loadedFilters) {
@@ -631,8 +806,8 @@ function loadFiltersFromStorage() {
     console.log("ストレージからフィルタデータの読み込みを開始します");
 
     if (isExtensionEnvironment()) {
-        // 1. まず local から読む（新方針ではここが主）
-        chrome.storage.local.get('filters', function (localResult) {
+        // filters と nodesStructure をまとめて読む
+        chrome.storage.local.get(['filters', 'nodesStructure'], function(localResult) {
             if (chrome.runtime.lastError) {
                 console.error('ローカルストレージの読み込みに失敗:', chrome.runtime.lastError);
                 return;
@@ -640,25 +815,32 @@ function loadFiltersFromStorage() {
 
             if (localResult.filters && Array.isArray(localResult.filters) && localResult.filters.length > 0) {
                 console.log('ローカルストレージからフィルタを読み込みました。');
-                handleLoadedData(localResult.filters);
+                handleLoadedData(localResult.filters, localResult.nodesStructure || null);
             } else {
                 console.log('ローカルストレージにフィルタが見つかりません。同期ストレージを確認します。');
-                // 2. 旧バージョンユーザーのために sync からも探し、見つかったら local へ移行
+                // 旧バージョンユーザーのために sync からも探し、見つかったら local へ移行
                 loadFiltersFromSyncAndMigrate();
             }
         });
     } else {
-        // 開発用（普通のWeb環境）は今まで通り
         try {
-            const savedData = localStorage.getItem('gmail_filters');
-            const parsedData = savedData ? JSON.parse(savedData) : null;
-            handleLoadedData(parsedData);
+            const raw = localStorage.getItem('gmail_filters');
+            const rawNodes = localStorage.getItem('gmail_filter_nodes_structure');
+            if (raw) {
+                const parsedFilters = JSON.parse(raw);
+                const parsedNodes = rawNodes ? JSON.parse(rawNodes) : null;
+                handleLoadedData(parsedFilters, parsedNodes);
+            } else {
+                console.log('localStorage にフィルタが見つかりません。初期データを作成します。');
+                handleLoadedData(null, null);
+            }
         } catch (e) {
-            console.error('フィルタ設定の読み込みに失敗しました：', e);
-            handleLoadedData(null);
+            console.error('ローカルストレージの読み込み中にエラーが発生しました:', e);
+            handleLoadedData(null, null);
         }
     }
 }
+
 
 function loadFiltersFromSyncAndMigrate() {
     chrome.storage.sync.get('filters', function (syncResult) {
