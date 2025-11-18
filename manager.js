@@ -2028,36 +2028,54 @@ function displayFolderDetails(folder) {
         chrome.i18n.getMessage('managerFolderListUnnamed') ||
         'Untitled folder';
 
-    // 既存のイベントを一旦クリアしてから再設定（重複バインド防止）
+    // 既存のハンドラをクリアしてから「1つだけ」付け直す
     folderNameInput.oninput = null;
     folderNameInput.onchange = null;
 
-    // 入力が変わったら folder.name を更新し、一覧も更新
-    folderNameInput.addEventListener('input', () => {
-        folder.name = folderNameInput.value;
-        // 名前変更は nodes 内だけなので filters には触らない
-        renderFilterList();
-        // 保存は「フォルダ永続化」をやるコミットでまとめて入れる
-    });
+    // ★ addEventListener ではなく oninput に直接代入する
+    folderNameInput.oninput = () => {
+        const newName = folderNameInput.value;
 
-    // ▼ フォルダ削除ボタンの設定（任意）
+        // 1) このフォルダオブジェクト自体を更新
+        folder.name = newName;
+
+        // 2) nodes 側の該当フォルダも同期（ID一致のみ）
+        if (Array.isArray(nodes)) {
+            nodes.forEach((n) => {
+                if (n && n.type === 'folder' && n.id === folder.id) {
+                    n.name = newName;
+                }
+            });
+        }
+
+        // 3) 左ペインのラベルだけ更新（フル再描画はしない）
+        const filterListUl = document.getElementById('filter-list');
+        if (filterListUl) {
+            const titleSpan = filterListUl.querySelector(
+                `.item.folder-item[data-folder-id="${folder.id}"] .folder-title-text`
+            );
+            if (titleSpan) {
+                titleSpan.textContent =
+                    newName ||
+                    chrome.i18n.getMessage('managerFolderListUnnamed') ||
+                    'Folder';
+            }
+        }
+
+        // 4) ストレージへ永続化（nodesStructure も含めて）
+        saveFiltersToStorage();
+    };
+
+    // ▼ フォルダ削除ボタンの設定も、同じ理由で onclick に一本化しておくと安全
     const deleteButton = document.getElementById('delete-this-folder');
     if (deleteButton) {
-        // 既存ハンドラをクリア
         deleteButton.onclick = null;
-
-        // 現在表示中のフォルダに対して削除処理を呼ぶ
-        deleteButton.addEventListener('click', () => {
-            if (!folder || !folder.id) {
-                console.warn('No folder to delete.');
-                return;
-            }
-            deleteFolderWithConfirm(folder.id);
-        });
+        deleteButton.onclick = () => {
+            deleteThisFolderWithConfirm(folder);
+        };
     }
-
-
 }
+
 
 
 // フィルタの処理を複製する関数
@@ -2322,28 +2340,35 @@ function setupFilterListSorting() {
     console.log("Sortable.js initialized for root and folder children");
 }
 
-// フォルダを削除する関数
-// 引数: folderId ... 削除対象フォルダのID
-function deleteFolderWithConfirm(folderId) {
-    console.log('Attempting to delete folder:', folderId);
+/**
+ * 今開いているフォルダを確認付きで削除する
+ * - 子フィルタはルートに移動
+ * - nodes / filters / UI を一貫して更新
+ * @param {FolderNode} folder
+ */
+function deleteThisFolderWithConfirm(folder) {
+    if (!folder || !folder.id) {
+        console.warn('No folder to delete.');
+        return;
+    }
 
     if (!Array.isArray(nodes)) {
         console.warn('nodes is not an array. Abort folder deletion.');
         return;
     }
 
-    // 対象フォルダノードを取得
+    // 対象フォルダを nodes から探す
     /** @type {FolderNode | null} */
     let targetFolder = null;
     for (const n of nodes) {
-        if (n && n.type === 'folder' && n.id === folderId) {
+        if (n && n.type === 'folder' && n.id === folder.id) {
             targetFolder = n;
             break;
         }
     }
 
     if (!targetFolder) {
-        console.warn('Target folder not found for id:', folderId);
+        console.warn('Target folder not found for id:', folder.id);
         return;
     }
 
@@ -2352,7 +2377,7 @@ function deleteFolderWithConfirm(folderId) {
         (chrome.i18n && chrome.i18n.getMessage('managerFolderListUnnamed')) ||
         'フォルダ';
 
-    // 確認ダイアログを表示
+    // 確認ダイアログ
     const isConfirmed = confirm(
         `フォルダ "${folderName}" を削除してもよろしいですか？\n` +
         `このフォルダ内のフィルタはルート一覧に移動します。\n` +
@@ -2370,38 +2395,40 @@ function deleteFolderWithConfirm(folderId) {
         : [];
 
     // 1. nodes から当該フォルダを削除
-    nodes = nodes.filter(n => !(n && n.type === 'folder' && n.id === folderId));
+    nodes = nodes.filter(n => !(n && n.type === 'folder' && n.id === targetFolder.id));
 
-    // 2. 子フィルタを nodes の末尾に追加（ルートに移動）
+    // 2. 子フィルタを nodes の末尾に追加（ルートへ移動）
     children.forEach(f => {
         if (!f) return;
         f.type = 'filter';
         nodes.push(f);
     });
 
-    // 3. filters にも順序を反映しつつ保存
+    // 3. filters にも順序を反映
     syncFiltersFromNodes();
+
+    // 4. 保存・再描画
     saveFiltersToStorage();
     renderFilterList();
 
-    // 状態リセット・再選択
+    // 5. 選択状態リセット
     currentFolderId = null;
 
     if (filters.length > 0) {
-        // 適当なフィルタを選択（ここでは先頭）
+        // ひとまず先頭フィルタを選択
         selectFilter(0);
     } else {
         currentFilterIndex = -1;
         displayFilterDetails(null);
     }
 
-    // フィルタ削除ボタン等の状態更新があるならここで
     if (typeof updateDeleteButtonState === 'function') {
         updateDeleteButtonState();
     }
 
-    console.log('Folder deleted successfully:', folderId);
+    console.log('Folder deleted successfully:', targetFolder.id);
 }
+
 
 
 
