@@ -832,7 +832,7 @@ function loadFiltersFromStorage() {
 
     if (isExtensionEnvironment()) {
         // filters と nodesStructure をまとめて読む
-        chrome.storage.local.get(['filters', 'nodesStructure'], function(localResult) {
+        chrome.storage.local.get(['filters', 'nodesStructure'], function (localResult) {
             if (chrome.runtime.lastError) {
                 console.error('ローカルストレージの読み込みに失敗:', chrome.runtime.lastError);
                 return;
@@ -1300,7 +1300,7 @@ function renderFilterList() {
 
             button.appendChild(toggleIcon);
             button.appendChild(text);
-            
+
             if (currentFolderId && currentFolderId === folder.id) {
                 button.classList.add('active');
             }
@@ -2043,17 +2043,17 @@ function displayFolderDetails(folder) {
     // ▼ フォルダ削除ボタンの設定（任意）
     const deleteButton = document.getElementById('delete-this-folder');
     if (deleteButton) {
-    // 既存ハンドラをクリア
-    deleteButton.onclick = null;
+        // 既存ハンドラをクリア
+        deleteButton.onclick = null;
 
-    // 現在表示中のフォルダに対して削除処理を呼ぶ
-    deleteButton.addEventListener('click', () => {
-        if (!folder || !folder.id) {
-        console.warn('No folder to delete.');
-        return;
-        }
-        deleteFolderWithConfirm(folder.id);
-    });
+        // 現在表示中のフォルダに対して削除処理を呼ぶ
+        deleteButton.addEventListener('click', () => {
+            if (!folder || !folder.id) {
+                console.warn('No folder to delete.');
+                return;
+            }
+            deleteFolderWithConfirm(folder.id);
+        });
     }
 
 
@@ -2325,82 +2325,82 @@ function setupFilterListSorting() {
 // フォルダを削除する関数
 // 引数: folderId ... 削除対象フォルダのID
 function deleteFolderWithConfirm(folderId) {
-  console.log('Attempting to delete folder:', folderId);
+    console.log('Attempting to delete folder:', folderId);
 
-  if (!Array.isArray(nodes)) {
-    console.warn('nodes is not an array. Abort folder deletion.');
-    return;
-  }
-
-  // 対象フォルダノードを取得
-  /** @type {FolderNode | null} */
-  let targetFolder = null;
-  for (const n of nodes) {
-    if (n && n.type === 'folder' && n.id === folderId) {
-      targetFolder = n;
-      break;
+    if (!Array.isArray(nodes)) {
+        console.warn('nodes is not an array. Abort folder deletion.');
+        return;
     }
-  }
 
-  if (!targetFolder) {
-    console.warn('Target folder not found for id:', folderId);
-    return;
-  }
+    // 対象フォルダノードを取得
+    /** @type {FolderNode | null} */
+    let targetFolder = null;
+    for (const n of nodes) {
+        if (n && n.type === 'folder' && n.id === folderId) {
+            targetFolder = n;
+            break;
+        }
+    }
 
-  const folderName =
-    targetFolder.name ||
-    (chrome.i18n && chrome.i18n.getMessage('managerFolderListUnnamed')) ||
-    'フォルダ';
+    if (!targetFolder) {
+        console.warn('Target folder not found for id:', folderId);
+        return;
+    }
 
-  // 確認ダイアログを表示
-  const isConfirmed = confirm(
-    `フォルダ "${folderName}" を削除してもよろしいですか？\n` +
-      `このフォルダ内のフィルタはルート一覧に移動します。\n` +
-      `この操作は元に戻せません。`
-  );
+    const folderName =
+        targetFolder.name ||
+        (chrome.i18n && chrome.i18n.getMessage('managerFolderListUnnamed')) ||
+        'フォルダ';
 
-  if (!isConfirmed) {
-    console.log('Folder deletion cancelled by user.');
-    return;
-  }
+    // 確認ダイアログを表示
+    const isConfirmed = confirm(
+        `フォルダ "${folderName}" を削除してもよろしいですか？\n` +
+        `このフォルダ内のフィルタはルート一覧に移動します。\n` +
+        `この操作は元に戻せません。`
+    );
 
-  // 子フィルタを退避
-  const children = Array.isArray(targetFolder.children)
-    ? targetFolder.children.slice()
-    : [];
+    if (!isConfirmed) {
+        console.log('Folder deletion cancelled by user.');
+        return;
+    }
 
-  // 1. nodes から当該フォルダを削除
-  nodes = nodes.filter(n => !(n && n.type === 'folder' && n.id === folderId));
+    // 子フィルタを退避
+    const children = Array.isArray(targetFolder.children)
+        ? targetFolder.children.slice()
+        : [];
 
-  // 2. 子フィルタを nodes の末尾に追加（ルートに移動）
-  children.forEach(f => {
-    if (!f) return;
-    f.type = 'filter';
-    nodes.push(f);
-  });
+    // 1. nodes から当該フォルダを削除
+    nodes = nodes.filter(n => !(n && n.type === 'folder' && n.id === folderId));
 
-  // 3. filters にも順序を反映しつつ保存
-  syncFiltersFromNodes();
-  saveFiltersToStorage();
-  renderFilterList();
+    // 2. 子フィルタを nodes の末尾に追加（ルートに移動）
+    children.forEach(f => {
+        if (!f) return;
+        f.type = 'filter';
+        nodes.push(f);
+    });
 
-  // 状態リセット・再選択
-  currentFolderId = null;
+    // 3. filters にも順序を反映しつつ保存
+    syncFiltersFromNodes();
+    saveFiltersToStorage();
+    renderFilterList();
 
-  if (filters.length > 0) {
-    // 適当なフィルタを選択（ここでは先頭）
-    selectFilter(0);
-  } else {
-    currentFilterIndex = -1;
-    displayFilterDetails(null);
-  }
+    // 状態リセット・再選択
+    currentFolderId = null;
 
-  // フィルタ削除ボタン等の状態更新があるならここで
-  if (typeof updateDeleteButtonState === 'function') {
-    updateDeleteButtonState();
-  }
+    if (filters.length > 0) {
+        // 適当なフィルタを選択（ここでは先頭）
+        selectFilter(0);
+    } else {
+        currentFilterIndex = -1;
+        displayFilterDetails(null);
+    }
 
-  console.log('Folder deleted successfully:', folderId);
+    // フィルタ削除ボタン等の状態更新があるならここで
+    if (typeof updateDeleteButtonState === 'function') {
+        updateDeleteButtonState();
+    }
+
+    console.log('Folder deleted successfully:', folderId);
 }
 
 
