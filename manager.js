@@ -2039,6 +2039,24 @@ function displayFolderDetails(folder) {
         renderFilterList();
         // 保存は「フォルダ永続化」をやるコミットでまとめて入れる
     });
+
+    // ▼ フォルダ削除ボタンの設定（任意）
+    const deleteButton = document.getElementById('delete-this-folder');
+    if (deleteButton) {
+    // 既存ハンドラをクリア
+    deleteButton.onclick = null;
+
+    // 現在表示中のフォルダに対して削除処理を呼ぶ
+    deleteButton.addEventListener('click', () => {
+        if (!folder || !folder.id) {
+        console.warn('No folder to delete.');
+        return;
+        }
+        deleteFolderWithConfirm(folder.id);
+    });
+    }
+
+
 }
 
 
@@ -2304,6 +2322,88 @@ function setupFilterListSorting() {
     console.log("Sortable.js initialized for root and folder children");
 }
 
+// フォルダを削除する関数
+// 引数: folderId ... 削除対象フォルダのID
+function deleteFolderWithConfirm(folderId) {
+  console.log('Attempting to delete folder:', folderId);
+
+  if (!Array.isArray(nodes)) {
+    console.warn('nodes is not an array. Abort folder deletion.');
+    return;
+  }
+
+  // 対象フォルダノードを取得
+  /** @type {FolderNode | null} */
+  let targetFolder = null;
+  for (const n of nodes) {
+    if (n && n.type === 'folder' && n.id === folderId) {
+      targetFolder = n;
+      break;
+    }
+  }
+
+  if (!targetFolder) {
+    console.warn('Target folder not found for id:', folderId);
+    return;
+  }
+
+  const folderName =
+    targetFolder.name ||
+    (chrome.i18n && chrome.i18n.getMessage('managerFolderListUnnamed')) ||
+    'フォルダ';
+
+  // 確認ダイアログを表示
+  const isConfirmed = confirm(
+    `フォルダ "${folderName}" を削除してもよろしいですか？\n` +
+      `このフォルダ内のフィルタはルート一覧に移動します。\n` +
+      `この操作は元に戻せません。`
+  );
+
+  if (!isConfirmed) {
+    console.log('Folder deletion cancelled by user.');
+    return;
+  }
+
+  // 子フィルタを退避
+  const children = Array.isArray(targetFolder.children)
+    ? targetFolder.children.slice()
+    : [];
+
+  // 1. nodes から当該フォルダを削除
+  nodes = nodes.filter(n => !(n && n.type === 'folder' && n.id === folderId));
+
+  // 2. 子フィルタを nodes の末尾に追加（ルートに移動）
+  children.forEach(f => {
+    if (!f) return;
+    f.type = 'filter';
+    nodes.push(f);
+  });
+
+  // 3. filters にも順序を反映しつつ保存
+  syncFiltersFromNodes();
+  saveFiltersToStorage();
+  renderFilterList();
+
+  // 状態リセット・再選択
+  currentFolderId = null;
+
+  if (filters.length > 0) {
+    // 適当なフィルタを選択（ここでは先頭）
+    selectFilter(0);
+  } else {
+    currentFilterIndex = -1;
+    displayFilterDetails(null);
+  }
+
+  // フィルタ削除ボタン等の状態更新があるならここで
+  if (typeof updateDeleteButtonState === 'function') {
+    updateDeleteButtonState();
+  }
+
+  console.log('Folder deleted successfully:', folderId);
+}
+
+
 
 // 並べ替え処理: nodes を直接並べ替え、結果を filters に反映する
 function reorderFilters(oldIndex, newIndex) {
@@ -2469,7 +2569,6 @@ function rebuildNodesFromFilterListDOM() {
     saveFiltersToStorage();
     renderFilterList();
 }
-
 
 // 各条件項目にロジックを設定する関数
 function setupConditionItem(conditionItemElement) {

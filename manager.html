@@ -287,7 +287,7 @@
             <section class="filter-actions-section">
                 <button id="export-this-filter" class="action" data-i18n-text="managerActionExportThis"></button><button id="duplicate-this-filter" class="action" data-i18n-text="managerActionDuplicate"></button><button id="delete-this-filter" class="action danger" data-i18n-text="managerActionDelete" data-i18n-title="managerActionDeleteTooltip"></button></section>
         </article>
-        <!-- ★フォルダ用エディタ：最初は非表示 -->
+        <!-- フォルダ用エディタ -->
         <article id="folder-editor" class="filter-setting-section" style="display: none;">
             <section class="folder-name">
                 <h2 data-i18n-text="managerFolderEditorTitle">フォルダ設定</h2>
@@ -303,6 +303,11 @@
                 <p class="info-text" data-i18n-text="managerFolderEditorHint">
                     フォルダはGmailのフィルタ構造には影響せず、この拡張機能内だけでフィルタを整理するために使われます。
                 </p>
+            </section>
+            <section class="filter-actions-section">
+                <button id="delete-this-folder" class="action danger" data-i18n-text="managerFolderDeleteButton">
+                    このフォルダを削除
+                </button>
             </section>
         </article>
         </div>
