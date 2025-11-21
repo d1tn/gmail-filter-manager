@@ -3641,7 +3641,6 @@ function handleImportedFilters(importedFilters, importedStructure) {
     }
 
     console.log(`${importedFilters.length}個のフィルタをインポート完了 (構造維持: ${!!importedStructure})`);
-    alert(`${importedFilters.length}個のフィルタをインポートしました。🥺👍`);
 }
 
 // XMLエントリからフィルタ名とIDを抽出する関数
