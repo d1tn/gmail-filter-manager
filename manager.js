@@ -2717,13 +2717,6 @@ function rebuildNodesFromFilterListDOM() {
             }
             folderNode.children = children;
 
-            // ▼ コミットC: 「以前は子あり」かつ「今は子0」のフォルダは自動削除
-            const prevCount = prevFolderChildCount.get(folderNode.id) || 0;
-            if (prevCount > 0 && children.length === 0) {
-                console.log('Folder became empty; auto-removing folder:', folderNode.id);
-                return; // newNodes に追加しない
-            }
-
             newNodes.push(folderNode);
             return;
         }
