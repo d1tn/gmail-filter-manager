@@ -2259,7 +2259,7 @@ function setupFilterListSorting() {
     let dragHoverTimer = null;      // 開くまでのタイマー
     let draggingItemType = null;    // 'filter' or 'folder'
     let lastHoveredFolderId = null; // 直前にホバーしていたフォルダID
-    let initiallyOpenFolderIds = new Set(); // ★追加: ドラッグ開始時点で開いていたフォルダのIDリスト
+    let dragSourceFolderId = null;  // ドラッグ開始元のフォルダID
 
     // ▼ 共通: フォルダ強調をクリアするヘルパー
     const clearFolderDropHighlight = () => {
@@ -2268,189 +2268,160 @@ function setupFilterListSorting() {
             .forEach(li => li.classList.remove('folder-drop-target'));
     };
 
-    // ▼ フォルダを視覚的に開閉するヘルパー（DOM操作のみ、データ保存なし）
+    // ▼ フォルダを視覚的に開閉するヘルパー
     const toggleFolderVisual = (folderLi, forceOpen = null) => {
         if (!folderLi) return;
         
         const folderId = folderLi.dataset.folderId;
         const childrenUl = folderLi.querySelector('ul.folder-children');
         const toggleIcon = folderLi.querySelector('.folder-toggle-icon');
-        // const folderButton = folderLi.querySelector('.folder-button'); // 未使用
 
         if (!childrenUl) return;
 
-        // 現在の状態を確認
         const isCurrentlyOpen = childrenUl.style.display !== 'none';
         const shouldOpen = forceOpen !== null ? forceOpen : !isCurrentlyOpen;
 
         if (shouldOpen) {
-            // 開く
             childrenUl.style.display = 'block';
             folderLi.classList.add('is-open-folder');
             if (toggleIcon) toggleIcon.textContent = 'folder_open';
         } else {
-            // 閉じる
             childrenUl.style.display = 'none';
             folderLi.classList.remove('is-open-folder');
             if (toggleIcon) toggleIcon.textContent = 'folder';
         }
     };
 
+    // ▼▼▼ 共通のドラッグ移動中ロジック (RootでもChildでもこれを使う) ▼▼▼
+    const onMoveLogic = function(evt, originalEvent) {
+        // フォルダ自体のドラッグ中は自動開閉しない
+        if (draggingItemType === 'folder') {
+            clearFolderDropHighlight();
+            return; 
+        }
+
+        // カーソルの下にある要素（related）がフォルダかどうか判定
+        const related = evt.related;
+        // Sortableの仕様で、relatedがnullの場合や、期待と違う要素の場合があるためclosestで探す
+        const folderLi = related ? related.closest('.folder-item') : null;
+        const targetFolderId = folderLi ? folderLi.dataset.folderId : null;
+
+        // 1. 以前ホバーしていたフォルダから離れた場合 -> 閉じる
+        if (lastHoveredFolderId && lastHoveredFolderId !== targetFolderId) {
+            // タイマーキャンセル
+            if (dragHoverTimer) {
+                clearTimeout(dragHoverTimer);
+                dragHoverTimer = null;
+            }
+            
+            // 直前にホバーしていたフォルダを閉じる
+            const prevFolderLi = filterListUl.querySelector(`.folder-item[data-folder-id="${lastHoveredFolderId}"]`);
+            if (prevFolderLi) {
+                    // ★「ドラッグ開始元のフォルダ」でなければ閉じる
+                    // （ドラッグ元は、マウスが離れても閉じずに待っていてほしい）
+                    if (lastHoveredFolderId !== dragSourceFolderId) {
+                        toggleFolderVisual(prevFolderLi, false);
+                    }
+            }
+            
+            clearFolderDropHighlight();
+        }
+
+        // 2. 新しいフォルダに乗った場合
+        if (targetFolderId) {
+            if (folderLi) folderLi.classList.add('folder-drop-target');
+
+            // まだそのフォルダのアクション待機中でなければタイマーセット
+            if (lastHoveredFolderId !== targetFolderId) {
+                lastHoveredFolderId = targetFolderId;
+                
+                // 既存タイマーあれば消す
+                if (dragHoverTimer) clearTimeout(dragHoverTimer);
+
+                // 400ms後に開く予約
+                dragHoverTimer = setTimeout(() => {
+                    console.log('Auto-opening folder:', targetFolderId);
+                    toggleFolderVisual(folderLi, true);
+                    dragHoverTimer = null;
+                }, 400);
+            }
+        } else {
+            // フォルダ以外の場所にいる
+            clearFolderDropHighlight();
+            lastHoveredFolderId = null;
+            if (dragHoverTimer) {
+                clearTimeout(dragHoverTimer);
+                dragHoverTimer = null;
+            }
+        }
+    };
+    // ▲▲▲ 共通ロジックここまで ▲▲▲
+
+
     // ▼ 共通の onEnd ハンドラ
     const handleSortEnd = function (evt) {
         console.log("Drag ended", evt);
         
-        // タイマーがあればクリア
         if (dragHoverTimer) {
             clearTimeout(dragHoverTimer);
             dragHoverTimer = null;
         }
         
-        // ハイライト解除
         clearFolderDropHighlight();
 
-        // 「ドラッグ中に一時的に開いたが、結局そこにドロップしなかった（通り過ぎた）フォルダ」を閉じる処理
-        // ドロップされたアイテム
+        // ドロップされなかったフォルダを閉じる処理
         const droppedItem = evt.item;
-        // ドロップ先の親リスト（ul）
         const parentList = droppedItem.parentNode;
         
-        // もしドロップ先が「フォルダの中（folder-children）」なら、その親フォルダIDを特定
         let destFolderId = null;
         if (parentList && parentList.classList.contains('folder-children')) {
             const folderItem = parentList.closest('.folder-item');
             if (folderItem) destFolderId = folderItem.dataset.folderId;
         }
 
-        // 全フォルダをチェックして整理
         const allFolders = filterListUl.querySelectorAll('.folder-item');
         allFolders.forEach(folderLi => {
             const fId = folderLi.dataset.folderId;
-            // 1. 今、開いている状態か？
             if (folderLi.classList.contains('is-open-folder')) {
-                // 2. ドラッグ開始前から開いていたか？（元々開いてたなら何もしない）
-                if (!initiallyOpenFolderIds.has(fId)) {
-                    // 3. ここにドロップされたか？（ここに入れたなら開いたままでOK）
-                    if (fId !== destFolderId) {
-                        // 条件合致：
-                        // 「元々は閉じていて、ドラッグ中に勝手に開いたが、ここには入れなかった」
-                        // → なので閉じる！
-                        console.log(`Closing folder ${fId} (opened during drag but not dropped in)`);
-                        toggleFolderVisual(folderLi, false);
-                    }
+                // ここに入っていないなら閉じる
+                if (fId !== destFolderId) {
+                    // ただし、ドラッグ元フォルダも、戻ってこなかったなら閉じていいのか？
+                    // UX的には「元のフォルダに戻さなかった＝移動した」ので、元のフォルダも閉じてスッキリさせるのが正解
+                    console.log(`Closing folder ${fId} (not dropped in)`);
+                    toggleFolderVisual(folderLi, false);
                 }
             }
         });
 
-        // DOM から nodes を再構築して保存・再描画
-        // （この時点で閉じているべきフォルダは閉じているので、見た目通りに保存される）
         rebuildNodesFromFilterListDOM();
         
-        // 変数リセット
         draggingItemType = null;
         lastHoveredFolderId = null;
-        initiallyOpenFolderIds.clear();
+        dragSourceFolderId = null;
     };
 
     // ▼ ルート用 Sortable
     rootSortable = new Sortable(filterListUl, {
         animation: 150,
         handle: '.drag-handle',
-        draggable: '.item:not(#add-new-filter-item)', // フォルダもフィルタも対象
+        draggable: '.item:not(#add-new-filter-item)',
         filter: '.filter-list-button',
+        swapThreshold: 0.65,
         group: {
             name: 'filter-nodes',
             pull: true,
             put: true,
         },
-        // ドラッグ開始時
         onStart(evt) {
             console.log('Root drag start', evt);
-            // ドラッグしている要素の特定
+            dragSourceFolderId = null; // ルートからのドラッグ
             if (evt.item.classList.contains('folder-item')) {
                 draggingItemType = 'folder';
             } else {
                 draggingItemType = 'filter';
             }
-
-            // ★現在の開閉状態を記録（onEndでの復元判定用）
-            initiallyOpenFolderIds.clear();
-            const openFolders = filterListUl.querySelectorAll('.folder-item.is-open-folder');
-            openFolders.forEach(el => {
-                if(el.dataset.folderId) initiallyOpenFolderIds.add(el.dataset.folderId);
-            });
-            console.log('Initially open folders:', initiallyOpenFolderIds);
         },
-        // ドラッグ移動中
-        onMove(evt, originalEvent) {
-            // フォルダをドラッグ中は自動開閉しない
-            if (draggingItemType === 'folder') {
-                clearFolderDropHighlight();
-                return; // 通常のSortable挙動に任せる
-            }
-
-            // --- ここからフィルタドラッグ時の挙動 ---
-
-            // カーソルの下にある要素（related）がフォルダかどうか判定
-            const related = evt.related;
-            const folderLi = related ? related.closest('.folder-item') : null;
-            const targetFolderId = folderLi ? folderLi.dataset.folderId : null;
-
-            // 1. 以前ホバーしていたフォルダから離れた場合 -> 閉じる or タイマークリア
-            if (lastHoveredFolderId && lastHoveredFolderId !== targetFolderId) {
-                // タイマーキャンセル
-                if (dragHoverTimer) {
-                    clearTimeout(dragHoverTimer);
-                    dragHoverTimer = null;
-                }
-                
-                // 直前にホバーしていたフォルダを閉じる
-                // ただし「元々開いていた」やつは閉じないほうが自然だが、
-                // ここで閉じても onEnd で戻すのは難しいので、
-                // 「ドラッグ中に開いたやつ」だけ閉じる判定を入れるのがベストだが
-                // 視覚的なフィードバックとして「離れたら閉じる」はわかりやすいので一旦閉じる。
-                // もし「元々開いてたやつも閉じちゃうのが嫌」ならここに initiallyOpenFolderIds チェックを入れる。
-                
-                const prevFolderLi = filterListUl.querySelector(`.folder-item[data-folder-id="${lastHoveredFolderId}"]`);
-                if (prevFolderLi) {
-                     // ★修正: 元々開いていたフォルダなら、離れても閉じないようにする
-                     if (!initiallyOpenFolderIds.has(lastHoveredFolderId)) {
-                        toggleFolderVisual(prevFolderLi, false);
-                     }
-                }
-                
-                clearFolderDropHighlight();
-            }
-
-            // 2. 新しいフォルダに乗った場合
-            if (targetFolderId) {
-                // ハイライト適用
-                if (folderLi) folderLi.classList.add('folder-drop-target');
-
-                // まだそのフォルダのアクション待機中でなければタイマーセット
-                if (lastHoveredFolderId !== targetFolderId) {
-                    lastHoveredFolderId = targetFolderId;
-                    
-                    // 既存タイマーあれば消す
-                    if (dragHoverTimer) clearTimeout(dragHoverTimer);
-
-                    // 400ms後に開く予約
-                    dragHoverTimer = setTimeout(() => {
-                        console.log('Auto-opening folder:', targetFolderId);
-                        toggleFolderVisual(folderLi, true);
-                        dragHoverTimer = null;
-                    }, 400);
-                }
-            } else {
-                // フォルダ以外の場所にいる
-                clearFolderDropHighlight();
-                lastHoveredFolderId = null;
-                if (dragHoverTimer) {
-                    clearTimeout(dragHoverTimer);
-                    dragHoverTimer = null;
-                }
-            }
-        },
+        onMove: onMoveLogic, // ★共通ロジックを適用
         onEnd: handleSortEnd,
     });
 
@@ -2463,11 +2434,12 @@ function setupFilterListSorting() {
             handle: '.drag-handle',
             draggable: '.item',
             filter: '.filter-list-button',
+            emptyInsertThreshold: 20, // 空フォルダに入れやすくする
+            swapThreshold: 0.65,
             group: {
                 name: 'filter-nodes',
                 pull: true,
                 put: (to, from, draggedEl) => {
-                    // フォルダの中にフォルダは入れない
                     if (draggedEl.classList.contains('folder-item')) return false;
                     return true;
                 },
@@ -2475,24 +2447,22 @@ function setupFilterListSorting() {
             onStart(evt) {
                 console.log('Child drag start');
                 draggingItemType = 'filter';
-                // 子ドラッグ開始時も状態保存（隣のフォルダを開く等の操作がありうるため）
-                initiallyOpenFolderIds.clear();
-                const openFolders = filterListUl.querySelectorAll('.folder-item.is-open-folder');
-                openFolders.forEach(el => {
-                    if(el.dataset.folderId) initiallyOpenFolderIds.add(el.dataset.folderId);
-                });
+                
+                // ドラッグ元のフォルダIDを記録
+                const parentFolder = evt.from.closest('.folder-item');
+                if (parentFolder) {
+                    dragSourceFolderId = parentFolder.dataset.folderId;
+                }
             },
-            onMove(evt) {
-                const folderLi = evt.to.closest('.folder-item');
-                if(folderLi) folderLi.classList.add('folder-drop-target');
-            },
+            onMove: onMoveLogic, // ★ここが重要！子ドラッグ時も共通ロジックを適用して他のフォルダに反応させる！
             onEnd: handleSortEnd,
         });
         folderChildrenSortables.push(s);
     });
 
-    console.log("Sortable.js initialized for root and folder children");
+    console.log("Sortable.js initialized for root and folder children (Unified onMove logic)");
 }
+
 /**
  * 今開いているフォルダを確認付きで削除する
  * - 子フィルタはルートに移動
