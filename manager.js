@@ -1305,11 +1305,20 @@ function renderFilterList() {
                 button.classList.add('active');
             }
 
+            // ▼ フォルダのクリックイベント
             button.addEventListener('click', () => {
+                // 1. 開閉状態をトグル
                 folder.collapsed = !folder.collapsed;
+                
+                // 2. フィルタ・フォルダの選択状態を更新
                 currentFolderId = folder.id;
+                currentFilterIndex = -1;
+
+                // 3. 保存して再描画
                 saveFiltersToStorage();
                 renderFilterList();
+                
+                // 4. 右ペインに詳細表示
                 displayFolderDetails(folder);
             });
 
