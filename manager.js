@@ -3010,18 +3010,17 @@ function generateGmailFilterXML(filtersArray, nodesStructure = null) {
     xml += '  <title>Mail Filters</title>\n';
 
     // 各フィルタをXMLエントリに変換
-    filtersArray.forEach(filter => {
+    filtersArray.forEach((filter, index) => {
         xml += '  <entry>\n';
         xml += '    <category term="filter"></category>\n';
-        
-        // フィルタIDをコメント内に区切り文字 || を使って埋め込む
-        // Gmailはこれを無視するが、本ツールへのインポート時に構造復元に使用する
-        const nameComment = `${filter.name || ''} || id:${filter.id}`;
+
+        // フィルタIDをコメント内に埋め込む（ここは変更なし）
+        const nameComment = `${filter.name || ''} || id:${filter.id || ('gen_' + Date.now() + '_' + index)}`;
         xml += `    <title>${escapeXml(nameComment)}</title>\n`;
         xml += '    <content></content>\n';
 
-        // フィルタ条件をXMLに変換
-        const conditions = filter.conditions;
+        // フィルタ条件（各 generate* 関数は改行込みで適切な文字列を返す前提）
+        const conditions = filter.conditions || {};
         if (conditions.from && conditions.from.length > 0) xml += generateFromConditionXML(conditions.from);
         if (conditions.to && conditions.to.length > 0) xml += generateToConditionXML(conditions.to);
         if (conditions.subject && conditions.subject.length > 0) xml += generateSubjectConditionXML(conditions.subject);
@@ -3030,25 +3029,29 @@ function generateGmailFilterXML(filtersArray, nodesStructure = null) {
         if (conditions.size && conditions.size.value !== null) xml += generateSizeConditionXML(conditions.size);
         if (conditions.hasAttachment) xml += '    <apps:property name="hasAttachment" value="true"/>\n';
 
-        // フィルタ処理アクション
-        xml += generateActionXML(filter.actions);
+        // フィルタ処理
+        xml += generateActionXML(filter.actions || {});
 
         xml += '  </entry>\n';
     });
 
-    // フォルダ構造情報がある場合、特殊なエントリとしてXML末尾に追加
+    xml += '</feed>\n';
+
+    // フォルダ構造情報を XML の末尾に「コメント」として追記する（安全処理を行う）
     if (nodesStructure) {
-        xml += '  <entry>\n';
-        xml += '    <category term="filter-manager-structure"></category>\n'; // 識別用カテゴリ
-        xml += '    <title>GFM_STRUCTURE_DATA</title>\n';
-        xml += '    <content>';
-        // JSONをXMLエスケープして埋め込む
-        xml += escapeXml(JSON.stringify(nodesStructure));
-        xml += '</content>\n';
-        xml += '  </entry>\n';
+        // JSON を作成
+        const jsonStr = JSON.stringify(nodesStructure);
+
+        // XML コメント内で禁止されているパターンを回避する
+        // - '-->' は '--&gt;' に変換（閉じタグと誤解されないように）
+        // - '--' の連続は XML コメントで禁止されるため、安全な代替に置換
+        // 必要に応じて他のエスケープ処理を追加してください
+        const safeJson = jsonStr.replace(/-->/g, '--&gt;').replace(/--/g, '- -');
+
+        // コメントとして包む（識別タグ付き）
+        xml += `<!-- GFM_STRUCTURE_DATA\n${safeJson}\n-->\n`;
     }
 
-    xml += '</feed>';
     return xml;
 }
 
@@ -3329,36 +3332,45 @@ function importFiltersFromXML(xmlContent) {
             throw new Error("XML解析エラー: " + parserError.textContent);
         }
 
-        const entries = xmlDoc.querySelectorAll('entry');
-        console.log(`${entries.length}個のエントリを検出しました`);
-
         const importedFilters = [];
         let importedStructure = null;
 
+        // まず正規表現で XMLコメント内の構造データを探す
+        // <feed>の外や中にあるコメントを抽出
+        const structureMatch = xmlContent.match(/<!--\s*GFM_STRUCTURE_DATA\s*([\s\S]*?)\s*-->/);
+        if (structureMatch && structureMatch[1]) {
+            try {
+                // XMLエスケープされた「--&gt;」を元に戻す（必要に応じて他のエスケープも復元）
+                const jsonStr = structureMatch[1].replace(/--&gt;/g, '-->');
+                importedStructure = JSON.parse(jsonStr);
+                console.log("XMLコメントから構造データを検出・解析しました。", importedStructure);
+            } catch (e) {
+                console.warn("構造データの解析に失敗しました:", e);
+            }
+        }
+
+        // 次に通常のフィルタエントリを処理
+        const entries = xmlDoc.querySelectorAll('entry');
+        console.log(`${entries.length}個のエントリを検出しました`);
+
         entries.forEach((entry, entryIndex) => {
-            // ★ 特殊構造データのチェック
-            const category = entry.querySelector('category');
-            if (category && category.getAttribute('term') === 'filter-manager-structure') {
-                const content = entry.querySelector('content');
-                if (content) {
-                    try {
-                        // XMLアンエスケープしてからJSONパース
-                        const jsonStr = unescapeXml(content.textContent);
-                        importedStructure = JSON.parse(jsonStr);
-                        console.log("フォルダ構造データを検出・解析しました。", importedStructure);
-                    } catch (e) {
-                        console.warn("フォルダ構造データの解析に失敗しました:", e);
-                    }
-                }
-                return; // これはフィルタではないので処理終了
+            // 旧方式（<entry>タグに埋め込んだもの）への対応（念のため残す場合）
+            const titleElement = entry.querySelector('title');
+            if (titleElement && titleElement.textContent === 'GFM_STRUCTURE_DATA') {
+                 // コメント方式で見つかっていない場合のみ採用
+                 if (!importedStructure) {
+                     const content = entry.querySelector('content');
+                     if (content) {
+                         try {
+                             importedStructure = JSON.parse(unescapeXml(content.textContent));
+                         } catch(e) {}
+                     }
+                 }
+                 return; // フィルタではないのでスキップ
             }
 
             // 通常のフィルタ処理
-            console.log(`フィルタエントリ #${entryIndex + 1} の処理を開始`);
             const filter = createNewFilterData();
-            
-            // 一時的なランダムIDを付与（衝突回避のため）
-            // ※後で構造データのIDマップを使って整合性をとる
             filter.id = Date.now().toString() + "_" + entryIndex + "_" + Math.random().toString(36).substring(2, 10);
 
             extractFilterName(entry, filter);
