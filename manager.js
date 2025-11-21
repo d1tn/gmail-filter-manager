@@ -2912,33 +2912,35 @@ function exportFilters(mode = 'all') {
     if (mode === 'current' && currentFilterIndex === -1) {
         console.warn("No filter selected to export.");
         alert("エクスポートするフィルタが選択されていません。");
-        return; // 選択されているフィルタがない場合は何もしない
+        return;
     }
 
-    // エクスポート対象のフィルタ配列を取得
     let filtersToExport;
+    let nodesToExport; // ★ 追加: 構造データ
     let fileNamePrefix = 'gmailfilter';
 
     if (mode === 'current') {
-        // 表示中のフィルタのみを対象にする
         const currentFilter = filters[currentFilterIndex];
         filtersToExport = [currentFilter];
+        
+        // 単体エクスポートの場合は構造を含めず、単一ノードとして扱う（もしくはnull）
+        // ここではシンプルに「単体フィルタ」として構造を作る
+        nodesToExport = [{ type: 'filter', id: currentFilter.id }];
 
-        // ファイル名にフィルタ名を含める（特殊文字を置換）
         const safeFilterName = currentFilter.name
             ? currentFilter.name.replace(/[\\\/\:\*\?\"\<\>\|]/g, '_').substring(0, 30)
             : "unnamed";
         fileNamePrefix = `gmailfilter_${safeFilterName}`;
     } else {
-        // すべてのフィルタを対象にする
+        // すべてのフィルタと、現在の全フォルダ構造を対象にする
         filtersToExport = filters;
+        nodesToExport = buildStoredNodesFromRuntimeNodes(); // ★ 現在の構造を取得
         fileNamePrefix = 'gmailfilter_all';
     }
 
-    // XMLデータを生成
-    const xmlContent = generateGmailFilterXML(filtersToExport);
+    // XMLデータを生成 (引数に nodesToExport を追加)
+    const xmlContent = generateGmailFilterXML(filtersToExport, nodesToExport);
 
-    // 現在の日時を取得してファイル名を生成
     const now = new Date();
     const dateStr = now.getFullYear() +
         ('0' + (now.getMonth() + 1)).slice(-2) +
@@ -2948,7 +2950,6 @@ function exportFilters(mode = 'all') {
         ('0' + now.getSeconds()).slice(-2);
     const fileName = `${fileNamePrefix}_${dateStr}_${timeStr}.xml`;
 
-    // XMLをダウンロード
     const blob = new Blob([xmlContent], { type: 'application/xml' });
     const url = URL.createObjectURL(blob);
 
@@ -2958,7 +2959,6 @@ function exportFilters(mode = 'all') {
     document.body.appendChild(a);
     a.click();
 
-    // クリーンアップ
     setTimeout(function () {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
@@ -2967,17 +2967,13 @@ function exportFilters(mode = 'all') {
     const filterCount = filtersToExport.length;
     console.log(`Exported ${filterCount} filter(s) successfully.`);
 
-    // エクスポート完了後にレビュー訴求モーダルを開く
     if (typeof window.showReviewRequestModal === 'function') {
         try {
             window.showReviewRequestModal();
         } catch (e) {
-            console.error('showReviewRequestModal 実行中にエラー:', e);
+            console.error('showReviewRequestModal error:', e);
         }
-    } else {
-        console.warn('showReviewRequestModal が定義されていません（review.js が読み込まれていない可能性）');
     }
-
 }
 // インポートダイアログを表示する関数
 function showImportDialog() {
@@ -3008,8 +3004,7 @@ function showImportDialog() {
 }
 
 // Gmail互換のXMLフィルタを生成する関数
-function generateGmailFilterXML(filtersArray) {
-    // XMLのヘッダー
+function generateGmailFilterXML(filtersArray, nodesStructure = null) {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:apps="http://schemas.google.com/apps/2006">\n';
     xml += '  <title>Mail Filters</title>\n';
@@ -3018,52 +3013,40 @@ function generateGmailFilterXML(filtersArray) {
     filtersArray.forEach(filter => {
         xml += '  <entry>\n';
         xml += '    <category term="filter"></category>\n';
-        xml += `    <title><!-- ${filter.name} --></title>\n`; // フィルタ名をXMLコメントとして埋め込み
+        
+        // フィルタIDをコメント内に区切り文字 || を使って埋め込む
+        // Gmailはこれを無視するが、本ツールへのインポート時に構造復元に使用する
+        const nameComment = `${filter.name || ''} || id:${filter.id}`;
+        xml += `    <title>${escapeXml(nameComment)}</title>\n`;
         xml += '    <content></content>\n';
 
         // フィルタ条件をXMLに変換
         const conditions = filter.conditions;
+        if (conditions.from && conditions.from.length > 0) xml += generateFromConditionXML(conditions.from);
+        if (conditions.to && conditions.to.length > 0) xml += generateToConditionXML(conditions.to);
+        if (conditions.subject && conditions.subject.length > 0) xml += generateSubjectConditionXML(conditions.subject);
+        if (conditions.includes && conditions.includes.length > 0) xml += generateHasTheWordConditionXML(conditions.includes);
+        if (conditions.excludes && conditions.excludes.length > 0) xml += generateDoesNotHaveTheWordConditionXML(conditions.excludes);
+        if (conditions.size && conditions.size.value !== null) xml += generateSizeConditionXML(conditions.size);
+        if (conditions.hasAttachment) xml += '    <apps:property name="hasAttachment" value="true"/>\n';
 
-        // From条件
-        if (conditions.from && conditions.from.length > 0) {
-            xml += generateFromConditionXML(conditions.from);
-        }
-
-        // To条件
-        if (conditions.to && conditions.to.length > 0) {
-            xml += generateToConditionXML(conditions.to);
-        }
-
-        // 件名条件
-        if (conditions.subject && conditions.subject.length > 0) {
-            xml += generateSubjectConditionXML(conditions.subject);
-        }
-
-        // メール内容に含むキーワード条件
-        if (conditions.includes && conditions.includes.length > 0) {
-            xml += generateHasTheWordConditionXML(conditions.includes);
-        }
-
-        // メール内容に含まないキーワード条件
-        if (conditions.excludes && conditions.excludes.length > 0) {
-            xml += generateDoesNotHaveTheWordConditionXML(conditions.excludes);
-        }
-
-        // サイズ条件
-        if (conditions.size && conditions.size.value !== null) {
-            xml += generateSizeConditionXML(conditions.size);
-        }
-
-        // 添付ファイルあり条件
-        if (conditions.hasAttachment) {
-            xml += '    <apps:property name="hasAttachment" value="true"/>\n';
-        }
-
-        // フィルタ処理アクションをXMLに変換
+        // フィルタ処理アクション
         xml += generateActionXML(filter.actions);
 
         xml += '  </entry>\n';
     });
+
+    // フォルダ構造情報がある場合、特殊なエントリとしてXML末尾に追加
+    if (nodesStructure) {
+        xml += '  <entry>\n';
+        xml += '    <category term="filter-manager-structure"></category>\n'; // 識別用カテゴリ
+        xml += '    <title>GFM_STRUCTURE_DATA</title>\n';
+        xml += '    <content>';
+        // JSONをXMLエスケープして埋め込む
+        xml += escapeXml(JSON.stringify(nodesStructure));
+        xml += '</content>\n';
+        xml += '  </entry>\n';
+    }
 
     xml += '</feed>';
     return xml;
@@ -3338,53 +3321,58 @@ function parseConditionString(conditionStr) {
 function importFiltersFromXML(xmlContent) {
     try {
         console.log("XMLのインポートを開始します");
-        // XMLパーサーを作成
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlContent, "application/xml");
 
-        // XMLパースエラーをチェック
         const parserError = xmlDoc.querySelector('parsererror');
         if (parserError) {
             throw new Error("XML解析エラー: " + parserError.textContent);
         }
 
-        // 全エントリを取得
         const entries = xmlDoc.querySelectorAll('entry');
-        console.log(`${entries.length}個のフィルタエントリを検出しました`);
+        console.log(`${entries.length}個のエントリを検出しました`);
 
         const importedFilters = [];
+        let importedStructure = null;
 
-        // 各エントリーを処理
         entries.forEach((entry, entryIndex) => {
+            // ★ 特殊構造データのチェック
+            const category = entry.querySelector('category');
+            if (category && category.getAttribute('term') === 'filter-manager-structure') {
+                const content = entry.querySelector('content');
+                if (content) {
+                    try {
+                        // XMLアンエスケープしてからJSONパース
+                        const jsonStr = unescapeXml(content.textContent);
+                        importedStructure = JSON.parse(jsonStr);
+                        console.log("フォルダ構造データを検出・解析しました。", importedStructure);
+                    } catch (e) {
+                        console.warn("フォルダ構造データの解析に失敗しました:", e);
+                    }
+                }
+                return; // これはフィルタではないので処理終了
+            }
+
+            // 通常のフィルタ処理
             console.log(`フィルタエントリ #${entryIndex + 1} の処理を開始`);
-
-            // 新しいフィルタオブジェクトを作成
             const filter = createNewFilterData();
+            
+            // 一時的なランダムIDを付与（衝突回避のため）
+            // ※後で構造データのIDマップを使って整合性をとる
+            filter.id = Date.now().toString() + "_" + entryIndex + "_" + Math.random().toString(36).substring(2, 10);
 
-            // 一意性を保証するため、現在時刻 + インデックス + ランダム文字列を使用
-            filter.id = Date.now().toString() + "_" + entryIndex + "_" +
-                Math.random().toString(36).substring(2, 10);
-
-            console.log(`フィルタに一意のID "${filter.id}" を割り当てました`);
-
-            // フィルタ名を取得
             extractFilterName(entry, filter);
-
-            // 各プロパティを取得
+            
             const properties = getPropertiesFromEntry(entry);
-            console.log(`${properties.length}個のプロパティを検出しました`);
-
-            // 各プロパティを処理
             properties.forEach(property => {
                 processPropertyForImport(property, filter);
             });
 
-            console.log("インポートされたフィルタデータ:", JSON.stringify(filter, null, 2));
             importedFilters.push(filter);
         });
 
-        // インポートされたフィルタの処理
-        handleImportedFilters(importedFilters);
+        // インポートされたフィルタと構造データをハンドラに渡す
+        handleImportedFilters(importedFilters, importedStructure);
 
         return importedFilters.length;
     } catch (error) {
@@ -3394,19 +3382,172 @@ function importFiltersFromXML(xmlContent) {
     }
 }
 
-// XMLエントリからフィルタ名を抽出する関数
+/**
+ * インポートされたフィルタと構造データの処理
+ * @param {Array} importedFilters 
+ * @param {Array|null} importedStructure - XMLから抽出した構造データ(nodes)
+ */
+function handleImportedFilters(importedFilters, importedStructure) {
+    if (!importedFilters || importedFilters.length === 0) {
+        alert("有効なフィルタが見つかりませんでした。");
+        return;
+    }
+
+    // 構造データの有無でメッセージを変える
+    const structureMsg = importedStructure 
+        ? "（フォルダ構造を含みます）" 
+        : "（フォルダ構造なし・フラット）";
+
+    const confirmMsg = `${importedFilters.length}個のフィルタを読み込みました${structureMsg}。\n\n` +
+        `[OK] = 既存の設定と「統合」する（重複回避のためIDは再生成されます）\n` +
+        `[キャンセル] = 既存の設定をすべて「置き換える」`;
+
+    const isMerge = confirm(confirmMsg);
+
+    // IDマッピングの作成 (OldID -> NewRuntimeID)
+    // フィルタの実体(importedFilters)は、importFiltersFromXML内で既に新しいランダムIDが付与されているが、
+    // 構造データ(importedStructure)内のIDは古いままなので、ここで紐付けを行う必要がある。
+    const idMap = new Map();
+    importedFilters.forEach(f => {
+        // _importOldId は extractFilterName で一時的に付与されたプロパティ
+        if (f._importOldId) {
+            idMap.set(f._importOldId, f.id);
+            // 用済みなので消す（保存データに残さないため）
+            delete f._importOldId; 
+        }
+    });
+
+    /**
+     * 構造データのIDを新しいIDに置換する再帰関数
+     * @param {StoredNode[]} structNodes
+     * @returns {StoredNode[]}
+     */
+    function mapStructureIds(structNodes) {
+        if (!Array.isArray(structNodes)) return [];
+        const mapped = [];
+        
+        structNodes.forEach(node => {
+            if (node.type === 'filter') {
+                // マップに新しいIDがあれば採用（XML内のフィルタと紐付いた）
+                const newId = idMap.get(node.id);
+                if (newId) {
+                    mapped.push({ type: 'filter', id: newId });
+                } else {
+                    // 構造データにはあるが、フィルタ実体が見つからない場合はスキップ（または孤立ノードとして扱う）
+                    // ここではスキップとする
+                }
+            } else if (node.type === 'folder') {
+                // ★ フォルダIDも一新する（マージ時のID衝突回避のため）
+                const newFolderId = 'folder_' + Date.now().toString() + '_' + Math.random().toString(36).substring(2, 8);
+                
+                mapped.push({
+                    type: 'folder',
+                    id: newFolderId,
+                    name: node.name,
+                    collapsed: !!node.collapsed,
+                    children: mapStructureIds(node.children) // 再帰
+                });
+            }
+        });
+        return mapped;
+    }
+
+    // 構造データを復元（ID置換済み）
+    let newNodesStructure = [];
+    if (importedStructure) {
+        newNodesStructure = mapStructureIds(importedStructure);
+    } else {
+        // 構造がない場合（他ツールからのXMLなど）、インポートされた全フィルタをフラットに並べる
+        newNodesStructure = importedFilters.map(f => ({ type: 'filter', id: f.id }));
+    }
+
+    if (isMerge) {
+        // --- [統合モード] ---
+        console.log("Merging imported filters...");
+        
+        // 1. フィルタ配列の結合
+        filters = filters.concat(importedFilters);
+
+        // 2. nodes配列の結合
+        // 現在の実行時nodesに加え、インポートされた構造を追加する
+        const importedRuntimeNodes = buildRuntimeNodesFromStored(newNodesStructure, importedFilters);
+        if (!Array.isArray(nodes)) nodes = [];
+        nodes = nodes.concat(importedRuntimeNodes);
+
+    } else {
+        // --- [置換モード] ---
+        console.log("Replacing all filters...");
+        
+        filters = importedFilters;
+        // 構造データからランタイムnodesを完全新規構築
+        nodes = buildRuntimeNodesFromStored(newNodesStructure, filters);
+    }
+
+    // 整合性チェック: filtersにあるがnodesに漏れているものを救済して末尾に追加
+    syncNodesFromFilters();
+
+    // UI更新
+    renderFilterList();
+    saveFiltersToStorage();
+
+    // 完了後の選択
+    if (filters.length > 0) {
+        // 新しく追加された（または置換された）最初のフィルタを選択すると親切
+        const firstNewFilter = importedFilters[0];
+        if (firstNewFilter) {
+            selectFilterById(firstNewFilter.id);
+        } else {
+            selectFilter(0);
+        }
+    } else {
+        currentFilterIndex = -1;
+        displayFilterDetails(null);
+    }
+
+    console.log(`${importedFilters.length}個のフィルタをインポート完了 (構造維持: ${!!importedStructure})`);
+    alert(`${importedFilters.length}個のフィルタをインポートしました。🥺👍`);
+}
+
+// XMLエントリからフィルタ名とIDを抽出する関数
 function extractFilterName(entry, filter) {
     const titleElement = entry.querySelector('title');
     if (titleElement) {
-        const titleContent = titleElement.innerHTML || '';
-        const nameMatch = titleContent.match(/<!--\s*(.*?)\s*-->/);
-        if (nameMatch && nameMatch[1]) {
-            filter.name = unescapeXml(nameMatch[1].trim());
-            console.log(`フィルタ名を検出: "${filter.name}"`);
+        // 1. まず通常のテキストコンテンツを取得
+        let rawTitle = titleElement.textContent || '';
+
+        // 2. テキストが空の場合、コメントノード（）の中身を探す（旧規格対応）
+        if (!rawTitle.trim()) {
+            for (let i = 0; i < titleElement.childNodes.length; i++) {
+                if (titleElement.childNodes[i].nodeType === 8) { // 8 = Node.COMMENT_NODE
+                    rawTitle = titleElement.childNodes[i].data;
+                    break;
+                }
+            }
         }
+
+        // 3. 正規表現で「名前」と「ID」を分離する（新規格対応）
+        // パターン: 任意の文字列 + " || id:" + 任意のID文字列
+        const match = rawTitle.match(/^(.*?)\s*\|\|\s*id:(.*)$/);
+
+        if (match) {
+            // 新規格フィルタ用: "名前 || id:xxx" の形式
+            filter.name = match[1].trim();
+            const idPart = match[2].trim();
+            if (idPart) {
+                filter._importOldId = idPart;
+            }
+        } else {
+            // 旧規格フィルタ用: 区切り文字がない場合
+            const cleanName = rawTitle.trim();
+            // "Mail Filter" はGmailのデフォルト名なので無視する
+            if (cleanName && cleanName !== 'Mail Filter') {
+                filter.name = cleanName;
+            }
+        }
+        
+        console.log(`フィルタ情報を検出: Name="${filter.name}", OldID="${filter._importOldId || 'none'}"`);
     }
 }
-
 // XMLエントリからプロパティ要素を取得する関数
 function getPropertiesFromEntry(entry) {
     // 複数の方法でプロパティ要素を取得（互換性対応）
@@ -3422,7 +3563,7 @@ function getPropertiesFromEntry(entry) {
     return properties;
 }
 
-// プロパティ要素を処理する関数
+// プロパティ要素を処理する関数（アクション対応版）
 function processPropertyForImport(property, filter) {
     const name = property.getAttribute('name');
     let value = property.getAttribute('value');
@@ -3430,96 +3571,81 @@ function processPropertyForImport(property, filter) {
     // XMLエスケープ文字列をデコード
     value = unescapeXml(value);
 
-    console.log(`プロパティ: ${name} = ${value}`);
+    // console.log(`プロパティ: ${name} = ${value}`);
 
     try {
         switch (name) {
-            // 条件プロパティの処理
+            // --- 条件プロパティ ---
             case 'from':
                 filter.conditions.from = parseConditionString(value);
-                console.log(`From条件を設定: `, filter.conditions.from);
                 break;
             case 'to':
                 filter.conditions.to = parseConditionString(value);
-                console.log(`To条件を設定: `, filter.conditions.to);
                 break;
             case 'subject':
                 filter.conditions.subject = parseConditionString(value);
-                console.log(`Subject条件を設定: `, filter.conditions.subject);
                 break;
             case 'hasTheWord':
                 filter.conditions.includes = parseConditionString(value);
-                console.log(`Contains条件を設定: `, filter.conditions.includes);
                 break;
             case 'doesNotHaveTheWord':
                 filter.conditions.excludes = parseConditionString(value);
-                console.log(`Excludes条件を設定: `, filter.conditions.excludes);
                 break;
-            // その他のプロパティ処理...（省略）
+            case 'size':
+                // サイズ条件は別途処理が必要だが、簡易的に数値だけ入れる（演算子等はデフォルト）
+                filter.conditions.size.value = parseInt(value, 10);
+                break;
+            case 'sizeOperator':
+                 if (value === 's_sl') filter.conditions.size.operator = 'larger_than';
+                 if (value === 's_ss') filter.conditions.size.operator = 'smaller_than';
+                 break;
+            case 'sizeUnit':
+                 filter.conditions.size.unit = value;
+                 break;
+            case 'hasAttachment':
+                filter.conditions.hasAttachment = (value === 'true');
+                break;
+
+            // --- 処理（アクション）プロパティ ---
             case 'label':
                 filter.actions.applyLabel.enabled = true;
                 filter.actions.applyLabel.labelName = value;
-                console.log(`Label処理を設定: enabled=${filter.actions.applyLabel.enabled}, name=${filter.actions.applyLabel.labelName}`);
                 break;
             case 'forwardTo':
                 filter.actions.forward.enabled = true;
                 filter.actions.forward.forwardAddress = value;
-                console.log(`Forward処理を設定: enabled=${filter.actions.forward.enabled}, address=${filter.actions.forward.forwardAddress}`);
                 break;
-            // その他のプロパティ処理（省略）
+            case 'shouldArchive':
+                filter.actions.skipInbox = (value === 'true');
+                break;
+            case 'shouldMarkAsRead':
+                filter.actions.markAsRead = (value === 'true');
+                break;
+            case 'shouldStar':
+                filter.actions.star = (value === 'true');
+                break;
+            case 'shouldTrash':
+                filter.actions.delete = (value === 'true');
+                break;
+            case 'shouldNeverSpam':
+                filter.actions.notSpam = (value === 'true');
+                break;
+            case 'shouldAlwaysMarkAsImportant':
+                filter.actions.alwaysImportant = (value === 'true');
+                break;
+            case 'shouldNeverMarkAsImportant':
+                filter.actions.neverImportant = (value === 'true');
+                break;
+            case 'smartLabelToApply':
+                filter.actions.applyCategory.enabled = true;
+                filter.actions.applyCategory.category = value;
+                break;
+
             default:
-                console.log(`未処理のプロパティ: ${name} = ${value}`);
+                // console.log(`未処理のプロパティ: ${name} = ${value}`);
+                break;
         }
     } catch (error) {
         console.error(`プロパティ ${name} の処理中にエラー: ${error.message}`, error);
     }
-}
-
-// インポートされたフィルタの処理
-function handleImportedFilters(importedFilters) {
-    // 既存のフィルタと結合するか、置き換えるか確認
-    if (filters.length > 0 && importedFilters.length > 0) {
-        if (confirm(`${importedFilters.length}個のフィルタを読み込みました。既存の${filters.length}個のフィルタと統合しますか？「キャンセル」を選択すると、既存のフィルタを全て置き換えます。`)) {
-            // 統合する場合
-            const currentIds = new Set(filters.map(f => f.id));
-
-            // 既存のIDと重複しないようにする
-            importedFilters.forEach(filter => {
-                // 既にIDが存在する場合は新しいIDを生成
-                if (currentIds.has(filter.id)) {
-                    const newId = Date.now().toString() + "_" +
-                        Math.random().toString(36).substring(2, 10);
-                    console.log(`ID重複を検出: "${filter.id}" → 新ID "${newId}"`);
-                    filter.id = newId;
-                }
-                currentIds.add(filter.id);
-            });
-
-            filters = filters.concat(importedFilters);
-        } else {
-            // 置き換える場合
-            filters = importedFilters;
-        }
-    } else {
-        // 既存のフィルタがない場合は置き換え
-        filters = importedFilters;
-    }
-
-    syncNodesFromFilters();
-
-    // フィルタ一覧を更新
-    renderFilterList();
-
-    // 変更を保存
-    saveFiltersToStorage();
-
-    // 最初のフィルタを選択
-    if (filters.length > 0) {
-        selectFilter(0);
-    } else {
-        currentFilterIndex = -1;
-        displayFilterDetails(null);
-    }
-
-    console.log(`${importedFilters.length}個のフィルタを正常にインポートしました`);
 }
