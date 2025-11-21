@@ -648,5 +648,33 @@
   },
   "reviewModalCtaClose": {
     "message": "閉じる"
+  },
+  "alertOfImportSuccess": {
+    "message": "$1個のフィルタを正常にインポートしました。",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "10"
+      }
+    }
+  },
+  "alertOfImportFileError": {
+    "message": "ファイルの読み込み中にエラーが発生しました。"
+  },
+  "alertImportNoValid": {
+    "message": "有効なフィルタが見つかりませんでした。"
+  },
+  "importMsgStructYes": {
+    "message": "（フォルダ構造を含みます）"
+  },
+  "importMsgStructNo": {
+    "message": "（フォルダ構造なし・フラット）"
+  },
+  "confirmImportMergeAction": {
+    "message": "$1個のフィルタを読み込みました$2。\n\n既存のフィルタ設定に統合しますか？それとも全て置き換えますか？\n\n[OK] = 既存の設定と「統合」する（重複回避のためIDは再生成されます）\n[キャンセル] = 既存の設定をすべて「置き換える」（元の設定は復元できません）",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
   }
 }

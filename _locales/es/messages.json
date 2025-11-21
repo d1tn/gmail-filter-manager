@@ -648,5 +648,33 @@
   },
   "reviewModalCtaClose": {
     "message": "Cerrar"
+  },
+  "alertOfImportSuccess": {
+    "message": "Se han importado correctamente $1 filtros. ",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "10"
+      }
+    }
+  },
+  "alertOfImportFileError": {
+    "message": "Ocurrió un error al leer el archivo."
+  },
+  "alertImportNoValid": {
+    "message": "No se encontraron filtros válidos."
+  },
+  "importMsgStructYes": {
+    "message": " (incluye estructura de carpetas)"
+  },
+  "importMsgStructNo": {
+    "message": " (sin estructura de carpetas / plano)"
+  },
+  "confirmImportMergeAction": {
+    "message": "Se han cargado $1 filtros$2.\n\n¿Desea fusionarlos con la configuración existente o reemplazarlo todo?\n\n[Aceptar] = Fusionar (los ID se regeneran)\n[Cancelar] = Reemplazar todo (No se puede restaurar la configuración original)",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
   }
 }

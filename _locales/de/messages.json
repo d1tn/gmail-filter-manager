@@ -648,5 +648,33 @@
   },
   "reviewModalCtaClose": {
     "message": "Schließen"
+  },
+  "alertOfImportSuccess": {
+    "message": "$1 Filter erfolgreich importiert. ",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "10"
+      }
+    }
+  },
+  "alertOfImportFileError": {
+    "message": "Beim Lesen der Datei ist ein Fehler aufgetreten."
+  },
+  "alertImportNoValid": {
+    "message": "Keine gültigen Filter gefunden."
+  },
+  "importMsgStructYes": {
+    "message": " (enthält Ordnerstruktur)"
+  },
+  "importMsgStructNo": {
+    "message": " (keine Ordnerstruktur / flach)"
+  },
+  "confirmImportMergeAction": {
+    "message": "$1 Filter geladen$2.\n\nMöchten Sie diese mit den bestehenden Einstellungen zusammenführen oder alles ersetzen?\n\n[OK] = Zusammenführen (IDs werden neu generiert)\n[Abbrechen] = Alles ersetzen (Kann nicht wiederhergestellt werden)",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
   }
 }

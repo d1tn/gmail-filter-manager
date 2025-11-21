@@ -648,5 +648,33 @@
   },
   "reviewModalCtaClose": {
     "message": "关闭"
+  },
+  "alertOfImportSuccess": {
+    "message": "成功导入 $1 个过滤器。",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "10"
+      }
+    }
+  },
+  "alertOfImportFileError": {
+    "message": "读取文件时发生错误。"
+  },
+  "alertImportNoValid": {
+    "message": "未找到有效的过滤器。"
+  },
+  "importMsgStructYes": {
+    "message": "（包含文件夹结构）"
+  },
+  "importMsgStructNo": {
+    "message": "（无文件夹结构/扁平）"
+  },
+  "confirmImportMergeAction": {
+    "message": "已加载 $1 个过滤器$2。\n\n您希望与现有设置合并，还是全部替换？\n\n[确定] = 合并（ID 将重新生成）\n[取消] = 全部替换（原有设置无法恢复）",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
   }
 }

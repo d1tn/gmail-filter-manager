@@ -3099,6 +3099,7 @@ function exportFilters(mode = 'all') {
         }
     }
 }
+
 // インポートダイアログを表示する関数
 function showImportDialog() {
     // ファイル選択ダイアログを表示
@@ -3113,13 +3114,19 @@ function showImportDialog() {
         const reader = new FileReader();
         reader.onload = function (e) {
             const xmlContent = e.target.result;
+            // 処理を実行し、件数を受け取る
             const count = importFiltersFromXML(xmlContent);
+            
+            // ★ 多言語対応版のアラート
             if (count > 0) {
-                alert(`${count}個のフィルタを正常にインポートしました。`);
+                // メッセージを取得（もし取得失敗したらデフォルトの日本語を表示）
+                const msg = chrome.i18n.getMessage('alertOfImportSuccess', [String(count)]) || `${count}個のフィルタを正常にインポートしました。`;
+                alert(msg);
             }
         };
         reader.onerror = function () {
-            alert("ファイルの読み込み中にエラーが発生しました。");
+            const errMsg = chrome.i18n.getMessage('alertOfImportFileError') || "ファイルの読み込み中にエラーが発生しました。";
+            alert(errMsg);
         };
         reader.readAsText(file);
     };
@@ -3473,15 +3480,14 @@ function importFiltersFromXML(xmlContent) {
             }
         }
 
+
         // 次に通常のフィルタエントリを処理
         const entries = xmlDoc.querySelectorAll('entry');
         console.log(`${entries.length}個のエントリを検出しました`);
 
         entries.forEach((entry, entryIndex) => {
-            // 旧方式（<entry>タグに埋め込んだもの）への対応（念のため残す場合）
             const titleElement = entry.querySelector('title');
             if (titleElement && titleElement.textContent === 'GFM_STRUCTURE_DATA') {
-                 // コメント方式で見つかっていない場合のみ採用
                  if (!importedStructure) {
                      const content = entry.querySelector('content');
                      if (content) {
@@ -3490,10 +3496,9 @@ function importFiltersFromXML(xmlContent) {
                          } catch(e) {}
                      }
                  }
-                 return; // フィルタではないのでスキップ
+                 return;
             }
 
-            // 通常のフィルタ処理
             const filter = createNewFilterData();
             filter.id = Date.now().toString() + "_" + entryIndex + "_" + Math.random().toString(36).substring(2, 10);
 
@@ -3513,7 +3518,9 @@ function importFiltersFromXML(xmlContent) {
         return importedFilters.length;
     } catch (error) {
         console.error("フィルタのインポート中にエラーが発生しました:", error);
-        alert("フィルタのインポート中にエラーが発生しました: " + error.message);
+        // エラーメッセージ (managerImportErrorキーを再利用)
+        const msg = chrome.i18n.getMessage('managerImportError', [error.message]) || ("フィルタのインポート中にエラーが発生しました: " + error.message);
+        alert(msg);
         return 0;
     }
 }
@@ -3525,55 +3532,43 @@ function importFiltersFromXML(xmlContent) {
  */
 function handleImportedFilters(importedFilters, importedStructure) {
     if (!importedFilters || importedFilters.length === 0) {
-        alert("有効なフィルタが見つかりませんでした。");
+        // 有効なフィルタなし
+        const msg = chrome.i18n.getMessage('alertImportNoValid') || "有効なフィルタが見つかりませんでした。";
+        alert(msg);
         return;
     }
 
-    // 構造データの有無でメッセージを変える
-    const structureMsg = importedStructure 
-        ? "（フォルダ構造を含みます）" 
-        : "（フォルダ構造なし・フラット）";
+    // 構造データの有無メッセージ
+    const structureMsgKey = importedStructure ? 'importMsgStructYes' : 'importMsgStructNo';
+    const structureMsgDefault = importedStructure ? "（フォルダ構造を含みます）" : "（フォルダ構造なし・フラット）";
+    const structureMsg = chrome.i18n.getMessage(structureMsgKey) || structureMsgDefault;
 
-    const confirmMsg = `${importedFilters.length}個のフィルタを読み込みました${structureMsg}。\n\n` +
-        `[OK] = 既存の設定と「統合」する（重複回避のためIDは再生成されます）\n` +
-        `[キャンセル] = 既存の設定をすべて「置き換える」`;
+    // 確認ダイアログ
+    const confirmMsg = chrome.i18n.getMessage('confirmImportMergeAction', [String(importedFilters.length), structureMsg]) 
+        || `${importedFilters.length}個のフィルタを読み込みました${structureMsg}。\n\n[OK] = 既存の設定と「統合」する\n[キャンセル] = 既存の設定をすべて「置き換える」`;
 
     const isMerge = confirm(confirmMsg);
 
-    // IDマッピングの作成 (OldID -> NewRuntimeID)
-    // フィルタの実体(importedFilters)は、importFiltersFromXML内で既に新しいランダムIDが付与されているが、
-    // 構造データ(importedStructure)内のIDは古いままなので、ここで紐付けを行う必要がある。
+    // IDマッピングの作成
     const idMap = new Map();
     importedFilters.forEach(f => {
-        // _importOldId は extractFilterName で一時的に付与されたプロパティ
         if (f._importOldId) {
             idMap.set(f._importOldId, f.id);
-            // 用済みなので消す（保存データに残さないため）
             delete f._importOldId; 
         }
     });
 
-    /**
-     * 構造データのIDを新しいIDに置換する再帰関数
-     * @param {StoredNode[]} structNodes
-     * @returns {StoredNode[]}
-     */
     function mapStructureIds(structNodes) {
         if (!Array.isArray(structNodes)) return [];
         const mapped = [];
         
         structNodes.forEach(node => {
             if (node.type === 'filter') {
-                // マップに新しいIDがあれば採用（XML内のフィルタと紐付いた）
                 const newId = idMap.get(node.id);
                 if (newId) {
                     mapped.push({ type: 'filter', id: newId });
-                } else {
-                    // 構造データにはあるが、フィルタ実体が見つからない場合はスキップ（または孤立ノードとして扱う）
-                    // ここではスキップとする
                 }
             } else if (node.type === 'folder') {
-                // ★ フォルダIDも一新する（マージ時のID衝突回避のため）
                 const newFolderId = 'folder_' + Date.now().toString() + '_' + Math.random().toString(36).substring(2, 8);
                 
                 mapped.push({
@@ -3581,54 +3576,37 @@ function handleImportedFilters(importedFilters, importedStructure) {
                     id: newFolderId,
                     name: node.name,
                     collapsed: !!node.collapsed,
-                    children: mapStructureIds(node.children) // 再帰
+                    children: mapStructureIds(node.children)
                 });
             }
         });
         return mapped;
     }
 
-    // 構造データを復元（ID置換済み）
     let newNodesStructure = [];
     if (importedStructure) {
         newNodesStructure = mapStructureIds(importedStructure);
     } else {
-        // 構造がない場合（他ツールからのXMLなど）、インポートされた全フィルタをフラットに並べる
         newNodesStructure = importedFilters.map(f => ({ type: 'filter', id: f.id }));
     }
 
     if (isMerge) {
-        // --- [統合モード] ---
         console.log("Merging imported filters...");
-        
-        // 1. フィルタ配列の結合
         filters = filters.concat(importedFilters);
-
-        // 2. nodes配列の結合
-        // 現在の実行時nodesに加え、インポートされた構造を追加する
         const importedRuntimeNodes = buildRuntimeNodesFromStored(newNodesStructure, importedFilters);
         if (!Array.isArray(nodes)) nodes = [];
         nodes = nodes.concat(importedRuntimeNodes);
-
     } else {
-        // --- [置換モード] ---
         console.log("Replacing all filters...");
-        
         filters = importedFilters;
-        // 構造データからランタイムnodesを完全新規構築
         nodes = buildRuntimeNodesFromStored(newNodesStructure, filters);
     }
 
-    // 整合性チェック: filtersにあるがnodesに漏れているものを救済して末尾に追加
     syncNodesFromFilters();
-
-    // UI更新
     renderFilterList();
     saveFiltersToStorage();
 
-    // 完了後の選択
     if (filters.length > 0) {
-        // 新しく追加された（または置換された）最初のフィルタを選択すると親切
         const firstNewFilter = importedFilters[0];
         if (firstNewFilter) {
             selectFilterById(firstNewFilter.id);
@@ -3642,7 +3620,6 @@ function handleImportedFilters(importedFilters, importedStructure) {
 
     console.log(`${importedFilters.length}個のフィルタをインポート完了 (構造維持: ${!!importedStructure})`);
 }
-
 // XMLエントリからフィルタ名とIDを抽出する関数
 function extractFilterName(entry, filter) {
     const titleElement = entry.querySelector('title');

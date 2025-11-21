@@ -648,5 +648,33 @@
   },
   "reviewModalCtaClose": {
     "message": "Закрыть"
+  },
+  "alertOfImportSuccess": {
+    "message": "Успешно импортировано фильтров: $1. ",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "10"
+      }
+    }
+  },
+  "alertOfImportFileError": {
+    "message": "Произошла ошибка при чтении файла."
+  },
+  "alertImportNoValid": {
+    "message": "Действительные фильтры не найдены."
+  },
+  "importMsgStructYes": {
+    "message": " (включая структуру папок)"
+  },
+  "importMsgStructNo": {
+    "message": " (без структуры папок)"
+  },
+  "confirmImportMergeAction": {
+    "message": "Загружено фильтров: $1$2.\n\nВы хотите объединить их с текущими настройками или заменить всё?\n\n[OK] = Объединить (ID будут пересозданы)\n[Отмена] = Заменить всё (Исходные настройки восстановить нельзя)",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
   }
 }

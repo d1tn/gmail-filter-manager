@@ -648,5 +648,33 @@
   },
   "reviewModalCtaClose": {
     "message": "Fermer"
+  },
+  "alertOfImportSuccess": {
+    "message": "$1 filtres ont été importés avec succès. ",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "10"
+      }
+    }
+  },
+  "alertOfImportFileError": {
+    "message": "Une erreur est survenue lors de la lecture du fichier."
+  },
+  "alertImportNoValid": {
+    "message": "Aucun filtre valide trouvé."
+  },
+  "importMsgStructYes": {
+    "message": " (inclut la structure des dossiers)"
+  },
+  "importMsgStructNo": {
+    "message": " (sans structure de dossiers / plat)"
+  },
+  "confirmImportMergeAction": {
+    "message": "$1 filtres chargés$2.\n\nSouhaitez-vous fusionner avec les paramètres existants ou tout remplacer ?\n\n[OK] = Fusionner (les ID sont régénérés)\n[Annuler] = Tout remplacer (Impossible de restaurer les paramètres d'origine)",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
   }
 }
