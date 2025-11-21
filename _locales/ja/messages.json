@@ -67,6 +67,22 @@
     "message": "無題のフォルダ",
     "sourcefile": "manager.js"
   },
+  "managerFolderEditorTitle": {
+    "message": "フォルダ設定",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderNamePlaceholder": {
+    "message": "フォルダ名を入力",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderEditorHint": {
+    "message": "フォルダはGmailのフィルタ構造には影響せず、この拡張機能内だけでフィルタを整理するために使われます。",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderDeleteButton": {
+    "message": "このフォルダを削除",
+    "sourcefile": "manager.html"
+  },
   "managerSupportTitle": {
     "message": "開発支援",
     "sourcefile": "manager.html"

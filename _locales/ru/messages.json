@@ -67,6 +67,22 @@
     "message": "Папка без имени",
     "sourcefile": "manager.js"
   },
+  "managerFolderEditorTitle": {
+    "message": "Настройки папки",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderNamePlaceholder": {
+    "message": "Введите имя папки",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderEditorHint": {
+    "message": "Папки не влияют на структуру фильтров Gmail; они используются только для организации фильтров внутри этого расширения.",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderDeleteButton": {
+    "message": "Удалить эту папку",
+    "sourcefile": "manager.html"
+  },
   "managerSupportTitle": {
     "message": "Поддержать разработку",
     "sourcefile": "manager.html"

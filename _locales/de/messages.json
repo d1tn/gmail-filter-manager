@@ -67,6 +67,22 @@
     "message": "Unbenannter Ordner",
     "sourcefile": "manager.js"
   },
+  "managerFolderEditorTitle": {
+    "message": "Ordner-Einstellungen",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderNamePlaceholder": {
+    "message": "Ordnernamen eingeben",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderEditorHint": {
+    "message": "Ordner haben keinen Einfluss auf die Filterstruktur von Gmail; sie dienen nur der Organisation von Filtern innerhalb dieser Erweiterung.",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderDeleteButton": {
+    "message": "Diesen Ordner löschen",
+    "sourcefile": "manager.html"
+  },
   "managerSupportTitle": {
     "message": "Entwicklung unterstützen",
     "sourcefile": "manager.html"

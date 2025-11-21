@@ -67,6 +67,22 @@
     "message": "Untitled folder",
     "sourcefile": "manager.js"
   },
+  "managerFolderEditorTitle": {
+    "message": "Folder Settings",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderNamePlaceholder": {
+    "message": "Enter folder name",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderEditorHint": {
+    "message": "Folders do not affect Gmail's filter structure; they are used only to organize filters within this extension.",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderDeleteButton": {
+    "message": "Delete this folder",
+    "sourcefile": "manager.html"
+  },
   "managerSupportTitle": {
     "message": "Support Development",
     "sourcefile": "manager.html"

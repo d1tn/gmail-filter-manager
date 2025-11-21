@@ -67,6 +67,22 @@
     "message": "Dossier sans nom",
     "sourcefile": "manager.js"
   },
+  "managerFolderEditorTitle": {
+    "message": "Paramètres du dossier",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderNamePlaceholder": {
+    "message": "Saisir le nom du dossier",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderEditorHint": {
+    "message": "Les dossiers n'affectent pas la structure des filtres Gmail ; ils servent uniquement à organiser les filtres dans cette extension.",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderDeleteButton": {
+    "message": "Supprimer ce dossier",
+    "sourcefile": "manager.html"
+  },
   "managerSupportTitle": {
     "message": "Soutenir le développement",
     "sourcefile": "manager.html"

@@ -67,6 +67,22 @@
     "message": "未命名文件夹",
     "sourcefile": "manager.js"
   },
+  "managerFolderEditorTitle": {
+    "message": "文件夹设置",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderNamePlaceholder": {
+    "message": "输入文件夹名称",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderEditorHint": {
+    "message": "文件夹不影响 Gmail 的过滤器结构，仅用于在此扩展中整理过滤器。",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderDeleteButton": {
+    "message": "删除此文件夹",
+    "sourcefile": "manager.html"
+  },
   "managerSupportTitle": {
     "message": "支持开发",
     "sourcefile": "manager.html"

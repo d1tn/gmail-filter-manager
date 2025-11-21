@@ -67,6 +67,22 @@
     "message": "Carpeta sin nombre",
     "sourcefile": "manager.js"
   },
+  "managerFolderEditorTitle": {
+    "message": "Configuración de la carpeta",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderNamePlaceholder": {
+    "message": "Ingresar nombre de la carpeta",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderEditorHint": {
+    "message": "Las carpetas no afectan la estructura de filtros de Gmail; solo se usan para organizar filtros dentro de esta extensión.",
+    "sourcefile": "manager.html"
+  },
+  "managerFolderDeleteButton": {
+    "message": "Eliminar esta carpeta",
+    "sourcefile": "manager.html"
+  },
   "managerSupportTitle": {
     "message": "Apoyar el desarrollo",
     "sourcefile": "manager.html"

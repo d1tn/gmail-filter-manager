@@ -289,21 +289,27 @@
         </article>
         <!-- フォルダ用エディタ -->
         <article id="folder-editor" class="filter-setting-section" style="display: none;">
-            <section class="folder-name">
+            <section class="folder-settings">
                 <h2 data-i18n-text="managerFolderEditorTitle">フォルダ設定</h2>
-                <input
-                    type="text"
-                    id="folder-name-input"
-                    class="app-form-input folder-name"
-                    data-i18n-placeholder="managerFolderNamePlaceholder"
-                    placeholder="フォルダ名を入力">
             </section>
-
             <section class="folder-description">
                 <p class="info-text" data-i18n-text="managerFolderEditorHint">
                     フォルダはGmailのフィルタ構造には影響せず、この拡張機能内だけでフィルタを整理するために使われます。
                 </p>
             </section>
+            <section class="folder-name">
+                    <div class="condition-input-area">
+                        <div class="input-and-button-container">
+                            <input
+                            type="text"
+                            id="folder-name-input"
+                            class="app-form-input folder-name"
+                            data-i18n-placeholder="managerFolderNamePlaceholder"
+                            placeholder="フォルダ名を入力">                        
+                        </div>
+                    </div>
+            </section>
+
             <section class="filter-actions-section">
                 <button id="delete-this-folder" class="action danger" data-i18n-text="managerFolderDeleteButton">
                     このフォルダを削除
