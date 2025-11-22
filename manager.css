@@ -516,7 +516,7 @@ input {
                     .drag-handle {
                         position: absolute;
                         font-size: 1.1rem;
-                        top: 50%;
+                        top: 1.25rem;
                         text-align: center;
                         width: 2.5rem;
                         height: 2.5rem;
