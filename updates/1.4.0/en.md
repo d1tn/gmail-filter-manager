@@ -1,0 +1,11 @@
+2025.11.22
+- Added a folder management feature. Please make use of this when you have a large number of filters.
+    - Folders can be created simply by clicking the folder icon in the left menu.
+    - You can move filters into folders by dragging and dropping them.
+    - Folders do not affect the Gmail filter structure; they are used solely for organization within this extension.
+    - Please note that a paid subscription is required to create 11 or more folders. We appreciate your understanding to help maintain the development.
+    - Rest assured, you can still create an unlimited number of filters for free.
+- Added a version update notification feature.
+    - Update details will now automatically display upon launching the extension after an update.
+    - Clicking the close button will hide the notification until the next version.
+    - You can manually view this update history by clicking the version number in the header.

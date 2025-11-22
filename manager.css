@@ -515,15 +515,22 @@ input {
                     /* ドラッグハンドル */
                     .drag-handle {
                         position: absolute;
-                        right: 1.2rem;
                         font-size: 1.1rem;
-                        top: 1.1rem;
+                        top: 50%;
+                        text-align: center;
+                        width: 2.5rem;
+                        height: 2.5rem;
+                        line-height: 2.1rem;
+                        right: 0rem;
                         transform: translateY(-50%);
                         cursor: grab;
                         color: #666;
-                        z-index: 10;
                         user-select: none;
-
+                        z-index: 10;
+                        border-radius: 5.0rem;
+                        &:hover {
+                            background-color: #EEE;
+                        }
                         &:active {
                             cursor: grabbing;
                         }

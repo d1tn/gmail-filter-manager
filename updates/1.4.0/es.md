@@ -1,0 +1,11 @@
+2025.11.22
+- Se ha añadido la función de gestión de carpetas. Utilícela cuando tenga muchos filtros.
+    - Puede crear carpetas simplemente haciendo clic en el icono de carpeta del menú izquierdo.
+    - Puede mover los filtros a las carpetas arrastrándolos y soltándolos.
+    - Las carpetas no afectan a la estructura de filtros de Gmail, solo se utilizan para organizar los filtros dentro de esta extensión.
+    - Tenga en cuenta que se requiere una suscripción de pago para crear 11 o más carpetas. Agradecemos su comprensión para ayudar a mantener el desarrollo.
+    - No se preocupe, puede seguir creando un número ilimitado de filtros de forma gratuita.
+- Se ha añadido una función de notificación de actualización de versión.
+    - El contenido de la actualización se mostrará automáticamente al iniciar la extensión tras una actualización.
+    - Al pulsar el botón de cerrar, no se volverá a mostrar hasta la próxima versión.
+    - Puede ver este historial de actualizaciones manualmente haciendo clic en el número de versión en el encabezado.

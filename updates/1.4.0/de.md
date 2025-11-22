@@ -1,0 +1,11 @@
+2025.11.22
+- Ordnerverwaltungsfunktion hinzugefügt. Bitte nutzen Sie diese, wenn Sie viele Filter haben.
+    - Ordner können einfach durch Klicken auf das Ordner-Symbol im linken Menü erstellt werden.
+    - Sie können Filter per Drag & Drop in Ordner verschieben.
+    - Ordner haben keinen Einfluss auf die Filterstruktur von Gmail; sie dienen nur der Organisation innerhalb dieser Erweiterung.
+    - Bitte beachten Sie, dass für das Erstellen von 11 oder mehr Ordnern ein kostenpflichtiges Abonnement erforderlich ist. Wir bitten um Ihr Verständnis, um die Entwicklung aufrechterhalten zu können.
+    - Seien Sie versichert, dass Sie weiterhin eine unbegrenzte Anzahl von Filtern erstellen können.
+- Funktion zur Benachrichtigung über Versionsaktualisierungen hinzugefügt.
+    - Der Aktualisierungsinhalt wird nun beim Start der Erweiterung nach einem Update automatisch angezeigt.
+    - Durch Klicken auf die Schaltfläche „Schließen“ wird die Meldung bis zur nächsten Version ausgeblendet.
+    - Dieser Update-Verlauf kann manuell durch Klicken auf die Versionsnummer in der Kopfzeile angezeigt werden.

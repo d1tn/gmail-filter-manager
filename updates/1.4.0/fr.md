@@ -1,0 +1,11 @@
+2025.11.22
+- Ajout d'une fonction de gestion des dossiers. À utiliser lorsque vous avez de nombreux filtres.
+    - Les dossiers peuvent être créés simplement en cliquant sur l'icône de dossier dans le menu de gauche.
+    - Vous pouvez déplacer les filtres dans les dossiers par glisser-déposer.
+    - Les dossiers n'affectent pas la structure des filtres de Gmail ; ils servent uniquement à l'organisation au sein de cette extension.
+    - Veuillez noter qu'un abonnement payant est requis pour créer 11 dossiers ou plus. Nous vous remercions de votre compréhension pour soutenir le développement.
+    - Rassurez-vous, vous pouvez toujours créer un nombre illimité de filtres.
+- Ajout d'une fonction de notification de mise à jour de version.
+    - Le contenu de la mise à jour s'affichera désormais automatiquement au lancement de l'extension après une mise à jour.
+    - En cliquant sur le bouton « Fermer », la notification ne s'affichera plus jusqu'à la prochaine version.
+    - Vous pouvez afficher cet historique de mise à jour manuellement en cliquant sur le numéro de version dans l'en-tête.
