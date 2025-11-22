@@ -1131,7 +1131,7 @@ input:checked+.slider:before {
     border-bottom: 2px solid #eee;
 
 
-    /* "🎉 新バージョン" ラベル */
+    /* "新バージョン" ラベル */
     .release-label {
         color: #2980b9;
         margin-bottom: 0.5rem;

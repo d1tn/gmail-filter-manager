@@ -677,5 +677,20 @@
         "content": "$2"
       }
     }
+  },
+  "updateModalNewVersionTitle": {
+    "message": "新版本"
+  },
+  "updateModalHistoryTitle": {
+    "message": "更新历史"
+  },
+  "updateModalGeneralTitle": {
+    "message": "更新信息"
+  },
+  "updateModalNoContentAlert": {
+    "message": "没有可显示的更新历史。"
+  },
+  "headerVersionTooltip": {
+    "message": "点击查看更新历史"
   }
 }

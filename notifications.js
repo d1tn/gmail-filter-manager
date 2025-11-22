@@ -84,13 +84,15 @@ function parseMdContent(version, mdText, isLatest) {
         }).join('');
     }
 
+    const newVersionTitle = "🎉 " + chrome.i18n.getMessage('updateModalNewVersionTitle') || "新バージョン";
+
     const bodyHtml = listItemsHtml ? `<ul>${listItemsHtml}</ul>` : "";
 
     let html = "";
     if (isLatest) {
         html = `
             <div class="release-latest">
-                <h1 class="release-label">🎉 新バージョン</h1>
+                <h1 class="release-label">${newVersionTitle}</h1>
                 <h2>
                     ${dateStr} <span class="version-badge release-meta">v${version}</span>
                 </h2>
@@ -139,10 +141,12 @@ async function fetchVersionFile(version) {
 function showInfoModal(htmlContent, onClose = null) {
     const modal = document.getElementById('info-modal');
     const bodyEl = document.getElementById('info-modal-body');
-    const titleEl = document.getElementById('info-modal-title'); 
+    const titleEl = document.getElementById('infof-modal-title'); 
     if (!modal || !bodyEl) return;
 
-    if(titleEl) titleEl.textContent = "更新情報";
+    if(titleEl) {
+        titleEl.textContent = chrome.i18n.getMessage('updateModalGeneralTitle') || "更新情報";
+    }
     bodyEl.innerHTML = htmlContent;
 
     const closeBtn = document.getElementById('info-modal-close');
@@ -183,7 +187,9 @@ async function loadAndShowChangelog(forceShow = false) {
             .sort((a, b) => compareVersions(b, a));
 
         if (versionList.length === 0) {
-            console.log("No version folders found.");
+            if (forceShow) {
+                alert(chrome.i18n.getMessage('updateModalNoContentAlert') || "表示できる更新履歴がありません。");
+            }
             return;
         }
 
@@ -200,6 +206,8 @@ async function loadAndShowChangelog(forceShow = false) {
         let combinedHtml = "";
         let historyHeaderAdded = false;
 
+        const historyTitle = chrome.i18n.getMessage('updateModalHistoryTitle') || "過去の更新履歴";
+
         versionList.forEach((ver, index) => {
             const mdText = contents[index];
             if (!mdText) return;
@@ -207,7 +215,7 @@ async function loadAndShowChangelog(forceShow = false) {
             const isLatest = (index === 0);
 
             if (!isLatest && !historyHeaderAdded) {
-                combinedHtml += `<h2 class="release-history-header">過去の更新履歴</h2>`;
+                combinedHtml += `<h2 class="release-history-header">${historyTitle}</h2>`;
                 historyHeaderAdded = true;
             }
 
@@ -221,7 +229,7 @@ async function loadAndShowChangelog(forceShow = false) {
             });
         } else {
             if (forceShow) {
-                alert("表示できる更新履歴がありません。");
+                alert(chrome.i18n.getMessage('updateModalNoContentAlert') || "表示できる更新履歴がありません。");
             }
         }
 
@@ -236,7 +244,7 @@ async function loadAndShowChangelog(forceShow = false) {
 function setupVersionClickListener() {
     const versionEl = document.getElementById('version-display');
     if (versionEl) {
-        versionEl.title = "クリックで更新履歴を表示"; 
+        versionEl.title = chrome.i18n.getMessage('headerVersionTooltip') || "クリックで更新履歴を表示";
 
         versionEl.addEventListener('click', () => {
             console.log("Version clicked. Opening changelog...");

@@ -677,5 +677,20 @@
         "content": "$2"
       }
     }
+  },
+  "updateModalNewVersionTitle": {
+    "message": "新バージョン"
+  },
+  "updateModalHistoryTitle": {
+    "message": "過去の更新履歴"
+  },
+  "updateModalGeneralTitle": {
+    "message": "更新情報"
+  },
+  "updateModalNoContentAlert": {
+    "message": "表示できる更新履歴がありません。"
+  },
+  "headerVersionTooltip": {
+    "message": "クリックで更新履歴を表示"
   }
 }

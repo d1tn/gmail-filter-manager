@@ -677,5 +677,20 @@
         "content": "$2"
       }
     }
+  },
+  "updateModalNewVersionTitle": {
+    "message": "Neue Version"
+  },
+  "updateModalHistoryTitle": {
+    "message": "Update-Verlauf"
+  },
+  "updateModalGeneralTitle": {
+    "message": "Update-Informationen"
+  },
+  "updateModalNoContentAlert": {
+    "message": "Kein Update-Verlauf verfügbar."
+  },
+  "headerVersionTooltip": {
+    "message": "Klicken, um Update-Verlauf anzuzeigen"
   }
 }

@@ -674,5 +674,20 @@
         "content": "$2"
       }
     }
+  },
+  "updateModalNewVersionTitle": {
+    "message": "New Version"
+  },
+  "updateModalHistoryTitle": {
+    "message": "Update History"
+  },
+  "updateModalGeneralTitle": {
+    "message": "Update Information"
+  },
+  "updateModalNoContentAlert": {
+    "message": "No update history available."
+  },
+  "headerVersionTooltip": {
+    "message": "Click to view update history"
   }
 }

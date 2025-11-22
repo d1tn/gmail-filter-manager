@@ -677,5 +677,20 @@
         "content": "$2"
       }
     }
+  },
+  "updateModalNewVersionTitle": {
+    "message": "Новая версия"
+  },
+  "updateModalHistoryTitle": {
+    "message": "История обновлений"
+  },
+  "updateModalGeneralTitle": {
+    "message": "Информация об обновлении"
+  },
+  "updateModalNoContentAlert": {
+    "message": "Нет доступной истории обновлений."
+  },
+  "headerVersionTooltip": {
+    "message": "Нажмите, чтобы посмотреть историю"
   }
 }

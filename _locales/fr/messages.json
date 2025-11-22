@@ -677,5 +677,20 @@
         "content": "$2"
       }
     }
+  },
+  "updateModalNewVersionTitle": {
+    "message": "Nouvelle version"
+  },
+  "updateModalHistoryTitle": {
+    "message": "Historique des mises à jour"
+  },
+  "updateModalGeneralTitle": {
+    "message": "Informations de mise à jour"
+  },
+  "updateModalNoContentAlert": {
+    "message": "Aucun historique de mise à jour disponible."
+  },
+  "headerVersionTooltip": {
+    "message": "Cliquez pour voir l'historique"
   }
 }
