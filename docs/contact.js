@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setupContactFormEventListeners();
             
             // モーダルを表示（外部クリックでの閉じる動作を無効化）
-            showDocsModal('お問い合わせフォーム', true);
+            showDocsModal(chrome.i18n.getMessage('managerMenuContact') || 'お問い合わせ', true);
 
             // 閉じるボタンに確認ダイアログを追加
             addCloseConfirmation();
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('お問い合わせフォームの表示に失敗しました:', error);
             showError(docsContent, error);
-            showDocsModal('お問い合わせフォーム', true);
+            showDocsModal(chrome.i18n.getMessage('managerMenuContact') || 'お問い合わせ', true);
         }
     }
     
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div id="form-success" class="form-success" style="display: none;">
                 <h2 data-i18n-text="contactFormSuccessTitle"></h2>
                 <p data-i18n-text="contactFormSuccessMessage"></p>
-                <button type="button" id="close-success" class="complete-button" data-i18n-text="contactFormCloseButton"></button>
+                <button type="button" id="close-success" class="complete-button" data-i18n-text="commonModalCloseButton"></button>
             </div>
 
                 <div id="form-error" class="form-error" style="display: none;">
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p data-i18n-text="contactFormErrorMessage"></p>
                 <p class="help-text" data-i18n-text="contactFormErrorHelp"></p>
                 <button type="button" id="retry-submit" class="retry-button" data-i18n-text="contactFormRetryButton"></button>
-                <button type="button" id="close-error" class="complete-button" data-i18n-text="contactFormCloseButton"></button>
+                <button type="button" id="close-error" class="complete-button" data-i18n-text="commonModalCloseButton"></button>
             </div>
 
         </div>
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let message = document.getElementById('contact-message').value;
                 
                 if (!type || !message) {
-                    alert('お問い合わせ種別とお問い合わせ内容は必須です。');
+                    alert(chrome.i18n.getMessage('contactFormValidationRequired') || 'お問い合わせ種別とお問い合わせ内容は必須です。');
                     return;
                 }
                 
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (submitButton) {
                     submitButton.disabled = true;
                     submitButton.classList.add('submitting');
-                    submitButton.textContent = '送信中...';
+                    submitButton.textContent = chrome.i18n.getMessage('contactFormSubmittingButton') || "送信中...";
                 }
                 
                 // Google Formの送信URL
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const hasInput = checkIfFormHasInput();
                 
                 if (hasInput) {
-                    const isConfirmed = confirm('入力内容が失われますが、お問い合わせをキャンセルしますか？');
+                    const isConfirmed = confirm(chrome.i18n.getMessage('contactFormCancelConfirm') || '入力内容が失われますが、お問い合わせをキャンセルしますか？');
                     if (isConfirmed) {
                         closeModal();
                     }
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const hasInput = checkIfFormHasInput();
                     
                     if (hasInput) {
-                        const isConfirmed = confirm('入力内容が失われますが、お問い合わせをキャンセルしますか？');
+                        const isConfirmed = confirm(chrome.i18n.getMessage('contactFormCancelConfirm') || '入力内容が失われますが、お問い合わせをキャンセルしますか？');
                         if (isConfirmed) {
                             closeModal();
                         }

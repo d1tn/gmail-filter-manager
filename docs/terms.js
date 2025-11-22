@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
           renderMarkdown(markdownText, docsContent);
           
           // モーダルを表示
-          showDocsModal('利用規約');
+          showDocsModal(chrome.i18n.getMessage('managerMenuTerms') || '利用規約', true)
           
       } catch (error) {
           console.error('利用規約の読み込みに失敗しました:', error);

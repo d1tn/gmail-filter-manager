@@ -535,10 +535,6 @@
     "message": "Erneut versuchen",
     "sourcefile": "contact.js"
   },
-  "contactFormCloseButton": {
-    "message": "Schließen",
-    "sourcefile": "contact.js"
-  },
   "contactFormValidationRequired": {
     "message": "Anfragetyp und Anfragedetails sind erforderlich.",
     "sourcefile": "contact.js"
@@ -564,6 +560,10 @@
       }
     },
     "sourcefile": "common.js"
+  },
+  "commonModalCloseButton": {
+    "message": "Schließen",
+    "sourcefile": "contact.js"
   },
   "commonModalReloadLink": {
     "message": "Neu laden",
@@ -645,9 +645,6 @@
   },
   "reviewModalCtaSnooze": {
     "message": "Später erinnern"
-  },
-  "reviewModalCtaClose": {
-    "message": "Schließen"
   },
   "alertOfImportSuccess": {
     "message": "$1 Filter erfolgreich importiert. ",

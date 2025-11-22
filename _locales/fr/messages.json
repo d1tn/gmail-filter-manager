@@ -535,10 +535,6 @@
     "message": "Réessayer",
     "sourcefile": "contact.js"
   },
-  "contactFormCloseButton": {
-    "message": "Fermer",
-    "sourcefile": "contact.js"
-  },
   "contactFormValidationRequired": {
     "message": "Le type de demande et les détails de la demande sont obligatoires.",
     "sourcefile": "contact.js"
@@ -564,6 +560,10 @@
       }
     },
     "sourcefile": "common.js"
+  },
+  "commonModalCloseButton": {
+    "message": "Fermer",
+    "sourcefile": "contact.js"
   },
   "commonModalReloadLink": {
     "message": "Recharger",
@@ -645,9 +645,6 @@
   },
   "reviewModalCtaSnooze": {
     "message": "Me le rappeler plus tard"
-  },
-  "reviewModalCtaClose": {
-    "message": "Fermer"
   },
   "alertOfImportSuccess": {
     "message": "$1 filtres ont été importés avec succès. ",

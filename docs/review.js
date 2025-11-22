@@ -187,7 +187,7 @@
             ${t('reviewModalCtaReview')}
           </button>
           <button id="review-modal-close" type="button" class="action">
-          ${t('reviewModalCtaClose')}
+          ${t('commonModalCloseButton')}
           </button>
           <button id="review-modal-snooze" type="button" class="action nobutton">
             ${t('reviewModalCtaSnooze')}

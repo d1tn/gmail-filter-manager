@@ -535,10 +535,6 @@
     "message": "重试",
     "sourcefile": "contact.js"
   },
-  "contactFormCloseButton": {
-    "message": "关闭",
-    "sourcefile": "contact.js"
-  },
   "contactFormValidationRequired": {
     "message": "咨询类型和咨询详情是必填项。",
     "sourcefile": "contact.js"
@@ -564,6 +560,10 @@
       }
     },
     "sourcefile": "common.js"
+  },
+    "commonModalCloseButton": {
+    "message": "关闭",
+    "sourcefile": "contact.js"
   },
   "commonModalReloadLink": {
     "message": "重新加载",
@@ -645,9 +645,6 @@
   },
   "reviewModalCtaSnooze": {
     "message": "稍后提醒"
-  },
-  "reviewModalCtaClose": {
-    "message": "关闭"
   },
   "alertOfImportSuccess": {
     "message": "成功导入 $1 个过滤器。",

@@ -535,10 +535,6 @@
     "message": "Повторить",
     "sourcefile": "contact.js"
   },
-  "contactFormCloseButton": {
-    "message": "Закрыть",
-    "sourcefile": "contact.js"
-  },
   "contactFormValidationRequired": {
     "message": "Тип запроса и детали запроса обязательны.",
     "sourcefile": "contact.js"
@@ -564,6 +560,10 @@
       }
     },
     "sourcefile": "common.js"
+  },
+  "commonModalCloseButton": {
+    "message": "Закрыть",
+    "sourcefile": "contact.js"
   },
   "commonModalReloadLink": {
     "message": "Перезагрузить",
@@ -645,9 +645,6 @@
   },
   "reviewModalCtaSnooze": {
     "message": "Напомнить позже"
-  },
-  "reviewModalCtaClose": {
-    "message": "Закрыть"
   },
   "alertOfImportSuccess": {
     "message": "Успешно импортировано фильтров: $1. ",

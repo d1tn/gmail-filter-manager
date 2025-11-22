@@ -535,10 +535,6 @@
     "message": "再試行",
     "sourcefile": "contact.js"
   },
-  "contactFormCloseButton": {
-    "message": "閉じる",
-    "sourcefile": "contact.js"
-  },
   "contactFormValidationRequired": {
     "message": "お問い合わせ種別とお問い合わせ内容は必須です。",
     "sourcefile": "contact.js"
@@ -564,6 +560,10 @@
       }
     },
     "sourcefile": "common.js"
+  },
+  "commonModalCloseButton": {
+    "message": "閉じる",
+    "sourcefile": "contact.js"
   },
   "commonModalReloadLink": {
     "message": "再読み込み",
@@ -645,9 +645,6 @@
   },
   "reviewModalCtaSnooze": {
     "message": "しばらく表示しない"
-  },
-  "reviewModalCtaClose": {
-    "message": "閉じる"
   },
   "alertOfImportSuccess": {
     "message": "$1個のフィルタを正常にインポートしました。",
