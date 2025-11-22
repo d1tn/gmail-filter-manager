@@ -452,6 +452,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 nodes = [];
             }
 
+            // subscription.js の機能を利用
+            const currentFolderCount = nodes.filter(n => n && n.type === 'folder').length;
+            
+            // checkPremiumStatus() は subscription.js から呼べる
+            // canCreateFolder() ヘルパーを使ってもOK
+            if (!canCreateFolder(currentFolderCount)) {
+                const limitMsg = (chrome.i18n && chrome.i18n.getMessage('managerLimitReached')) 
+                    || `無料版ではフォルダは${window.UserStatus.maxFreeFolders}個までです。\n無制限に作成するにはプレミアム版へのアップグレードをご検討ください。🥺`;
+                
+                // アップグレードを促す
+                if(confirm(limitMsg + "\n\n今すぐアップグレードしますか？")) {
+                    openUpgradePage(); // subscription.js の関数
+                }
+                return;
+            }
+
             const newFolder = createNewFolderNode();
             nodes.push(newFolder);
 
