@@ -60,27 +60,3 @@ Gmail Filter Manager est une extension Chrome qui permet de gérer visuellement 
 ## Retour et contributions
 Signalez les bogues ou proposez des améliorations via GitHub Issues ou le formulaire de contact.  
 - GitHub Issues : https://github.com/d1tn/gmail-filter-manager/issues
-
-# Journal des versions
-#### 2025
-- **11.01 v1.3.2**
-  - Passage du stockage local à la synchronisation du compte Google (chrome.storage.sync)
-  - Mise à jour de la description et des conditions d’utilisation
-- **09.15 v1.3.1**
-  - Ajout du support pour l’espagnol, le chinois simplifié, le français, l’allemand et le russe
-- **06.05 v1.3.0**
-  - Ajout de “Dupliquer cette action”
-- **06.04 v1.2.2**
-  - Déplacement du menu vers le coin supérieur droit
-- **05.15 v1.2.0**
-  - Ajout du support anglais
-  - Correction de bugs de suppression
-  - **05.17 v1.2.1**
-    - Ajout d’un sous-titre au nom de l’application
-- **05.10 v1.1.0**
-  - Modification de la gestion des suppressions dans “Paramètres avancés”
-  - Ajout de l’exportation individuelle de filtres
-  - **05.10 v1.1.1**
-    - Correction de l’import et de la suppression
-    - Formulaire de contact mis à jour
-- **05.07 v1.0.0** Première version
