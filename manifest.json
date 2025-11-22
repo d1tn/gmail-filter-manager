@@ -12,6 +12,7 @@
       "resources": [
         "docs/*",
         "lib/*",
+        "updates/*",
         "manager.html",
         "manager.js",
         "manager.css"

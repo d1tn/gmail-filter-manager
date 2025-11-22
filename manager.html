@@ -390,9 +390,24 @@
                     </button>
                 </section>
             </article>
+            <div id="info-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="info-modal-title">お知らせ</h2>
+                        <span class="close-button" id="info-modal-close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div id="info-modal-body" class="markdown-container"></div>
+                    </div>
+                    <div class="modal-footer" style="padding: 1.5rem; text-align: right;">
+                        <button id="info-modal-action" class="action accent">閉じる</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="subscription.js"></script>
+    <script src="notifications.js"></script>
     <script src="manager.js"></script>
     <script src="docs/settings.js"></script>
     <script src="docs/common.js"></script>

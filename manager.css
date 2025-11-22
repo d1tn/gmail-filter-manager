@@ -145,6 +145,25 @@ input {
     min-width: 50px;
 }
 
+/* バージョン記号表示共通 */
+.version-badge {
+    margin-left: 0.5rem;
+    font-weight: normal;
+    font-size: 0.9rem;
+    color: #999;
+
+    &#version-display {
+        margin-left: 0.3rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        border-radius: 0.3rem;
+        padding: 0 0.2rem;
+
+        &:hover {
+            background-color: #ddd;
+        }
+    }
+}
 
 /* サブメニュー共通 */
 .submenu {
@@ -177,15 +196,7 @@ input {
     .app-title {
         color: #444746;
         font-size: 1.1rem;
-
-        .version-badge {
-            margin-left: 0.5rem;
-            font-weight: normal;
-            font-size: 0.9rem;
-            color: #999;
-        }
     }
-
 }
 
 /* ハンバーガーメニューの開閉用チェックボックス */
@@ -415,6 +426,7 @@ input {
 
         li.item {
             width: 100%;
+
             button,
             a {
                 box-sizing: border-box;
@@ -567,7 +579,8 @@ input {
                 .folder-children {
                     width: 95%;
                     list-style: none;
-                    .material-symbols-outlined{
+
+                    .material-symbols-outlined {
                         padding-left: 1.0rem;
                     }
                 }
@@ -1106,4 +1119,47 @@ input:checked+.slider:before {
     color: #e74c3c;
     font-size: 0.85rem;
     line-height: 1.4;
+}
+
+/* ========================================= */
+/* お知らせモーダル（リリースノート）用スタイル */
+/* ========================================= */
+
+/* 最新バージョンのセクション */
+.release-latest {
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #eee;
+
+
+    /* "🎉 新バージョン" ラベル */
+    .release-label {
+        color: #2980b9;
+        margin-bottom: 0.5rem;
+        padding: 0;
+        border-bottom: none;
+        /* 既存のh1スタイルをリセット */
+    }
+
+    li.parent-item {
+        font-weight: bold;
+    }
+
+}
+
+/* 日付とバージョン番号 (過去分) */
+.release-past {
+    margin-bottom: 2.5rem !important;
+
+    h3 {
+        font-size: 1rem;
+        padding-top: 0rem;
+        padding-bottom: 0rem;
+    }
+}
+
+
+/* 入れ子リスト項目 */
+.nested-item {
+    margin-left: 1.5rem;
+    list-style-type: circle !important;
 }
