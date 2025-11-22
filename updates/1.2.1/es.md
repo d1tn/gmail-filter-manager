@@ -1,2 +1,2 @@
-2025.05.17 v1.2.1
+2025.05.17
 - Se ha añadido un eslogan al título de la extensión.
