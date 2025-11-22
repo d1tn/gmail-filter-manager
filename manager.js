@@ -1309,7 +1309,7 @@ function renderFilterList() {
             button.addEventListener('click', () => {
                 // 1. 開閉状態をトグル
                 folder.collapsed = !folder.collapsed;
-                
+
                 // 2. フィルタ・フォルダの選択状態を更新
                 currentFolderId = folder.id;
                 currentFilterIndex = -1;
@@ -1317,7 +1317,7 @@ function renderFilterList() {
                 // 3. 保存して再描画
                 saveFiltersToStorage();
                 renderFilterList();
-                
+
                 // 4. 右ペインに詳細表示
                 displayFolderDetails(folder);
             });
@@ -2280,7 +2280,7 @@ function setupFilterListSorting() {
     // ▼ フォルダを視覚的に開閉するヘルパー
     const toggleFolderVisual = (folderLi, forceOpen = null) => {
         if (!folderLi) return;
-        
+
         const folderId = folderLi.dataset.folderId;
         const childrenUl = folderLi.querySelector('ul.folder-children');
         const toggleIcon = folderLi.querySelector('.folder-toggle-icon');
@@ -2302,11 +2302,11 @@ function setupFilterListSorting() {
     };
 
     // ▼▼▼ 共通のドラッグ移動中ロジック (RootでもChildでもこれを使う) ▼▼▼
-    const onMoveLogic = function(evt, originalEvent) {
+    const onMoveLogic = function (evt, originalEvent) {
         // フォルダ自体のドラッグ中は自動開閉しない
         if (draggingItemType === 'folder') {
             clearFolderDropHighlight();
-            return; 
+            return;
         }
 
         // カーソルの下にある要素（related）がフォルダかどうか判定
@@ -2322,17 +2322,17 @@ function setupFilterListSorting() {
                 clearTimeout(dragHoverTimer);
                 dragHoverTimer = null;
             }
-            
+
             // 直前にホバーしていたフォルダを閉じる
             const prevFolderLi = filterListUl.querySelector(`.folder-item[data-folder-id="${lastHoveredFolderId}"]`);
             if (prevFolderLi) {
-                    // ★「ドラッグ開始元のフォルダ」でなければ閉じる
-                    // （ドラッグ元は、マウスが離れても閉じずに待っていてほしい）
-                    if (lastHoveredFolderId !== dragSourceFolderId) {
-                        toggleFolderVisual(prevFolderLi, false);
-                    }
+                // ★「ドラッグ開始元のフォルダ」でなければ閉じる
+                // （ドラッグ元は、マウスが離れても閉じずに待っていてほしい）
+                if (lastHoveredFolderId !== dragSourceFolderId) {
+                    toggleFolderVisual(prevFolderLi, false);
+                }
             }
-            
+
             clearFolderDropHighlight();
         }
 
@@ -2343,7 +2343,7 @@ function setupFilterListSorting() {
             // まだそのフォルダのアクション待機中でなければタイマーセット
             if (lastHoveredFolderId !== targetFolderId) {
                 lastHoveredFolderId = targetFolderId;
-                
+
                 // 既存タイマーあれば消す
                 if (dragHoverTimer) clearTimeout(dragHoverTimer);
 
@@ -2370,18 +2370,18 @@ function setupFilterListSorting() {
     // ▼ 共通の onEnd ハンドラ
     const handleSortEnd = function (evt) {
         console.log("Drag ended", evt);
-        
+
         if (dragHoverTimer) {
             clearTimeout(dragHoverTimer);
             dragHoverTimer = null;
         }
-        
+
         clearFolderDropHighlight();
 
         // ドロップされなかったフォルダを閉じる処理
         const droppedItem = evt.item;
         const parentList = droppedItem.parentNode;
-        
+
         let destFolderId = null;
         if (parentList && parentList.classList.contains('folder-children')) {
             const folderItem = parentList.closest('.folder-item');
@@ -2403,7 +2403,7 @@ function setupFilterListSorting() {
         });
 
         rebuildNodesFromFilterListDOM();
-        
+
         draggingItemType = null;
         lastHoveredFolderId = null;
         dragSourceFolderId = null;
@@ -2456,7 +2456,7 @@ function setupFilterListSorting() {
             onStart(evt) {
                 console.log('Child drag start');
                 draggingItemType = 'filter';
-                
+
                 // ドラッグ元のフォルダIDを記録
                 const parentFolder = evt.from.closest('.folder-item');
                 if (parentFolder) {
@@ -3046,7 +3046,7 @@ function exportFilters(mode = 'all') {
     if (mode === 'current') {
         const currentFilter = filters[currentFilterIndex];
         filtersToExport = [currentFilter];
-        
+
         // 単体エクスポートの場合は構造を含めず、単一ノードとして扱う（もしくはnull）
         // ここではシンプルに「単体フィルタ」として構造を作る
         nodesToExport = [{ type: 'filter', id: currentFilter.id }];
@@ -3116,7 +3116,7 @@ function showImportDialog() {
             const xmlContent = e.target.result;
             // 処理を実行し、件数を受け取る
             const count = importFiltersFromXML(xmlContent);
-            
+
             // ★ 多言語対応版のアラート
             if (count > 0) {
                 // メッセージを取得（もし取得失敗したらデフォルトの日本語を表示）
@@ -3488,22 +3488,22 @@ function importFiltersFromXML(xmlContent) {
         entries.forEach((entry, entryIndex) => {
             const titleElement = entry.querySelector('title');
             if (titleElement && titleElement.textContent === 'GFM_STRUCTURE_DATA') {
-                 if (!importedStructure) {
-                     const content = entry.querySelector('content');
-                     if (content) {
-                         try {
-                             importedStructure = JSON.parse(unescapeXml(content.textContent));
-                         } catch(e) {}
-                     }
-                 }
-                 return;
+                if (!importedStructure) {
+                    const content = entry.querySelector('content');
+                    if (content) {
+                        try {
+                            importedStructure = JSON.parse(unescapeXml(content.textContent));
+                        } catch (e) { }
+                    }
+                }
+                return;
             }
 
             const filter = createNewFilterData();
             filter.id = Date.now().toString() + "_" + entryIndex + "_" + Math.random().toString(36).substring(2, 10);
 
             extractFilterName(entry, filter);
-            
+
             const properties = getPropertiesFromEntry(entry);
             properties.forEach(property => {
                 processPropertyForImport(property, filter);
@@ -3544,7 +3544,7 @@ function handleImportedFilters(importedFilters, importedStructure) {
     const structureMsg = chrome.i18n.getMessage(structureMsgKey) || structureMsgDefault;
 
     // 確認ダイアログ
-    const confirmMsg = chrome.i18n.getMessage('confirmImportMergeAction', [String(importedFilters.length), structureMsg]) 
+    const confirmMsg = chrome.i18n.getMessage('confirmImportMergeAction', [String(importedFilters.length), structureMsg])
         || `${importedFilters.length}個のフィルタを読み込みました${structureMsg}。\n\n[OK] = 既存の設定と「統合」する\n[キャンセル] = 既存の設定をすべて「置き換える」`;
 
     const isMerge = confirm(confirmMsg);
@@ -3554,14 +3554,14 @@ function handleImportedFilters(importedFilters, importedStructure) {
     importedFilters.forEach(f => {
         if (f._importOldId) {
             idMap.set(f._importOldId, f.id);
-            delete f._importOldId; 
+            delete f._importOldId;
         }
     });
 
     function mapStructureIds(structNodes) {
         if (!Array.isArray(structNodes)) return [];
         const mapped = [];
-        
+
         structNodes.forEach(node => {
             if (node.type === 'filter') {
                 const newId = idMap.get(node.id);
@@ -3570,7 +3570,7 @@ function handleImportedFilters(importedFilters, importedStructure) {
                 }
             } else if (node.type === 'folder') {
                 const newFolderId = 'folder_' + Date.now().toString() + '_' + Math.random().toString(36).substring(2, 8);
-                
+
                 mapped.push({
                     type: 'folder',
                     id: newFolderId,
@@ -3656,7 +3656,7 @@ function extractFilterName(entry, filter) {
                 filter.name = cleanName;
             }
         }
-        
+
         console.log(`フィルタ情報を検出: Name="${filter.name}", OldID="${filter._importOldId || 'none'}"`);
     }
 }
@@ -3708,12 +3708,12 @@ function processPropertyForImport(property, filter) {
                 filter.conditions.size.value = parseInt(value, 10);
                 break;
             case 'sizeOperator':
-                 if (value === 's_sl') filter.conditions.size.operator = 'larger_than';
-                 if (value === 's_ss') filter.conditions.size.operator = 'smaller_than';
-                 break;
+                if (value === 's_sl') filter.conditions.size.operator = 'larger_than';
+                if (value === 's_ss') filter.conditions.size.operator = 'smaller_than';
+                break;
             case 'sizeUnit':
-                 filter.conditions.size.unit = value;
-                 break;
+                filter.conditions.size.unit = value;
+                break;
             case 'hasAttachment':
                 filter.conditions.hasAttachment = (value === 'true');
                 break;

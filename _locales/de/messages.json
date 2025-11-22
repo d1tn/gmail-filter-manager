@@ -673,8 +673,12 @@
   "confirmImportMergeAction": {
     "message": "$1 Filter geladen$2.\n\nMöchten Sie diese mit den bestehenden Einstellungen zusammenführen oder alles ersetzen?\n\n[OK] = Zusammenführen (IDs werden neu generiert)\n[Abbrechen] = Alles ersetzen (Kann nicht wiederhergestellt werden)",
     "placeholders": {
-      "1": { "content": "$1" },
-      "2": { "content": "$2" }
+      "1": {
+        "content": "$1"
+      },
+      "2": {
+        "content": "$2"
+      }
     }
   }
 }

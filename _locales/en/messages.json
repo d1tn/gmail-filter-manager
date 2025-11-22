@@ -670,8 +670,12 @@
   "confirmImportMergeAction": {
     "message": "Loaded $1 filters$2.\n\nDo you want to merge with existing settings or replace everything?\n\n[OK] = Merge with existing settings (IDs regenerated)\n[Cancel] = Replace all existing settings (Cannot be restored)",
     "placeholders": {
-      "1": { "content": "$1" },
-      "2": { "content": "$2" }
+      "1": {
+        "content": "$1"
+      },
+      "2": {
+        "content": "$2"
+      }
     }
   }
 }

@@ -673,8 +673,12 @@
   "confirmImportMergeAction": {
     "message": "已加载 $1 个过滤器$2。\n\n您希望与现有设置合并，还是全部替换？\n\n[确定] = 合并（ID 将重新生成）\n[取消] = 全部替换（原有设置无法恢复）",
     "placeholders": {
-      "1": { "content": "$1" },
-      "2": { "content": "$2" }
+      "1": {
+        "content": "$1"
+      },
+      "2": {
+        "content": "$2"
+      }
     }
   }
 }

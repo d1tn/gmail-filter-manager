@@ -673,8 +673,12 @@
   "confirmImportMergeAction": {
     "message": "$1 filtres chargés$2.\n\nSouhaitez-vous fusionner avec les paramètres existants ou tout remplacer ?\n\n[OK] = Fusionner (les ID sont régénérés)\n[Annuler] = Tout remplacer (Impossible de restaurer les paramètres d'origine)",
     "placeholders": {
-      "1": { "content": "$1" },
-      "2": { "content": "$2" }
+      "1": {
+        "content": "$1"
+      },
+      "2": {
+        "content": "$2"
+      }
     }
   }
 }
